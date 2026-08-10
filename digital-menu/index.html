@@ -1,0 +1,3262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Ember & Oak | Modern Grill & Bar</title>
+<style>
+:root {
+  --bg: #131110;
+  --surface: #1e1a17;
+  --surface-raised: #262120;
+  --border: rgba(212, 165, 116, 0.10);
+  --border-strong: rgba(212, 165, 116, 0.22);
+  --ember: #E8820C;
+  --ember-glow: rgba(232, 130, 12, 0.12);
+  --flame: #FF6B00;
+  --gold: #D4A574;
+  --gold-bright: #E8C49A;
+  --cream: #FFF5E6;
+  --cream-dim: rgba(255, 245, 230, 0.72);
+  --cream-muted: rgba(255, 245, 230, 0.42);
+  --brown: #2C1810;
+  --green: #7FA36E;
+  --red: #D05A42;
+  --sage: #6B8E5A;
+  --teal: #4DB6AC;
+  --deep-red: #B23A2A;
+  --warm-gray: #A0937D;
+  --nav-h: 52px;
+  --bar-h: 66px;
+  --pad: 20px;
+  --radius: 14px;
+}
+
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Segoe UI", -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(120,75,35,0.028) 3px, rgba(120,75,35,0.028) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 44px, rgba(120,75,35,0.018) 44px, rgba(120,75,35,0.018) 45px),
+    var(--bg);
+  color: var(--cream);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-bottom: calc(var(--bar-h) + 20px);
+}
+
+img { display: block; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ========================
+   HERO
+   ======================== */
+.hero {
+  position: relative;
+  height: 58vh;
+  min-height: 380px;
+  max-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&h=600&fit=crop') center/cover no-repeat;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 6, 3, 0.85) 0%,
+    rgba(19, 17, 16, 0.30) 30%,
+    rgba(19, 17, 16, 0.20) 50%,
+    rgba(19, 17, 16, 0.40) 70%,
+    rgba(10, 6, 3, 0.95) 100%
+  );
+  z-index: 1;
+}
+
+#emberCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 0 var(--pad);
+}
+
+.flame-icon {
+  display: inline-block;
+  margin-bottom: 18px;
+  animation: glow-pulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(232,130,12,0.6)) drop-shadow(0 0 30px rgba(232,130,12,0.3));
+}
+
+.hero h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--cream);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 60px rgba(212, 165, 116, 0.35),
+    0 0 120px rgba(232, 130, 12, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.7);
+  animation: hero-fade 0.8s ease 0.4s both;
+}
+
+.hero .tagline {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+  opacity: 0.85;
+  animation: hero-fade 0.8s ease 0.7s both;
+}
+
+.hero .tagline-craft {
+  display: block;
+  font-family: "Segoe UI", -apple-system, Roboto, sans-serif;
+  font-style: normal;
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  margin-top: 14px;
+  opacity: 0;
+  animation: hero-fade 0.8s ease 1.0s both;
+  text-shadow: 0 0 20px rgba(212, 165, 116, 0.3);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  animation: bounce 2.5s ease-in-out infinite;
+  text-align: center;
+}
+.scroll-indicator-text {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 245, 230, 0.35);
+  margin-bottom: 8px;
+  font-family: "Segoe UI", sans-serif;
+}
+.scroll-indicator-arrow {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 0 auto;
+  border-right: 1.5px solid rgba(212, 165, 116, 0.4);
+  border-bottom: 1.5px solid rgba(212, 165, 116, 0.4);
+  transform: rotate(45deg);
+}
+
+/* ========================
+   CATEGORY NAV
+   ======================== */
+.category-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(19, 17, 16, 0.82);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid rgba(212, 165, 116, 0.18);
+  box-shadow: 0 1px 0 rgba(212, 165, 116, 0.06);
+}
+
+.nav-scroll {
+  display: flex;
+  gap: 7px;
+  padding: 10px var(--pad);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nav-scroll::-webkit-scrollbar { display: none; }
+
+.nav-btn {
+  white-space: nowrap;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 245, 230, 0.03);
+  color: var(--cream-dim);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  transition: all 0.3s ease;
+}
+.nav-btn:hover {
+  background: rgba(212, 165, 116, 0.08);
+  border-color: rgba(212, 165, 116, 0.35);
+}
+.nav-btn.active {
+  background: linear-gradient(135deg, #D4870A, #E8920C, #D4870A);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow:
+    0 2px 12px rgba(232, 130, 12, 0.35),
+    0 0 0 1px rgba(212, 165, 116, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ========================
+   GOLD SECTION DIVIDER
+   ======================== */
+.section-divider {
+  display: block;
+  width: 60%;
+  max-width: 300px;
+  height: 1px;
+  margin: 0 auto;
+  border: none;
+  background: linear-gradient(90deg, transparent, rgba(212, 165, 116, 0.18), transparent);
+}
+
+/* ========================
+   SECTIONS
+   ======================== */
+.menu-section {
+  padding: 0 var(--pad);
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  padding: 48px 0 22px;
+  position: relative;
+}
+
+.section-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 100px;
+  background: radial-gradient(ellipse, rgba(232, 130, 12, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ember-dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  background: var(--ember);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  box-shadow: 0 0 6px var(--ember), 0 0 18px rgba(232,130,12,0.25);
+}
+
+.section-header h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  position: relative;
+  text-shadow: 0 0 30px rgba(212, 165, 116, 0.2);
+}
+.section-header h2::before,
+.section-header h2::after {
+  content: '';
+  width: 55px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+.section-header h2::after {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+/* Decorative flourish below section title */
+.section-flourish {
+  display: block;
+  margin: 10px auto 0;
+  opacity: 0.35;
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ========================
+   MENU CARDS
+   ======================== */
+.menu-card {
+  display: flex;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease;
+  border-left: 3px solid #D4A574;
+  cursor: pointer;
+}
+.menu-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Shimmer sweep on hover */
+.menu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(212, 165, 116, 0.04) 40%,
+    rgba(212, 165, 116, 0.08) 50%,
+    rgba(212, 165, 116, 0.04) 60%,
+    transparent 80%
+  );
+  transition: left 0.7s ease;
+  pointer-events: none;
+  z-index: 3;
+}
+.menu-card:hover::before {
+  left: 130%;
+}
+
+/* Subtle top-edge shine */
+.menu-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,165,116,0.2), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.menu-card:hover {
+  box-shadow:
+    0 4px 24px rgba(232, 130, 12, 0.12),
+    inset 0 0 30px rgba(232, 130, 12, 0.03);
+  border-color: rgba(212, 165, 116, 0.18);
+}
+
+.card-image {
+  width: 38%;
+  min-height: 136px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+/* Vignette on image */
+.card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+.menu-card:hover .card-image img,
+.menu-card:active .card-image img {
+  transform: scale(1.06);
+}
+
+.card-content {
+  flex: 1;
+  padding: 13px 14px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.tag {
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.tag-special {
+  background: rgba(212, 165, 116, 0.22);
+  color: #D4A574;
+  border: 1px solid rgba(212, 165, 116, 0.2);
+}
+.tag-spicy {
+  background: rgba(178, 58, 42, 0.2);
+  color: #D05A42;
+  border: 1px solid rgba(178, 58, 42, 0.15);
+}
+.tag-veg {
+  background: rgba(107, 142, 90, 0.2);
+  color: #7FA36E;
+  border: 1px solid rgba(107, 142, 90, 0.15);
+}
+.tag-new {
+  background: rgba(77, 182, 172, 0.12);
+  color: var(--teal);
+  border: 1px solid rgba(77, 182, 172, 0.25);
+}
+.tag-popular {
+  background: rgba(220, 100, 40, 0.16);
+  color: #E87A30;
+  border: 1px solid rgba(220, 100, 40, 0.15);
+}
+
+.card-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.02rem;
+  color: var(--cream);
+  margin-bottom: 3px;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+}
+
+.card-desc {
+  font-size: 0.76rem;
+  color: var(--warm-gray);
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  position: relative;
+  z-index: 4;
+}
+
+.card-price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  background: rgba(212, 165, 116, 0.08);
+  border: 1px solid rgba(212, 165, 116, 0.15);
+  padding: 2px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.card-price .dollar {
+  font-size: 0.75em;
+  font-weight: 500;
+  vertical-align: super;
+  margin-right: 1px;
+}
+
+.card-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.remove-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  color: var(--gold);
+  font-size: 1.1rem;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  z-index: 5;
+}
+.remove-btn.visible { display: inline-flex; }
+.remove-btn:hover {
+  border-color: #D05A42;
+  color: #D05A42;
+  background: rgba(208,90,66,0.1);
+}
+.remove-btn:active { transform: scale(0.9); }
+.card-qty-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cream);
+  min-width: 18px;
+  text-align: center;
+  display: none;
+}
+.card-qty-label.visible { display: block; }
+.add-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ember);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(232,130,12,0.3);
+}
+.add-btn:hover {
+  background: var(--flame);
+  box-shadow: 0 2px 16px rgba(232,130,12,0.5);
+}
+.add-btn:active { transform: scale(0.9); }
+
+.qty-badge {
+  display: none;
+  background: var(--flame);
+  border-radius: 50%;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 1.5px solid var(--surface);
+}
+
+.float-text {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  color: var(--ember);
+  font-size: 0.72rem;
+  font-weight: 700;
+  pointer-events: none;
+  animation: float-up-fade 0.55s ease forwards;
+  z-index: 5;
+}
+
+/* ========================
+   HAPPY HOUR BANNER
+   ======================== */
+.happy-hour {
+  margin: 44px auto;
+  max-width: 520px;
+  padding: 0 var(--pad);
+}
+.happy-hour-inner {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&h=300&fit=crop') center/cover no-repeat;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px double rgba(212, 165, 116, 0.35);
+}
+.happy-hour-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(180, 90, 10, 0.82), rgba(44, 24, 16, 0.85));
+  z-index: 1;
+}
+/* Shimmer animation across the banner */
+.happy-hour-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 220, 150, 0.08) 45%,
+    rgba(255, 220, 150, 0.14) 50%,
+    rgba(255, 220, 150, 0.08) 55%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  animation: banner-shimmer 4s ease-in-out infinite;
+}
+.happy-hour-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 30px 20px;
+}
+.happy-hour-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FFD8A0;
+  background: rgba(255, 200, 100, 0.15);
+  border: 1px solid rgba(255, 200, 100, 0.3);
+  padding: 3px 16px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 200, 100, 0.3);
+}
+.happy-hour-content h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.55rem;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+  text-shadow: 0 0 30px rgba(232, 130, 12, 0.3);
+}
+.happy-hour-content p {
+  font-size: 0.88rem;
+  color: var(--gold-bright);
+  font-style: italic;
+  font-family: Georgia, serif;
+}
+
+/* ========================
+   DRINK LIST SECTIONS
+   ======================== */
+.drink-hero {
+  width: 100%;
+  height: 160px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 18px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.drink-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.drink-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(19,17,16,0.1) 0%, rgba(19,17,16,0.6) 100%);
+}
+
+.drink-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  padding: 8px 12px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent, transparent 7px,
+      rgba(120, 75, 35, 0.018) 7px, rgba(120, 75, 35, 0.018) 8px
+    );
+  border-radius: 8px;
+}
+
+.drink-category-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  opacity: 0.7;
+}
+
+.drink-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  cursor: pointer;
+}
+.drink-item:last-child {
+  border-bottom: none;
+  border-image: none;
+}
+
+.drink-info {
+  flex: 1;
+  min-width: 0;
+}
+.drink-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.95rem;
+  color: var(--cream);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+/* Dotted leader line */
+.drink-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.drink-leader {
+  flex: 1;
+  border-bottom: 1px dotted rgba(212, 165, 116, 0.2);
+  min-width: 20px;
+  margin-bottom: 3px;
+}
+.drink-desc {
+  font-size: 0.74rem;
+  color: var(--warm-gray);
+  font-style: italic;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+.drink-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.drink-price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.drink-add {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  color: var(--gold);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s;
+}
+.drink-add:hover {
+  border-color: var(--ember);
+  color: var(--ember);
+  background: rgba(232,130,12,0.08);
+  box-shadow: 0 0 10px rgba(232, 130, 12, 0.15);
+}
+.drink-add:active { transform: scale(0.9); }
+
+/* ========================
+   FOOTER
+   ======================== */
+.site-footer {
+  text-align: center;
+  padding: 50px var(--pad) 30px;
+  max-width: 520px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(212, 165, 116, 0.18);
+}
+.footer-line {
+  width: 30px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 auto 20px;
+  opacity: 0.4;
+}
+.footer-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(212, 165, 116, 0.15);
+}
+.footer-hours {
+  font-size: 0.78rem;
+  color: var(--cream-dim);
+  margin-bottom: 4px;
+}
+.footer-address {
+  font-size: 0.74rem;
+  color: var(--cream-muted);
+  margin-bottom: 4px;
+  font-style: italic;
+}
+.footer-note {
+  font-size: 0.7rem;
+  color: var(--cream-muted);
+  font-style: italic;
+  max-width: 260px;
+  margin: 12px auto 0;
+  line-height: 1.6;
+}
+.footer-powered {
+  font-size: 0.6rem;
+  color: rgba(255, 245, 230, 0.22);
+  margin-top: 18px;
+  letter-spacing: 0.06em;
+}
+
+/* ========================
+   ORDER BAR
+   ======================== */
+.order-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.order-bar.active {
+  transform: translateY(0);
+}
+.order-bar-inner {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 var(--pad) 0;
+}
+.order-bar-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(30, 22, 16, 0.85);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border-radius: 16px 16px 0 0;
+  padding: 14px 18px;
+  border-top: 1px solid rgba(212, 165, 116, 0.15);
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4), 0 -1px 0 rgba(212, 165, 116, 0.08);
+}
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.order-count {
+  font-size: 0.78rem;
+  color: var(--cream-muted);
+}
+.order-total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+}
+.view-order-btn {
+  padding: 8px 22px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #D4870A, #E8920C);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: all 0.3s;
+  box-shadow: 0 2px 12px rgba(232, 130, 12, 0.3);
+}
+.view-order-btn:hover {
+  background: linear-gradient(135deg, #E8920C, #FF6B00);
+  box-shadow: 0 2px 20px rgba(232, 130, 12, 0.5);
+}
+
+/* ========================
+   ORDER PANEL + BACKDROP
+   ======================== */
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.panel-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.order-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 310;
+  background: linear-gradient(to bottom, #1e1a17, #161210);
+  border-radius: 20px 20px 0 0;
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(212, 165, 116, 0.12);
+}
+.order-panel.open {
+  transform: translateY(0);
+}
+
+.panel-handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(212, 165, 116, 0.2);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px 12px;
+  border-bottom: 1px solid rgba(212, 165, 116, 0.1);
+}
+.panel-header h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-bright);
+  font-weight: 400;
+}
+.panel-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--cream-dim);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.panel-close:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--gold);
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 22px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(212, 165, 116, 0.07);
+}
+.order-item:last-child { border-bottom: none; }
+
+.order-item-info {
+  flex: 1;
+  min-width: 0;
+}
+.order-item-name {
+  font-family: Georgia, serif;
+  font-size: 0.9rem;
+  color: var(--cream);
+  display: block;
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+.order-item-price {
+  font-size: 0.78rem;
+  color: var(--warm-gray);
+  font-variant-numeric: tabular-nums;
+}
+
+.order-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 14px;
+}
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--cream);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.qty-btn:hover { border-color: var(--ember); color: var(--ember); }
+.qty-btn:active { transform: scale(0.92); }
+.qty-display {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cream);
+  width: 20px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-footer {
+  padding: 14px 22px 20px;
+  border-top: 1px solid rgba(212, 165, 116, 0.1);
+}
+.panel-subtotal {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.panel-subtotal span:first-child { color: var(--cream-dim); }
+.panel-subtotal span:last-child {
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+}
+.send-order-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #D4870A, #E8920C);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: all 0.3s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(232,130,12,0.3);
+}
+.send-order-btn:hover {
+  background: linear-gradient(135deg, #E8920C, #FF6B00);
+  box-shadow: 0 4px 28px rgba(232,130,12,0.45);
+}
+.send-order-btn:active { transform: scale(0.98); }
+
+.empty-order {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--cream-muted);
+  font-style: italic;
+  font-size: 0.88rem;
+  font-family: Georgia, serif;
+}
+
+/* ========================
+   ANIMATIONS
+   ======================== */
+@keyframes hero-fade {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(232,130,12,0.5)) drop-shadow(0 0 25px rgba(232,130,12,0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(232,130,12,0.9)) drop-shadow(0 0 40px rgba(232,130,12,0.4));
+  }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+  50% { transform: translateX(-50%) translateY(7px); opacity: 0.3; }
+}
+@keyframes float-up-fade {
+  0% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -28px); }
+}
+@keyframes badge-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.qty-badge.pop { animation: badge-pop 0.25s ease; }
+
+@keyframes banner-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* Stagger card entrance */
+.menu-card:nth-child(2),
+.drink-item:nth-child(2) { transition-delay: 0.08s; }
+.menu-card:nth-child(3),
+.drink-item:nth-child(3) { transition-delay: 0.16s; }
+.menu-card:nth-child(4),
+.drink-item:nth-child(4) { transition-delay: 0.24s; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .menu-card, .drink-item, .drink-hero {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Focus styles */
+button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Larger screens: center the menu */
+@media (min-width: 560px) {
+  .hero { max-height: 480px; }
+  .menu-card:hover .card-image img { transform: scale(1.06); }
+}
+
+/* ========================
+   MOBILE RESPONSIVE
+   ======================== */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  :root {
+    --pad: 16px;
+  }
+
+  .hero {
+    height: 50vh;
+    min-height: 280px;
+    max-height: 420px;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero .tagline {
+    font-size: 0.85rem;
+  }
+
+  .hero .tagline-craft {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+  }
+
+  .section-header {
+    padding: 38px 0 18px;
+  }
+
+  .menu-card {
+    flex-direction: column;
+    border-left: none;
+    border-image: none;
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(to right, #D4A574, #E8820C, #D4A574) 1;
+    border-image-slice: 1;
+  }
+
+  .card-image {
+    width: 100%;
+    min-height: 180px;
+    max-height: 200px;
+  }
+
+  .card-image img {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-content {
+    padding: 14px 16px;
+  }
+
+  .card-name {
+    font-size: 1rem;
+  }
+
+  .card-desc {
+    font-size: 0.78rem;
+    -webkit-line-clamp: 3;
+  }
+
+  .card-price {
+    font-size: 1.05rem;
+  }
+
+  .add-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.35rem;
+  }
+
+  .drink-add {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .drink-hero {
+    height: 140px;
+  }
+
+  .drink-name {
+    font-size: 0.92rem;
+  }
+
+  .drink-desc {
+    font-size: 0.72rem;
+  }
+
+  .happy-hour {
+    margin: 30px auto;
+  }
+
+  .happy-hour-content {
+    padding: 22px 16px;
+  }
+
+  .happy-hour-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .happy-hour-content p {
+    font-size: 0.82rem;
+  }
+
+  .order-bar-inner {
+    padding: 0;
+  }
+
+  .order-bar-card {
+    border-radius: 14px 14px 0 0;
+    padding: 14px 16px;
+  }
+
+  .view-order-btn {
+    padding: 10px 22px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .order-panel {
+    max-height: 80vh;
+    width: 100%;
+  }
+
+  .panel-header {
+    padding: 14px 16px 10px;
+  }
+
+  .panel-body {
+    padding: 8px 16px;
+  }
+
+  .panel-close {
+    width: 44px;
+    height: 44px;
+    font-size: 1.4rem;
+  }
+
+  .qty-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 1.15rem;
+  }
+
+  .qty-display {
+    width: 24px;
+    font-size: 0.95rem;
+  }
+
+  .order-item-controls {
+    gap: 8px;
+    margin-left: 10px;
+  }
+
+  .panel-footer {
+    padding: 14px 16px 20px;
+  }
+
+  .send-order-btn {
+    min-height: 48px;
+    font-size: 0.95rem;
+  }
+
+  .site-footer {
+    padding: 36px var(--pad) 24px;
+  }
+
+  .menu-items {
+    gap: 12px;
+  }
+}
+
+/* Phone screens */
+@media (max-width: 480px) {
+  .hero {
+    height: 46vh;
+    min-height: 260px;
+    max-height: 380px;
+  }
+
+  .hero h1 {
+    font-size: 1.7rem;
+    letter-spacing: 0.1em;
+  }
+
+  .hero .tagline {
+    font-size: 0.8rem;
+  }
+
+  .hero .tagline-craft {
+    font-size: 0.58rem;
+    letter-spacing: 0.3em;
+    margin-top: 10px;
+  }
+
+  .flame-icon svg {
+    width: 22px;
+    height: 28px;
+  }
+
+  .scroll-indicator {
+    bottom: 16px;
+  }
+  .scroll-indicator-text {
+    font-size: 0.52rem;
+  }
+
+  .nav-btn {
+    padding: 6px 12px;
+    font-size: 0.72rem;
+  }
+
+  .section-header {
+    padding: 28px 0 14px;
+  }
+
+  .section-header h2 {
+    font-size: 0.78rem;
+    gap: 10px;
+  }
+
+  .section-header h2::before,
+  .section-header h2::after {
+    width: 30px;
+  }
+
+  .card-image {
+    min-height: 160px;
+    max-height: 180px;
+  }
+
+  .card-content {
+    padding: 12px 14px;
+  }
+
+  .card-name {
+    font-size: 0.95rem;
+  }
+
+  .card-desc {
+    font-size: 0.74rem;
+  }
+
+  .tag {
+    font-size: 0.58rem;
+    padding: 2px 6px;
+  }
+
+  .card-footer {
+    margin-top: 8px;
+  }
+
+  .drink-hero {
+    height: 120px;
+    margin-bottom: 14px;
+  }
+
+  .drink-item {
+    padding: 12px 0;
+    gap: 10px;
+  }
+
+  .drink-name {
+    font-size: 0.88rem;
+  }
+
+  .drink-desc {
+    font-size: 0.7rem;
+    line-height: 1.35;
+  }
+
+  .drink-price {
+    font-size: 0.88rem;
+  }
+
+  .happy-hour {
+    margin: 24px auto;
+  }
+
+  .happy-hour-content {
+    padding: 20px 14px;
+  }
+
+  .happy-hour-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .happy-hour-content p {
+    font-size: 0.78rem;
+  }
+
+  .happy-hour-badge {
+    font-size: 0.6rem;
+    padding: 2px 10px;
+  }
+
+  .order-count {
+    font-size: 0.72rem;
+  }
+
+  .order-total {
+    font-size: 1rem;
+  }
+
+  .order-item-name {
+    font-size: 0.85rem;
+  }
+
+  .order-item-price {
+    font-size: 0.74rem;
+  }
+
+  .panel-subtotal {
+    font-size: 0.95rem;
+  }
+
+  .footer-name {
+    font-size: 0.9rem;
+  }
+
+  .footer-hours {
+    font-size: 0.74rem;
+  }
+
+  .footer-note {
+    font-size: 0.66rem;
+    max-width: 240px;
+  }
+
+  .menu-items {
+    gap: 10px;
+  }
+
+  .section-flourish {
+    width: 30px;
+    height: auto;
+  }
+}
+
+/* Small phone screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  :root {
+    --pad: 14px;
+  }
+
+  .hero {
+    height: 44vh;
+    min-height: 240px;
+    max-height: 340px;
+  }
+
+  .hero h1 {
+    font-size: 1.45rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hero .tagline {
+    font-size: 0.75rem;
+  }
+
+  .hero .tagline-craft {
+    font-size: 0.52rem;
+    letter-spacing: 0.2em;
+  }
+
+  .nav-btn {
+    padding: 5px 10px;
+    font-size: 0.68rem;
+  }
+
+  .nav-scroll {
+    gap: 5px;
+    padding: 8px var(--pad);
+  }
+
+  .card-image {
+    min-height: 140px;
+    max-height: 160px;
+  }
+
+  .card-content {
+    padding: 10px 12px;
+  }
+
+  .card-name {
+    font-size: 0.9rem;
+  }
+
+  .card-desc {
+    font-size: 0.72rem;
+  }
+
+  .card-price {
+    font-size: 0.95rem;
+    padding: 1px 9px;
+  }
+
+  .tag {
+    font-size: 0.55rem;
+    padding: 1px 5px;
+  }
+
+  .section-header h2 {
+    font-size: 0.72rem;
+    gap: 8px;
+  }
+
+  .section-header h2::before,
+  .section-header h2::after {
+    width: 22px;
+  }
+
+  .drink-hero {
+    height: 100px;
+  }
+
+  .drink-item {
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .drink-name {
+    font-size: 0.84rem;
+  }
+
+  .drink-desc {
+    font-size: 0.68rem;
+  }
+
+  .drink-meta {
+    gap: 8px;
+  }
+
+  .drink-price {
+    font-size: 0.84rem;
+  }
+
+  .happy-hour-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .happy-hour-content p {
+    font-size: 0.74rem;
+  }
+
+  .order-bar-card {
+    padding: 12px 14px;
+  }
+
+  .panel-header {
+    padding: 12px 14px 8px;
+  }
+
+  .panel-body {
+    padding: 6px 14px;
+  }
+
+  .panel-footer {
+    padding: 12px 14px 18px;
+  }
+
+  .order-item {
+    padding: 10px 0;
+  }
+
+  .order-item-name {
+    font-size: 0.82rem;
+  }
+
+  .qty-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.05rem;
+  }
+
+  .footer-note {
+    max-width: 220px;
+  }
+}
+
+/* ========================
+   ITEM DETAIL MODAL
+   ======================== */
+.detail-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.detail-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.detail-modal {
+  position: fixed;
+  z-index: 410;
+  background: linear-gradient(to bottom, #1e1a17, #161210);
+  max-width: 480px;
+  width: 92%;
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.6);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: var(--radius);
+  border: 1px solid rgba(212, 165, 116, 0.15);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 165, 116, 0.2) transparent;
+}
+.detail-modal::-webkit-scrollbar {
+  width: 4px;
+}
+.detail-modal::-webkit-scrollbar-thumb {
+  background: rgba(212, 165, 116, 0.2);
+  border-radius: 2px;
+}
+.detail-modal.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.detail-modal-img-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.detail-modal-img-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, #1e1a17);
+  pointer-events: none;
+}
+.detail-modal-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.detail-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.detail-modal-close:hover {
+  background: rgba(0,0,0,0.7);
+  border-color: var(--gold);
+}
+
+.detail-modal-body {
+  padding: 20px 22px 24px;
+}
+
+.detail-modal-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+  color: var(--cream);
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.detail-modal-desc {
+  font-size: 0.88rem;
+  color: var(--warm-gray);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.detail-modal-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 165, 116, 0.15), transparent);
+  margin: 16px 0;
+  border: none;
+}
+
+.detail-modal-section {
+  margin-bottom: 18px;
+}
+
+.detail-modal-section-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.detail-modal-ingredients {
+  font-size: 0.84rem;
+  color: var(--cream-dim);
+  line-height: 1.7;
+}
+
+.detail-modal-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.84rem;
+  color: var(--cream-dim);
+  background: rgba(212, 165, 116, 0.06);
+  border: 1px solid rgba(212, 165, 116, 0.1);
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.detail-modal-time svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.detail-modal-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.detail-modal-serving {
+  font-size: 0.84rem;
+  color: var(--cream-dim);
+  line-height: 1.7;
+}
+
+.detail-modal-alcohol {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 12px;
+  border-radius: 14px;
+  margin-top: 4px;
+}
+.detail-modal-alcohol--alcoholic {
+  background: rgba(178, 58, 42, 0.15);
+  color: var(--red);
+  border: 1px solid rgba(178, 58, 42, 0.2);
+}
+.detail-modal-alcohol--non {
+  background: rgba(107, 142, 90, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(107, 142, 90, 0.2);
+}
+
+.detail-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.detail-modal-price {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.detail-modal-price .dollar {
+  font-size: 0.75em;
+  font-weight: 500;
+  vertical-align: super;
+  margin-right: 1px;
+}
+
+.detail-modal-add-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #D4870A, #E8920C);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.3s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(232,130,12,0.3);
+}
+.detail-modal-add-btn:hover {
+  background: linear-gradient(135deg, #E8920C, #FF6B00);
+  box-shadow: 0 4px 28px rgba(232,130,12,0.45);
+}
+.detail-modal-add-btn:active {
+  transform: scale(0.98);
+}
+
+/* Mobile modal adjustments */
+@media (max-width: 768px) {
+  .detail-modal {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    transform: translate(0, 100%);
+    opacity: 1;
+  }
+  .detail-modal.open {
+    transform: translate(0, 0);
+  }
+  .detail-modal-image {
+    height: 200px;
+  }
+  .detail-modal-body {
+    padding: 18px 16px 24px;
+  }
+  .detail-modal-name {
+    font-size: 1.25rem;
+  }
+  .detail-modal-add-btn {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-modal-image {
+    height: 180px;
+  }
+  .detail-modal-body {
+    padding: 14px 14px 22px;
+  }
+  .detail-modal-name {
+    font-size: 1.15rem;
+  }
+  .detail-modal-desc {
+    font-size: 0.82rem;
+  }
+  .detail-modal-ingredients,
+  .detail-modal-serving {
+    font-size: 0.8rem;
+  }
+  .detail-modal-time {
+    font-size: 0.8rem;
+  }
+  .detail-modal-price {
+    font-size: 1.2rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="hero">
+  <canvas id="emberCanvas"></canvas>
+  <div class="hero-content">
+    <div class="flame-icon" aria-hidden="true">
+      <svg width="30" height="38" viewBox="0 0 26 34" fill="none">
+        <path d="M13 0C13 0 1 12.5 1 20.5C1 27.5 6.5 33 13 33C19.5 33 25 27.5 25 20.5C25 12.5 13 0 13 0Z" fill="url(#fg1)"/>
+        <path d="M13 13C13 13 6 20 6 24.5C6 28.5 9.5 31.5 13 33C16.5 31.5 20 28.5 20 24.5C20 20 13 13 13 13Z" fill="url(#fg2)"/>
+        <defs>
+          <linearGradient id="fg1" x1="13" y1="0" x2="13" y2="33" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF6B00"/><stop offset="1" stop-color="#E8820C"/>
+          </linearGradient>
+          <linearGradient id="fg2" x1="13" y1="13" x2="13" y2="33" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FFD93D"/><stop offset="1" stop-color="#FF8C00"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <h1>Ember &amp; Oak</h1>
+    <p class="tagline">Modern Grill &amp; Bar</p>
+    <span class="tagline-craft">Craft &nbsp; / &nbsp; Fire &nbsp; / &nbsp; Flavor</span>
+  </div>
+  <div class="scroll-indicator" aria-hidden="true">
+    <span class="scroll-indicator-text">Scroll to explore our menu</span>
+    <span class="scroll-indicator-arrow"></span>
+  </div>
+</header>
+
+<!-- ===== CATEGORY NAV ===== -->
+<nav class="category-nav" aria-label="Menu categories">
+  <div class="nav-scroll">
+    <button class="nav-btn active" data-section="starters">Starters</button>
+    <button class="nav-btn" data-section="mains">Mains</button>
+    <button class="nav-btn" data-section="grilled">Grilled</button>
+    <button class="nav-btn" data-section="burgers">Burgers</button>
+    <button class="nav-btn" data-section="sides">Sides</button>
+    <button class="nav-btn" data-section="desserts">Desserts</button>
+    <button class="nav-btn" data-section="cocktails">Cocktails</button>
+    <button class="nav-btn" data-section="wines">Wines</button>
+    <button class="nav-btn" data-section="non-alcoholic">Non-Alcoholic</button>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main>
+
+  <!-- STARTERS -->
+  <section id="starters" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>Starters</h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="menu-items">
+
+      <div class="menu-card" data-id="s1" data-ingredients="Little gem lettuce, aged parmesan, white anchovy, sourdough crouton, charred lemon dressing" data-time="~10 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop" alt="Charred Caesar" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-veg">Vegetarian</span></div>
+          <h3 class="card-name">Charred Caesar</h3>
+          <p class="card-desc">Little gem lettuce, aged parmesan, white anchovy, sourdough crouton, charred lemon dressing</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>16</span>
+            <button class="add-btn" aria-label="Add Charred Caesar to order" data-name="Charred Caesar" data-price="16">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="s2" data-ingredients="Tiger prawns, smoked garlic butter, Calabrian chili, grilled sourdough, fresh lemon" data-time="~12 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop" alt="Ember-Roasted Prawns" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-special">Chef's Special</span></div>
+          <h3 class="card-name">Ember-Roasted Prawns</h3>
+          <p class="card-desc">Tiger prawns, smoked garlic butter, Calabrian chili, grilled sourdough</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>22</span>
+            <button class="add-btn" aria-label="Add Ember-Roasted Prawns to order" data-name="Ember-Roasted Prawns" data-price="22">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="s3" data-ingredients="San Marzano tomato, fresh burrata, basil, oak-smoked olive oil, flaky sea salt" data-time="~10 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop" alt="Wood-Fired Flatbread" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-popular">Popular</span></div>
+          <h3 class="card-name">Wood-Fired Flatbread</h3>
+          <p class="card-desc">San Marzano tomato, burrata, fresh basil, oak-smoked olive oil</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>18</span>
+            <button class="add-btn" aria-label="Add Wood-Fired Flatbread to order" data-name="Wood-Fired Flatbread" data-price="18">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="s4" data-ingredients="Creamy burrata, grilled peach, aged balsamic reduction, pistachio crumb, micro basil" data-time="~8 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop" alt="Burrata & Stone Fruit" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-new">New</span></div>
+          <h3 class="card-name">Burrata &amp; Stone Fruit</h3>
+          <p class="card-desc">Creamy burrata, grilled peach, aged balsamic reduction, pistachio crumb, micro basil</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>19</span>
+            <button class="add-btn" aria-label="Add Burrata & Stone Fruit to order" data-name="Burrata & Stone Fruit" data-price="19">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- MAINS -->
+  <section id="mains" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>Mains</h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="menu-items">
+
+      <div class="menu-card" data-id="m1" data-ingredients="Prime 12oz ribeye, bone marrow butter, roasted garlic confit, red wine reduction, seasonal greens" data-time="~25 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop" alt="28-Day Aged Ribeye" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-special">Chef's Special</span></div>
+          <h3 class="card-name">28-Day Aged Ribeye</h3>
+          <p class="card-desc">Prime 12oz ribeye, bone marrow butter, roasted garlic confit, red wine reduction</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>48</span>
+            <button class="add-btn" aria-label="Add 28-Day Aged Ribeye to order" data-name="28-Day Aged Ribeye" data-price="48">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="m2" data-ingredients="Mediterranean sea bass fillet, saffron fennel risotto, citrus gremolata, herb oil, microgreens" data-time="~22 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=300&fit=crop" alt="Pan-Seared Branzino" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"></div>
+          <h3 class="card-name">Pan-Seared Branzino</h3>
+          <p class="card-desc">Mediterranean sea bass, saffron fennel risotto, citrus gremolata, herb oil</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>36</span>
+            <button class="add-btn" aria-label="Add Pan-Seared Branzino to order" data-name="Pan-Seared Branzino" data-price="36">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="m3" data-ingredients="72-hour braised beef short rib, truffle polenta, roasted root vegetables, natural jus, fresh thyme" data-time="~20 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop" alt="Braised Short Rib" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-popular">Popular</span></div>
+          <h3 class="card-name">Braised Short Rib</h3>
+          <p class="card-desc">72-hour braised beef, truffle polenta, roasted root vegetables, natural jus</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>42</span>
+            <button class="add-btn" aria-label="Add Braised Short Rib to order" data-name="Braised Short Rib" data-price="42">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- GRILLED -->
+  <section id="grilled" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>From the Grill</h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="menu-items">
+
+      <div class="menu-card" data-id="g1" data-ingredients="Full rack pork ribs, 12-hour applewood smoke, bourbon-maple glaze, house pickled slaw, cornbread" data-time="~25 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop" alt="Slow-Smoked Pork Ribs" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-popular">Popular</span></div>
+          <h3 class="card-name">Slow-Smoked Pork Ribs</h3>
+          <p class="card-desc">Full rack, 12-hour applewood smoke, bourbon-maple glaze, house pickled slaw</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>34</span>
+            <button class="add-btn" aria-label="Add Slow-Smoked Pork Ribs to order" data-name="Slow-Smoked Pork Ribs" data-price="34">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="g2" data-ingredients="Free-range spatchcock chicken, lemon-herb marinade, charred seasonal vegetables, salsa verde, roasted potatoes" data-time="~28 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=300&fit=crop" alt="Flame-Kissed Half Chicken" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"></div>
+          <h3 class="card-name">Flame-Kissed Half Chicken</h3>
+          <p class="card-desc">Free-range spatchcock, lemon-herb marinade, charred vegetables, salsa verde</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>28</span>
+            <button class="add-btn" aria-label="Add Flame-Kissed Half Chicken to order" data-name="Flame-Kissed Half Chicken" data-price="28">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="g3" data-ingredients="New Zealand lamb chops, harissa crust, mint yogurt, roasted peppers, za'atar, warm flatbread" data-time="~22 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop" alt="Oak-Grilled Lamb Chops" loading="lazy" style="object-position:left center">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-spicy">Spicy</span></div>
+          <h3 class="card-name">Oak-Grilled Lamb Chops</h3>
+          <p class="card-desc">New Zealand lamb, harissa crust, mint yogurt, roasted peppers, za'atar</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>44</span>
+            <button class="add-btn" aria-label="Add Oak-Grilled Lamb Chops to order" data-name="Oak-Grilled Lamb Chops" data-price="44">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HAPPY HOUR BANNER -->
+  <div class="happy-hour">
+    <div class="happy-hour-inner">
+      <div class="happy-hour-content">
+        <span class="happy-hour-badge">Happy Hour</span>
+        <h3>4 &#8211; 7 PM Daily</h3>
+        <p>50% Off All Cocktails</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BURGERS -->
+  <section id="burgers" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>Burgers</h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="menu-items">
+
+      <div class="menu-card" data-id="b1" data-ingredients="Double smash patty, aged cheddar, caramelized onion, ember sauce, brioche bun, hand-cut fries" data-time="~15 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop" alt="The Ember Burger" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-popular">Popular</span></div>
+          <h3 class="card-name">The Ember Burger</h3>
+          <p class="card-desc">Double smash patty, aged cheddar, caramelized onion, ember sauce, brioche bun</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>24</span>
+            <button class="add-btn" aria-label="Add The Ember Burger to order" data-name="The Ember Burger" data-price="24">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="b2" data-ingredients="Wagyu blend patty, truffle aioli, gruyere cheese, wild mushrooms, arugula, potato bun, truffle fries" data-time="~16 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop" alt="Truffle Smash" loading="lazy" style="object-position:right center">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-new">New</span></div>
+          <h3 class="card-name">Truffle Smash</h3>
+          <p class="card-desc">Wagyu blend patty, truffle aioli, gruyere, wild mushrooms, arugula, potato bun</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>26</span>
+            <button class="add-btn" aria-label="Add Truffle Smash to order" data-name="Truffle Smash" data-price="26">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="b3" data-ingredients="Char-grilled beef patty, smoked bacon, pepper jack cheese, jalapeno slaw, bourbon BBQ sauce, brioche bun" data-time="~14 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop" alt="Smoky BBQ Burger" loading="lazy" style="object-position:center top">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-spicy">Spicy</span></div>
+          <h3 class="card-name">Smoky BBQ Burger</h3>
+          <p class="card-desc">Char-grilled patty, smoked bacon, pepper jack, jalape&ntilde;o slaw, bourbon BBQ sauce</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>22</span>
+            <button class="add-btn" aria-label="Add Smoky BBQ Burger to order" data-name="Smoky BBQ Burger" data-price="22">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- SIDES -->
+  <section id="sides" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>Sides</h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="menu-items">
+
+      <div class="menu-card" data-id="si1" data-ingredients="Hand-cut potatoes, truffle oil, grated parmesan, fresh herbs, garlic aioli" data-time="~8 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop" alt="Truffle Parmesan Fries" loading="lazy" style="object-position:center bottom">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-popular">Popular</span></div>
+          <h3 class="card-name">Truffle Parmesan Fries</h3>
+          <p class="card-desc">Hand-cut fries, truffle oil, grated parmesan, fresh herbs, garlic aioli</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>12</span>
+            <button class="add-btn" aria-label="Add Truffle Parmesan Fries to order" data-name="Truffle Parmesan Fries" data-price="12">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="si2" data-ingredients="Broccolini, lemon zest, chili flake, toasted almonds, extra virgin olive oil" data-time="~7 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop" alt="Charred Broccolini" loading="lazy" style="object-position:right center">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-veg">Vegetarian</span></div>
+          <h3 class="card-name">Charred Broccolini</h3>
+          <p class="card-desc">Oak-fire charred, lemon zest, chili flake, toasted almonds</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>14</span>
+            <button class="add-btn" aria-label="Add Charred Broccolini to order" data-name="Charred Broccolini" data-price="14">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="si3" data-ingredients="Split marrow bones, herb crust, smoked sea salt, crostini, parsley salad" data-time="~10 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=300&fit=crop" alt="Roasted Bone Marrow" loading="lazy" style="object-position:left bottom">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-special">Chef's Special</span></div>
+          <h3 class="card-name">Roasted Bone Marrow</h3>
+          <p class="card-desc">Split marrow bones, herb crust, smoked sea salt, crostini</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>16</span>
+            <button class="add-btn" aria-label="Add Roasted Bone Marrow to order" data-name="Roasted Bone Marrow" data-price="16">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- DESSERTS -->
+  <section id="desserts" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>Desserts</h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="menu-items">
+
+      <div class="menu-card" data-id="d1" data-ingredients="Valrhona dark chocolate, molten center, vanilla bean ice cream, cocoa tuile, raspberry coulis" data-time="~12 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop" alt="Chocolate Lava Cake" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-popular">Popular</span></div>
+          <h3 class="card-name">Chocolate Lava Cake</h3>
+          <p class="card-desc">Valrhona dark chocolate, molten center, vanilla bean ice cream, cocoa tuile</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>14</span>
+            <button class="add-btn" aria-label="Add Chocolate Lava Cake to order" data-name="Chocolate Lava Cake" data-price="14">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="d2" data-ingredients="Tahitian vanilla cream, passion fruit coulis, seasonal berries, almond crumble, fresh mint" data-time="~10 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop" alt="Vanilla Panna Cotta" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"></div>
+          <h3 class="card-name">Vanilla Panna Cotta</h3>
+          <p class="card-desc">Tahitian vanilla, passion fruit coulis, seasonal berries, almond crumble</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>12</span>
+            <button class="add-btn" aria-label="Add Vanilla Panna Cotta to order" data-name="Vanilla Panna Cotta" data-price="12">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card" data-id="d3" data-ingredients="Thick-cut brioche, burnt caramel, mascarpone cream, candied pecans, maple drizzle" data-time="~12 min">
+        <div class="card-image">
+          <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop" alt="Caramelized Brioche Toast" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-tags"><span class="tag tag-new">New</span></div>
+          <h3 class="card-name">Caramelized Brioche Toast</h3>
+          <p class="card-desc">Thick-cut brioche, burnt caramel, mascarpone cream, candied pecans, maple drizzle</p>
+          <div class="card-footer">
+            <span class="card-price"><span class="dollar">$</span>13</span>
+            <button class="add-btn" aria-label="Add Caramelized Brioche Toast to order" data-name="Caramelized Brioche Toast" data-price="13">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- COCKTAILS -->
+  <section id="cocktails" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>
+        <svg class="drink-category-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.5" aria-hidden="true">
+          <path d="M8 2L2 8l6 6M3.5 7.5h14L20 2h-8"/>
+          <path d="M12 21v-7M8 21h8"/>
+          <path d="M6 2l-4 6 4.5 4.5"/>
+          <path d="M17.5 2L22 8l-6 6M12 14v7M8 21h8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Cocktails
+      </h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="drink-hero" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&h=300&fit=crop" alt="" loading="lazy">
+    </div>
+    <div class="drink-list">
+
+      <div class="drink-item" data-id="c1" data-ingredients="Bourbon whiskey, smoked demerara syrup, Angostura bitters, flamed orange peel" data-time="~5 min" data-serving="Rocks glass, large ice cube" data-alcohol="~30% ABV">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Smoky Old Fashioned</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Bourbon, smoked demerara, Angostura bitters, flamed orange peel</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>18</span>
+          <button class="drink-add" aria-label="Add Smoky Old Fashioned" data-name="Smoky Old Fashioned" data-price="18">+</button>
+        </div>
+      </div>
+
+      <div class="drink-item" data-id="c2" data-ingredients="London dry gin, Campari, sweet vermouth, charred rosemary, orange zest" data-time="~4 min" data-serving="Rocks glass, stirred over ice" data-alcohol="~24% ABV">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Ember Negroni</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Gin, Campari, sweet vermouth, charred rosemary, orange zest</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>17</span>
+          <button class="drink-add" aria-label="Add Ember Negroni" data-name="Ember Negroni" data-price="17">+</button>
+        </div>
+      </div>
+
+      <div class="drink-item" data-id="c3" data-ingredients="Reposado tequila, charred lime juice, agave nectar, smoked salt rim" data-time="~5 min" data-serving="Coupe glass, shaken and strained" data-alcohol="~22% ABV">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Charred Citrus Margarita</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Reposado tequila, charred lime, agave, smoked salt rim</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>16</span>
+          <button class="drink-add" aria-label="Add Charred Citrus Margarita" data-name="Charred Citrus Margarita" data-price="16">+</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- WINES -->
+  <section id="wines" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>
+        <svg class="drink-category-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 2v3a5 5 0 0 0 10 0V2"/>
+          <path d="M13 15v7"/>
+          <path d="M9 22h8"/>
+          <path d="M8 2h10"/>
+        </svg>
+        Wines
+      </h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="drink-hero" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&h=300&fit=crop" alt="" loading="lazy">
+    </div>
+    <div class="drink-list">
+
+      <div class="drink-item" data-id="w1" data-ingredients="Napa Valley, 2019 vintage, dark cherry, cedar, velvety tannins" data-time="~2 min" data-serving="Red wine glass, 6oz pour" data-alcohol="14.5% ABV">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Estate Cabernet Sauvignon</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Napa Valley, 2019 &mdash; dark cherry, cedar, velvety tannins</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>18</span>
+          <button class="drink-add" aria-label="Add Estate Cabernet" data-name="Estate Cabernet Sauvignon" data-price="18">+</button>
+        </div>
+      </div>
+
+      <div class="drink-item" data-id="w2" data-ingredients="Willamette Valley, 2020 vintage, bright raspberry, earthy undertones, silky finish" data-time="~2 min" data-serving="Burgundy glass, 6oz pour" data-alcohol="13.5% ABV">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Reserve Pinot Noir</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Willamette Valley, 2020 &mdash; bright raspberry, earthy, silky finish</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>16</span>
+          <button class="drink-add" aria-label="Add Reserve Pinot Noir" data-name="Reserve Pinot Noir" data-price="16">+</button>
+        </div>
+      </div>
+
+      <div class="drink-item" data-id="w3" data-ingredients="Sonoma Coast, 2021 vintage, golden apple, butterscotch, toasted oak" data-time="~2 min" data-serving="White wine glass, 6oz pour" data-alcohol="13.8% ABV">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Barrel-Aged Chardonnay</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Sonoma Coast, 2021 &mdash; golden apple, butterscotch, toasted oak</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>15</span>
+          <button class="drink-add" aria-label="Add Barrel-Aged Chardonnay" data-name="Barrel-Aged Chardonnay" data-price="15">+</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true">
+
+  <!-- NON-ALCOHOLIC -->
+  <section id="non-alcoholic" class="menu-section">
+    <div class="section-header">
+      <span class="ember-dot" aria-hidden="true"></span>
+      <h2>
+        <svg class="drink-category-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 8h1a4 4 0 0 1 0 8h-1"/>
+          <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>
+          <line x1="6" y1="2" x2="6" y2="4"/>
+          <line x1="10" y1="2" x2="10" y2="4"/>
+          <line x1="14" y1="2" x2="14" y2="4"/>
+        </svg>
+        Non-Alcoholic
+      </h2>
+      <svg class="section-flourish" width="40" height="12" viewBox="0 0 40 12" fill="none" aria-hidden="true">
+        <path d="M0 6 Q10 0 20 6 Q30 12 40 6" stroke="#D4A574" stroke-width="0.7" fill="none" opacity="0.5"/>
+        <circle cx="20" cy="6" r="1.5" fill="#D4A574" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="drink-hero" aria-hidden="true">
+      <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=300&fit=crop" alt="" loading="lazy">
+    </div>
+    <div class="drink-list">
+
+      <div class="drink-item" data-id="n1" data-ingredients="Single-origin Ethiopian beans, double shot espresso, orange twist" data-time="~3 min" data-serving="Espresso cup, 2oz" data-alcohol="Non-alcoholic">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Artisan Espresso</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Single-origin Ethiopian, double shot, served with a twist of orange</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>6</span>
+          <button class="drink-add" aria-label="Add Artisan Espresso" data-name="Artisan Espresso" data-price="6">+</button>
+        </div>
+      </div>
+
+      <div class="drink-item" data-id="n2" data-ingredients="Seasonal fruit blend, cold-pressed daily, served over crushed ice" data-time="~4 min" data-serving="Tall glass, 12oz" data-alcohol="Non-alcoholic">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">Fresh-Pressed Juice</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Seasonal fruit blend, cold-pressed daily, served over ice</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>8</span>
+          <button class="drink-add" aria-label="Add Fresh-Pressed Juice" data-name="Fresh-Pressed Juice" data-price="8">+</button>
+        </div>
+      </div>
+
+      <div class="drink-item" data-id="n3" data-ingredients="Charred lemon juice, raw honey, sparkling water, rosemary sprig" data-time="~3 min" data-serving="Highball glass, 14oz" data-alcohol="Non-alcoholic">
+        <div class="drink-info">
+          <div class="drink-name-row">
+            <span class="drink-name">House Ember Lemonade</span>
+            <span class="drink-leader"></span>
+          </div>
+          <span class="drink-desc">Charred lemon, raw honey, sparkling water, sprig of rosemary</span>
+        </div>
+        <div class="drink-meta">
+          <span class="drink-price"><span class="dollar">$</span>7</span>
+          <button class="drink-add" aria-label="Add House Ember Lemonade" data-name="House Ember Lemonade" data-price="7">+</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-line" aria-hidden="true"></div>
+  <p class="footer-name">Ember &amp; Oak</p>
+  <p class="footer-hours">Open Daily &middot; 11 AM &#8211; 11 PM</p>
+  <p class="footer-address">123 Oakwood Avenue, Downtown District</p>
+  <p class="footer-note">Please inform your server of any allergies or dietary requirements. All prices exclude tax and gratuity.</p>
+  <p class="footer-powered">Powered by Nani Digital</p>
+</footer>
+
+<!-- ===== ITEM DETAIL MODAL ===== -->
+<div class="detail-backdrop" id="detailBackdrop"></div>
+<div class="detail-modal" id="detailModal">
+  <div class="detail-modal-img-wrap" id="detailImgWrap">
+    <img class="detail-modal-image" id="detailImage" src="" alt="">
+    <button class="detail-modal-close" id="detailClose" aria-label="Close detail">&times;</button>
+  </div>
+  <div class="detail-modal-body">
+    <div class="detail-modal-tags" id="detailTags"></div>
+    <h3 class="detail-modal-name" id="detailName"></h3>
+    <p class="detail-modal-desc" id="detailDesc"></p>
+    <hr class="detail-modal-divider" aria-hidden="true">
+    <div class="detail-modal-section" id="detailIngredientsSection">
+      <div class="detail-modal-section-title" id="detailIngredientsTitle">Ingredients</div>
+      <p class="detail-modal-ingredients" id="detailIngredients"></p>
+    </div>
+    <div class="detail-modal-section" id="detailServingSection" style="display:none">
+      <div class="detail-modal-section-title">Serving Style</div>
+      <p class="detail-modal-serving" id="detailServing"></p>
+    </div>
+    <div class="detail-modal-section" id="detailAlcoholSection" style="display:none">
+      <div class="detail-modal-section-title">Alcohol Content</div>
+      <span class="detail-modal-alcohol" id="detailAlcohol"></span>
+    </div>
+    <div class="detail-modal-section">
+      <div class="detail-modal-section-title">Preparation Time</div>
+      <span class="detail-modal-time" id="detailTime">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span id="detailTimeText"></span>
+      </span>
+    </div>
+    <hr class="detail-modal-divider" aria-hidden="true">
+    <div class="detail-modal-footer">
+      <span class="detail-modal-price" id="detailPrice"></span>
+      <button class="detail-modal-add-btn" id="detailAddBtn">Add to Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ORDER BAR ===== -->
+<div class="order-bar" id="orderBar">
+  <div class="order-bar-inner">
+    <div class="order-bar-card">
+      <div class="order-info">
+        <span class="order-count" id="orderCount">0 items</span>
+        <span class="order-total" id="orderTotal">$0.00</span>
+      </div>
+      <button class="view-order-btn" id="viewOrder">View Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ORDER PANEL ===== -->
+<div class="panel-backdrop" id="panelBackdrop"></div>
+<div class="order-panel" id="orderPanel">
+  <div class="panel-handle" aria-hidden="true"></div>
+  <div class="panel-header">
+    <h3>Your Order</h3>
+    <button class="panel-close" id="panelClose" aria-label="Close order panel">&times;</button>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <p class="empty-order">Your order is empty</p>
+  </div>
+  <div class="panel-footer">
+    <div class="panel-subtotal">
+      <span>Subtotal</span>
+      <span id="panelTotal">$0.00</span>
+    </div>
+    <button class="send-order-btn" id="sendOrder">Send Order</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ============================
+     EMBER PARTICLE SYSTEM
+     ============================ */
+  const canvas = document.getElementById('emberCanvas');
+  const ctx = canvas.getContext('2d');
+  const hero = document.getElementById('hero');
+  let embers = [];
+  const isMobile = window.innerWidth <= 480;
+  const COUNT = isMobile ? 12 : (window.innerWidth <= 768 ? 20 : 30);
+  let animId;
+
+  function sizeCanvas() {
+    canvas.width = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+  }
+
+  class EmberParticle {
+    constructor(initial) {
+      this.reset(initial);
+    }
+    reset(initial) {
+      this.x = Math.random() * canvas.width;
+      this.y = initial ? Math.random() * canvas.height : canvas.height + Math.random() * 20;
+      this.r = Math.random() * 1.8 + 0.4;
+      this.vy = Math.random() * 0.5 + 0.15;
+      this.wobbleFreq = Math.random() * 0.015 + 0.005;
+      this.wobbleAmp = Math.random() * 0.6 + 0.15;
+      this.opacity = Math.random() * 0.55 + 0.15;
+      this.t = initial ? Math.random() * 300 : 0;
+      this.maxT = Math.random() * 280 + 140;
+      this.hShift = Math.random() * 35;
+    }
+    step() {
+      this.y -= this.vy;
+      this.x += Math.sin(this.t * this.wobbleFreq) * this.wobbleAmp;
+      this.t++;
+      if (this.t > this.maxT * 0.55) this.opacity *= 0.978;
+      if (this.opacity < 0.008 || this.y < -10) this.reset(false);
+    }
+    paint() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, 6.2832);
+      ctx.fillStyle = 'rgba(' + (220 + this.hShift|0) + ',' + (95 + this.hShift * 1.5|0) + ',8,' + this.opacity + ')';
+      ctx.fill();
+    }
+  }
+
+  function initEmbers() {
+    sizeCanvas();
+    embers = [];
+    for (let i = 0; i < COUNT; i++) embers.push(new EmberParticle(true));
+    tick();
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < embers.length; i++) {
+      embers[i].step();
+      embers[i].paint();
+    }
+    animId = requestAnimationFrame(tick);
+  }
+
+  // Pause when hero is off-screen
+  const heroObs = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      if (!animId) tick();
+    } else {
+      cancelAnimationFrame(animId);
+      animId = null;
+    }
+  });
+  heroObs.observe(hero);
+
+  // Respect reduced motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    cancelAnimationFrame(animId);
+    animId = null;
+  } else {
+    initEmbers();
+  }
+
+  window.addEventListener('resize', sizeCanvas);
+
+  /* ============================
+     SCROLL-BASED NAV HIGHLIGHT
+     ============================ */
+  const sections = document.querySelectorAll('.menu-section');
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const navScroll = document.querySelector('.nav-scroll');
+
+  const navObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.id;
+        navBtns.forEach(function(btn) {
+          var isActive = btn.getAttribute('data-section') === id;
+          btn.classList.toggle('active', isActive);
+          if (isActive && navScroll) {
+            var scrollLeft = btn.offsetLeft - navScroll.offsetWidth / 2 + btn.offsetWidth / 2;
+            navScroll.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+          }
+        });
+      }
+    });
+  }, {
+    rootMargin: '-18% 0px -65% 0px',
+    threshold: 0
+  });
+
+  sections.forEach(function(s) { navObs.observe(s); });
+
+  /* Nav click -> smooth scroll */
+  navBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var target = document.getElementById(btn.getAttribute('data-section'));
+      if (!target) return;
+      var navH = document.querySelector('.category-nav').offsetHeight;
+      var top = target.getBoundingClientRect().top + window.scrollY - navH - 6;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+  });
+
+  /* ============================
+     CARD SCROLL REVEAL
+     ============================ */
+  var revealEls = document.querySelectorAll('.menu-card, .drink-item, .drink-hero');
+  var revealObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -40px 0px' });
+
+  revealEls.forEach(function(el) { revealObs.observe(el); });
+
+  /* ============================
+     CART STATE
+     ============================ */
+  var cart = {};
+
+  function cartCount() {
+    var c = 0;
+    for (var k in cart) c += cart[k].qty;
+    return c;
+  }
+  function cartTotal() {
+    var t = 0;
+    for (var k in cart) t += cart[k].price * cart[k].qty;
+    return t;
+  }
+
+  function addToCart(id, name, price) {
+    if (cart[id]) {
+      cart[id].qty++;
+    } else {
+      cart[id] = { name: name, price: parseFloat(price), qty: 1 };
+    }
+    refreshBar();
+    refreshBadges();
+  }
+
+  function updateQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    refreshBar();
+    refreshBadges();
+    renderPanel();
+  }
+
+  function refreshBar() {
+    var c = cartCount(), t = cartTotal();
+    document.getElementById('orderCount').textContent = c + ' item' + (c !== 1 ? 's' : '');
+    document.getElementById('orderTotal').textContent = '$' + t.toFixed(2);
+    document.getElementById('orderBar').classList.toggle('active', c > 0);
+  }
+
+  /* Build button groups on init */
+  function initBtnGroups() {
+    document.querySelectorAll('.menu-card .add-btn').forEach(function(btn) {
+      var footer = btn.parentElement;
+      if (footer.querySelector('.card-btn-group')) return;
+      var group = document.createElement('span');
+      group.className = 'card-btn-group';
+      var rmBtn = document.createElement('button');
+      rmBtn.className = 'remove-btn';
+      rmBtn.innerHTML = '&minus;';
+      rmBtn.setAttribute('aria-label', 'Remove one');
+      var qtyLabel = document.createElement('span');
+      qtyLabel.className = 'card-qty-label';
+      qtyLabel.textContent = '0';
+      footer.removeChild(btn);
+      group.appendChild(rmBtn);
+      group.appendChild(qtyLabel);
+      group.appendChild(btn);
+      footer.appendChild(group);
+    });
+  }
+  initBtnGroups();
+
+  function refreshBadges() {
+    document.querySelectorAll('.menu-card').forEach(function(card) {
+      var id = card.getAttribute('data-id');
+      var group = card.querySelector('.card-btn-group');
+      if (!group) return;
+      var rmBtn = group.querySelector('.remove-btn');
+      var qtyLabel = group.querySelector('.card-qty-label');
+      if (cart[id] && cart[id].qty > 0) {
+        rmBtn.classList.add('visible');
+        qtyLabel.classList.add('visible');
+        qtyLabel.textContent = cart[id].qty;
+      } else {
+        rmBtn.classList.remove('visible');
+        qtyLabel.classList.remove('visible');
+      }
+    });
+    document.querySelectorAll('.drink-item').forEach(function(item) {
+      var id = item.getAttribute('data-id');
+      var badge = item.querySelector('.qty-badge');
+      if (!badge) return;
+      if (cart[id]) {
+        badge.textContent = cart[id].qty;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    });
+  }
+
+  function removeFromCart(id) {
+    if (!cart[id]) return;
+    cart[id].qty--;
+    if (cart[id].qty <= 0) delete cart[id];
+    refreshBar();
+    refreshBadges();
+    renderPanel();
+  }
+
+  /* ============================
+     ADD / REMOVE CLICKS
+     ============================ */
+  document.addEventListener('click', function(e) {
+    /* Remove button on food cards */
+    var rmBtn = e.target.closest('.remove-btn');
+    if (rmBtn) {
+      var card = rmBtn.closest('.menu-card');
+      if (card) {
+        removeFromCart(card.getAttribute('data-id'));
+        e.stopPropagation();
+      }
+      return;
+    }
+    /* Food card add button */
+    var btn = e.target.closest('.add-btn');
+    if (btn) {
+      var card = btn.closest('.menu-card');
+      if (!card) return;
+      var id = card.getAttribute('data-id');
+      addToCart(id, btn.getAttribute('data-name'), btn.getAttribute('data-price'));
+      animateAdd(btn);
+      e.stopPropagation();
+      return;
+    }
+    /* Drink add button */
+    var drinkBtn = e.target.closest('.drink-add');
+    if (drinkBtn) {
+      var item = drinkBtn.closest('.drink-item');
+      if (!item) return;
+      var did = item.getAttribute('data-id');
+      addToCart(did, drinkBtn.getAttribute('data-name'), drinkBtn.getAttribute('data-price'));
+      animateAdd(drinkBtn);
+      e.stopPropagation();
+      return;
+    }
+  });
+
+  function animateAdd(btn) {
+    btn.style.transform = 'scale(1.2)';
+    setTimeout(function() { btn.style.transform = ''; }, 160);
+    var f = document.createElement('span');
+    f.className = 'float-text';
+    f.textContent = '+1';
+    btn.appendChild(f);
+    setTimeout(function() { if (f.parentNode) f.parentNode.removeChild(f); }, 600);
+  }
+
+  /* ============================
+     ORDER PANEL
+     ============================ */
+  var panel = document.getElementById('orderPanel');
+  var backdrop = document.getElementById('panelBackdrop');
+
+  document.getElementById('viewOrder').addEventListener('click', function() {
+    renderPanel();
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+  });
+
+  function closePanel() {
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+  }
+
+  document.getElementById('panelClose').addEventListener('click', closePanel);
+  backdrop.addEventListener('click', closePanel);
+
+  function renderPanel() {
+    var body = document.getElementById('panelBody');
+    var keys = Object.keys(cart);
+    if (keys.length === 0) {
+      body.innerHTML = '<p class="empty-order">Your order is empty</p>';
+    } else {
+      body.innerHTML = keys.map(function(id) {
+        var it = cart[id];
+        return '<div class="order-item">'
+          + '<div class="order-item-info">'
+          +   '<span class="order-item-name">' + it.name + '</span>'
+          +   '<span class="order-item-price">$' + (it.price * it.qty).toFixed(2) + '</span>'
+          + '</div>'
+          + '<div class="order-item-controls">'
+          +   '<button class="qty-btn" data-id="' + id + '" data-delta="-1" aria-label="Decrease quantity">&minus;</button>'
+          +   '<span class="qty-display">' + it.qty + '</span>'
+          +   '<button class="qty-btn" data-id="' + id + '" data-delta="1" aria-label="Increase quantity">+</button>'
+          + '</div>'
+        + '</div>';
+      }).join('');
+    }
+    document.getElementById('panelTotal').textContent = '$' + cartTotal().toFixed(2);
+  }
+
+  /* Qty button clicks inside panel */
+  document.getElementById('panelBody').addEventListener('click', function(e) {
+    var qb = e.target.closest('.qty-btn');
+    if (qb) {
+      updateQty(qb.getAttribute('data-id'), parseInt(qb.getAttribute('data-delta'), 10));
+      if (cartCount() === 0) closePanel();
+    }
+  });
+
+  /* Send order */
+  document.getElementById('sendOrder').addEventListener('click', function() {
+    if (cartCount() === 0) return;
+    var btn = this;
+    btn.textContent = 'Order Sent!';
+    btn.style.background = '#5E8A4F';
+    setTimeout(function() {
+      var keys = Object.keys(cart);
+      for (var i = 0; i < keys.length; i++) delete cart[keys[i]];
+      refreshBar();
+      refreshBadges();
+      closePanel();
+      setTimeout(function() {
+        btn.textContent = 'Send Order';
+        btn.style.background = '';
+      }, 350);
+    }, 1400);
+  });
+
+  /* ============================
+     ITEM DETAIL MODAL
+     ============================ */
+  var detailModal = document.getElementById('detailModal');
+  var detailBackdrop = document.getElementById('detailBackdrop');
+  var detailImage = document.getElementById('detailImage');
+  var detailImgWrap = document.getElementById('detailImgWrap');
+  var detailName = document.getElementById('detailName');
+  var detailDesc = document.getElementById('detailDesc');
+  var detailTags = document.getElementById('detailTags');
+  var detailIngredients = document.getElementById('detailIngredients');
+  var detailIngredientsTitle = document.getElementById('detailIngredientsTitle');
+  var detailTime = document.getElementById('detailTime');
+  var detailTimeText = document.getElementById('detailTimeText');
+  var detailPrice = document.getElementById('detailPrice');
+  var detailAddBtn = document.getElementById('detailAddBtn');
+  var detailServingSection = document.getElementById('detailServingSection');
+  var detailServing = document.getElementById('detailServing');
+  var detailAlcoholSection = document.getElementById('detailAlcoholSection');
+  var detailAlcohol = document.getElementById('detailAlcohol');
+
+  var currentDetailId = null;
+  var currentDetailName = '';
+  var currentDetailPrice = 0;
+
+  function openDetailModal(data) {
+    currentDetailId = data.id;
+    currentDetailName = data.name;
+    currentDetailPrice = data.price;
+
+    /* Image */
+    if (data.imageSrc) {
+      detailImage.src = data.imageSrc;
+      detailImage.alt = data.name;
+      detailImgWrap.style.display = 'block';
+    } else {
+      detailImgWrap.style.display = 'none';
+    }
+
+    /* Name and description */
+    detailName.textContent = data.name;
+    detailDesc.textContent = data.desc;
+
+    /* Tags */
+    detailTags.innerHTML = '';
+    if (data.tags && data.tags.length > 0) {
+      data.tags.forEach(function(tag) {
+        var span = document.createElement('span');
+        span.className = tag.className;
+        span.textContent = tag.text;
+        detailTags.appendChild(span);
+      });
+      detailTags.style.display = 'flex';
+    } else {
+      detailTags.style.display = 'none';
+    }
+
+    /* Ingredients */
+    if (data.ingredients) {
+      detailIngredients.textContent = data.ingredients;
+      detailIngredientsTitle.textContent = data.isDrink ? 'Ingredients / Composition' : 'Ingredients';
+    } else {
+      detailIngredients.textContent = '';
+    }
+
+    /* Serving style (drinks only) */
+    if (data.serving) {
+      detailServing.textContent = data.serving;
+      detailServingSection.style.display = 'block';
+    } else {
+      detailServingSection.style.display = 'none';
+    }
+
+    /* Alcohol content (drinks only) */
+    if (data.alcohol) {
+      detailAlcohol.textContent = data.alcohol;
+      var isNonAlcoholic = data.alcohol.toLowerCase().indexOf('non') !== -1;
+      detailAlcohol.className = 'detail-modal-alcohol ' + (isNonAlcoholic ? 'detail-modal-alcohol--non' : 'detail-modal-alcohol--alcoholic');
+      detailAlcoholSection.style.display = 'block';
+    } else {
+      detailAlcoholSection.style.display = 'none';
+    }
+
+    /* Prep time */
+    if (data.time) {
+      detailTimeText.textContent = 'Estimated time: ' + data.time;
+      detailTime.style.display = 'inline-flex';
+    } else {
+      detailTime.style.display = 'none';
+    }
+
+    /* Price */
+    detailPrice.innerHTML = '<span class="dollar">$</span>' + data.price;
+
+    /* Show modal */
+    detailModal.classList.add('open');
+    detailBackdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+  }
+
+  function closeDetailModal() {
+    detailModal.classList.remove('open');
+    detailBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  }
+
+  /* Close handlers */
+  document.getElementById('detailClose').addEventListener('click', closeDetailModal);
+  detailBackdrop.addEventListener('click', closeDetailModal);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && detailModal.classList.contains('open')) {
+      closeDetailModal();
+    }
+  });
+
+  /* Add to order from modal */
+  detailAddBtn.addEventListener('click', function() {
+    if (!currentDetailId) return;
+    addToCart(currentDetailId, currentDetailName, currentDetailPrice);
+    /* Brief visual feedback */
+    var orig = detailAddBtn.textContent;
+    detailAddBtn.textContent = 'Added!';
+    detailAddBtn.style.background = '#5E8A4F';
+    setTimeout(function() {
+      detailAddBtn.textContent = orig;
+      detailAddBtn.style.background = '';
+    }, 800);
+  });
+
+  /* Click handler for food cards */
+  document.addEventListener('click', function(e) {
+    /* Skip if clicking any button */
+    if (e.target.closest('.add-btn') || e.target.closest('.drink-add') || e.target.closest('.remove-btn') || e.target.closest('.card-btn-group button')) return;
+
+    /* Food card click */
+    var card = e.target.closest('.menu-card');
+    if (card) {
+      var addBtn = card.querySelector('.add-btn');
+      var imgEl = card.querySelector('.card-image img');
+      var tagEls = card.querySelectorAll('.tag');
+      var tags = [];
+      tagEls.forEach(function(t) {
+        tags.push({ className: t.className, text: t.textContent });
+      });
+      openDetailModal({
+        id: card.getAttribute('data-id'),
+        name: card.querySelector('.card-name').textContent,
+        desc: card.querySelector('.card-desc').textContent,
+        price: addBtn.getAttribute('data-price'),
+        imageSrc: imgEl ? imgEl.src : '',
+        tags: tags,
+        ingredients: card.getAttribute('data-ingredients') || '',
+        time: card.getAttribute('data-time') || '',
+        isDrink: false,
+        serving: null,
+        alcohol: null
+      });
+      return;
+    }
+
+    /* Drink item click */
+    var drinkItem = e.target.closest('.drink-item');
+    if (drinkItem) {
+      var drinkAddBtn = drinkItem.querySelector('.drink-add');
+      /* Find the section hero image */
+      var section = drinkItem.closest('.menu-section');
+      var heroImg = section ? section.querySelector('.drink-hero img') : null;
+      openDetailModal({
+        id: drinkItem.getAttribute('data-id'),
+        name: drinkItem.querySelector('.drink-name').textContent,
+        desc: drinkItem.querySelector('.drink-desc').textContent,
+        price: drinkAddBtn.getAttribute('data-price'),
+        imageSrc: heroImg ? heroImg.src : '',
+        tags: [],
+        ingredients: drinkItem.getAttribute('data-ingredients') || '',
+        time: drinkItem.getAttribute('data-time') || '',
+        isDrink: true,
+        serving: drinkItem.getAttribute('data-serving') || null,
+        alcohol: drinkItem.getAttribute('data-alcohol') || null
+      });
+      return;
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

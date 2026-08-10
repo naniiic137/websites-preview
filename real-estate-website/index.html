@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeNest Realty - Find Your Dream Home</title>
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #1E293B;
+  background: #FFFFFF;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+}
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.section-header h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #1B2A4A;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+.section-header p {
+  font-size: 1.08rem;
+  color: #64748B;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+.section-header .accent-line {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #0EA5E9, #F97316);
+  margin: 18px auto 0;
+  border-radius: 2px;
+}
+section {
+  padding: 100px 0;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #0EA5E9, #0284C7);
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(14,165,233,0.35);
+}
+.btn-secondary {
+  background: transparent;
+  color: #0EA5E9;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 2px solid #0EA5E9;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-secondary:hover {
+  background: #0EA5E9;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ============ ANIMATIONS ============ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scale-in {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.scale-in.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============ NAVBAR ============ */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 18px 0;
+  transition: all 0.35s ease;
+}
+.navbar.scrolled {
+  background: rgba(27, 42, 74, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 12px 0;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+}
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+.nav-logo svg { flex-shrink: 0; }
+.nav-logo span { color: #0EA5E9; }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #0EA5E9;
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  color: #fff !important;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249,115,22,0.4);
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px;
+  background: none;
+  border: none;
+}
+.hamburger span {
+  width: 26px;
+  height: 3px;
+  background: #fff;
+  border-radius: 3px;
+  transition: all 0.3s;
+}
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+/* Mobile menu backdrop overlay */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.nav-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 0;
+}
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-bg-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+.hero-bg-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.75) 0%,
+    rgba(27, 42, 74, 0.7) 40%,
+    rgba(15, 23, 42, 0.85) 100%
+  );
+}
+.hero-bg-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  padding-top: 100px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14,165,233,0.15);
+  border: 1px solid rgba(14,165,233,0.3);
+  color: #7DD3FC;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.hero h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.12;
+  margin-bottom: 22px;
+  letter-spacing: -1.5px;
+}
+.hero h1 .highlight {
+  background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: 1.18rem;
+  color: rgba(255,255,255,0.75);
+  max-width: 620px;
+  margin: 0 auto 44px;
+  line-height: 1.75;
+}
+
+/* Hero Search */
+.hero-search {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 920px;
+  margin: 0 auto 56px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.search-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 22px;
+}
+.search-tab {
+  padding: 10px 24px;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s;
+  border: none;
+}
+.search-tab.active {
+  background: rgba(14,165,233,0.2);
+  color: #7DD3FC;
+}
+.search-tab:hover { color: #fff; }
+.search-fields {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+.search-field label {
+  display: block;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.search-field input,
+.search-field select {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+.search-field input::placeholder { color: rgba(255,255,255,0.4); }
+.search-field select option { background: #1B2A4A; color: #fff; }
+.search-field input:focus,
+.search-field select:focus {
+  border-color: #0EA5E9;
+  background: rgba(14,165,233,0.1);
+}
+.search-btn {
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  height: fit-content;
+}
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(249,115,22,0.4);
+}
+
+/* Hero Stats */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 70px;
+  padding-bottom: 70px;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat .number {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #fff;
+  display: block;
+  letter-spacing: -0.5px;
+}
+.hero-stat .number span { color: #0EA5E9; }
+.hero-stat .label {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+
+/* ============ FEATURED PROPERTIES ============ */
+#properties { background: #F8FAFC; }
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.property-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.08);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 1px solid rgba(226,232,240,0.8);
+}
+.property-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 24px 56px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.06);
+  border-color: transparent;
+}
+.property-image {
+  height: 240px;
+  position: relative;
+  overflow: hidden;
+}
+.property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.property-card:hover .property-image img {
+  transform: scale(1.08);
+}
+.property-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+.badge-sale {
+  background: linear-gradient(135deg, #0EA5E9, #0284C7);
+  color: #fff;
+}
+.badge-rent {
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  color: #fff;
+}
+.property-favorite {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.property-favorite:hover {
+  background: #EF4444;
+  transform: scale(1.1);
+}
+.property-favorite:hover svg { fill: #fff; stroke: #fff; }
+.property-info {
+  padding: 24px;
+}
+.property-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1B2A4A;
+  margin-bottom: 4px;
+}
+.property-price .period {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #94A3B8;
+}
+.property-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 4px;
+}
+.property-address {
+  color: #64748B;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+.property-features {
+  display: flex;
+  gap: 18px;
+  padding: 18px 0;
+  border-top: 1px solid #F1F5F9;
+  border-bottom: 1px solid #F1F5F9;
+  margin-bottom: 18px;
+}
+.property-feature {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748B;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.property-feature svg { flex-shrink: 0; }
+.property-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.property-agent-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.agent-avatar-small {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+}
+.agent-avatar-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.property-agent-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+.btn-view-details {
+  padding: 8px 18px;
+  background: #F1F5F9;
+  color: #0EA5E9;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+.btn-view-details:hover {
+  background: #0EA5E9;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+}
+
+/* Search Results */
+.search-results-section {
+  display: none;
+  background: #F8FAFC;
+  padding: 60px 0;
+  border-bottom: 1px solid #E2E8F0;
+}
+.search-results-section.active { display: block; }
+.search-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.search-results-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1B2A4A;
+}
+.search-results-count {
+  color: #64748B;
+  font-size: 0.95rem;
+}
+.search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  grid-column: 1 / -1;
+}
+.no-results h3 { color: #1B2A4A; margin-bottom: 8px; }
+.no-results p { color: #64748B; }
+
+/* ============ CATEGORIES ============ */
+#categories { background: #fff; }
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 22px;
+}
+.category-card {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  height: 240px;
+}
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+}
+.category-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.category-card:hover img {
+  transform: scale(1.1);
+}
+.category-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(15, 23, 42, 0.05) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px 20px;
+  transition: background 0.4s;
+}
+.category-card:hover .category-overlay {
+  background: linear-gradient(to top, rgba(14,165,233,0.85) 0%, rgba(14,165,233,0.2) 50%, rgba(14,165,233,0.05) 100%);
+}
+.category-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  transition: transform 0.3s, background 0.3s;
+}
+.category-card:hover .category-icon {
+  transform: scale(1.1);
+  background: rgba(255,255,255,0.25);
+}
+.category-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.category-count {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ============ HOW IT WORKS ============ */
+#how-it-works {
+  background: linear-gradient(135deg, #1B2A4A, #0F172A);
+  color: #fff;
+}
+#how-it-works .section-header h2 { color: #fff; }
+#how-it-works .section-header p { color: rgba(255,255,255,0.6); }
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  position: relative;
+}
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 48px;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(14,165,233,0.4), rgba(249,115,22,0.4), transparent);
+}
+.step-card {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.step-number {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  position: relative;
+}
+.step-number::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px dashed rgba(14,165,233,0.3);
+}
+.step-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.step-card p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.95rem;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ============ SERVICES ============ */
+#services { background: #F8FAFC; }
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.service-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 38px 28px;
+  border: 1px solid rgba(226,232,240,0.8);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #0EA5E9, #0284C7);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.service-card:hover::before { transform: scaleX(1); }
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  border-color: transparent;
+}
+.service-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.service-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1B2A4A;
+  margin-bottom: 10px;
+}
+.service-card p {
+  color: #64748B;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+/* ============ AGENTS ============ */
+#agents { background: #fff; }
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+.agent-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px 24px;
+  text-align: center;
+  border: 1px solid rgba(226,232,240,0.8);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.agent-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 24px 56px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.04);
+  border-color: transparent;
+}
+.agent-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 20px;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+.agent-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 3px solid #E2E8F0;
+  transition: border-color 0.3s;
+}
+.agent-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.agent-card:hover .agent-avatar::after { border-color: #0EA5E9; }
+.agent-card h3 {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #1B2A4A;
+  margin-bottom: 4px;
+}
+.agent-title {
+  color: #0EA5E9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.agent-stats {
+  color: #64748B;
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+}
+.agent-stats strong { color: #1B2A4A; }
+.agent-contacts {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+.agent-contact-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+.agent-contact-btn:hover {
+  background: #0EA5E9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+}
+.agent-contact-btn:hover svg { stroke: #fff; }
+
+/* ============ TESTIMONIALS ============ */
+#testimonials { background: #F8FAFC; }
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.testimonial-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px;
+  border: 1px solid rgba(226,232,240,0.8);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+.testimonial-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.08);
+  border-color: transparent;
+}
+.testimonial-card .quote-icon {
+  color: #E2E8F0;
+  margin-bottom: 16px;
+}
+.testimonial-stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.testimonial-text {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.testimonial-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.testimonial-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.testimonial-author-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1B2A4A;
+}
+.testimonial-author-info p {
+  color: #94A3B8;
+  font-size: 0.82rem;
+}
+
+/* ============ NEIGHBORHOODS ============ */
+#neighborhoods { background: #fff; }
+.neighborhoods-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.neighborhood-card {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 1px solid rgba(226,232,240,0.6);
+}
+.neighborhood-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 56px rgba(0,0,0,0.15);
+  border-color: transparent;
+}
+.neighborhood-image {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+.neighborhood-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.neighborhood-card:hover .neighborhood-image img {
+  transform: scale(1.08);
+}
+.neighborhood-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+  z-index: 1;
+}
+.neighborhood-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 22px;
+  z-index: 2;
+  color: #fff;
+}
+.neighborhood-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.neighborhood-info p {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+.neighborhood-stats {
+  padding: 18px 20px;
+  background: #fff;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.neighborhood-stat {
+  text-align: center;
+}
+.neighborhood-stat .stat-value {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1B2A4A;
+}
+.neighborhood-stat .stat-label {
+  font-size: 0.7rem;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============ CTA SECTION ============ */
+#cta {
+  position: relative;
+  overflow: hidden;
+  padding: 100px 0;
+}
+.cta-bg-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.cta-bg-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cta-bg-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(27, 42, 74, 0.88) 100%);
+}
+.cta-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.cta-text h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+.cta-text p {
+  color: rgba(255,255,255,0.65);
+  font-size: 1.05rem;
+  margin-bottom: 32px;
+  line-height: 1.75;
+}
+.cta-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cta-highlight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.95rem;
+}
+.cta-highlight svg { flex-shrink: 0; }
+.cta-form {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.cta-form h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.form-group {
+  margin-bottom: 18px;
+}
+.form-group label {
+  display: block;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: rgba(255,255,255,0.35); }
+.form-group select option { background: #1B2A4A; color: #fff; }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #0EA5E9;
+  background: rgba(14,165,233,0.08);
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-submit {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #F97316, #EA580C);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(249,115,22,0.4);
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  background: #0A0F1A;
+  color: rgba(255,255,255,0.7);
+  padding: 80px 0 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+.footer-brand h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-brand h3 span { color: #0EA5E9; }
+.footer-brand p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.footer-socials {
+  display: flex;
+  gap: 12px;
+}
+.social-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: none;
+}
+.social-btn:hover {
+  background: #0EA5E9;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+}
+.footer-column h4 {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.footer-column ul li {
+  margin-bottom: 10px;
+}
+.footer-column ul li a {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-column ul li a:hover {
+  color: #0EA5E9;
+  padding-left: 4px;
+}
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+.footer-contact-item svg { flex-shrink: 0; margin-top: 3px; }
+.footer-newsletter {
+  margin-top: 20px;
+}
+.footer-newsletter p {
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+}
+.newsletter-form {
+  display: flex;
+  gap: 8px;
+}
+.newsletter-form input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+.newsletter-form input::placeholder { color: rgba(255,255,255,0.35); }
+.newsletter-form input:focus { border-color: #0EA5E9; }
+.newsletter-form button {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #0EA5E9, #0284C7);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.newsletter-form button:hover {
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  transform: translateY(-1px);
+}
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.4);
+}
+.footer-bottom-links {
+  display: flex;
+  gap: 24px;
+}
+.footer-bottom-links a {
+  color: rgba(255,255,255,0.4);
+  transition: color 0.3s;
+}
+.footer-bottom-links a:hover { color: #0EA5E9; }
+
+/* ============ RESPONSIVE ============ */
+
+/* ---------- Tablet (1024px) ---------- */
+@media (max-width: 1024px) {
+  .properties-grid,
+  .services-grid,
+  .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  .agents-grid { grid-template-columns: repeat(2, 1fr); }
+  .neighborhoods-grid { grid-template-columns: repeat(2, 1fr); }
+  .categories-grid { grid-template-columns: repeat(3, 1fr); }
+  .search-fields { grid-template-columns: repeat(2, 1fr); }
+  .search-results-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 3.2rem; }
+  .cta-wrapper { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Mobile (768px) ---------- */
+@media (max-width: 768px) {
+
+  /* -- Global mobile overrides -- */
+  .container { padding: 0 16px; }
+  section { padding: 60px 0; }
+  .section-header { margin-bottom: 36px; }
+  .section-header h2 { font-size: 1.8rem; letter-spacing: -0.3px; }
+  .section-header p { font-size: 0.95rem; }
+
+  /* -- Navigation / hamburger -- */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    height: 100dvh;
+    background: #1B2A4A;
+    flex-direction: column;
+    padding: 80px 32px 32px;
+    gap: 20px;
+    transition: right 0.4s ease;
+    box-shadow: -4px 0 30px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    z-index: 1001;
+  }
+  .nav-links.open { right: 0; }
+  .hamburger { display: flex; z-index: 1002; }
+  .nav-cta {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-top: 8px;
+    padding: 14px 22px;
+  }
+
+  /* -- Hero -- */
+  .hero { min-height: 100vh; min-height: 100dvh; }
+  .hero-content { padding-top: 80px; }
+  .hero h1 { font-size: 2.4rem; letter-spacing: -1px; }
+  .hero-subtitle { font-size: 0.98rem; margin-bottom: 32px; }
+  .hero-badge { font-size: 0.78rem; padding: 6px 14px; margin-bottom: 20px; }
+
+  /* -- Hero search bar: stack everything vertically -- */
+  .hero-search {
+    padding: 20px 16px;
+    margin: 0 auto 36px;
+    border-radius: 16px;
+  }
+  .search-tabs {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .search-tab {
+    padding: 9px 18px;
+    font-size: 0.85rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .search-fields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .search-field input,
+  .search-field select {
+    padding: 13px 14px;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+  .search-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  /* -- Hero stats: wrap cleanly -- */
+  .hero-stats {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px 40px;
+    padding-bottom: 50px;
+  }
+  .hero-stat .number { font-size: 2rem; }
+  .hero-stat .label { font-size: 0.75rem; }
+
+  /* -- Property cards: single column -- */
+  .properties-grid,
+  .search-results-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .property-image { height: 220px; }
+  .property-info { padding: 18px; }
+  .property-features {
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 0;
+  }
+  .property-feature { font-size: 0.84rem; }
+  /* Touch-friendly favorite button (min 44px) */
+  .property-favorite { width: 44px; height: 44px; }
+
+  /* -- Category cards: 2-column -- */
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .category-card { height: 180px; }
+  .category-overlay { padding: 18px 14px; }
+  .category-card h3 { font-size: 1rem; }
+  .category-count { font-size: 0.8rem; }
+  .category-icon { width: 40px; height: 40px; margin-bottom: 8px; }
+
+  /* -- How It Works: vertical stack with connecting line -- */
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .steps-grid::before {
+    /* Vertical connecting line instead of horizontal */
+    top: 48px;
+    left: 50%;
+    width: 2px;
+    height: calc(100% - 96px);
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(14,165,233,0.4), rgba(249,115,22,0.4));
+  }
+  .step-card { z-index: 1; }
+
+  /* -- Services: single column -- */
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .service-card { padding: 28px 20px; }
+
+  /* -- Agents: 2-column with centered photos -- */
+  .agents-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .agent-card { padding: 24px 16px; }
+  .agent-avatar { width: 90px; height: 90px; margin: 0 auto 16px; }
+  .agent-card h3 { font-size: 1rem; }
+  .agent-title { font-size: 0.8rem; }
+  .agent-stats { font-size: 0.82rem; margin-bottom: 16px; }
+
+  /* -- Testimonials: single column full width -- */
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .testimonial-card { padding: 28px 20px; }
+  .testimonial-text { font-size: 0.93rem; }
+
+  /* -- Neighborhoods: 2-column -- */
+  .neighborhoods-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .neighborhood-image { height: 170px; }
+  .neighborhood-info { padding: 16px; }
+  .neighborhood-info h3 { font-size: 1.05rem; }
+  .neighborhood-stats { padding: 14px 12px; gap: 4px; }
+  .neighborhood-stat .stat-value { font-size: 0.85rem; }
+  .neighborhood-stat .stat-label { font-size: 0.65rem; }
+
+  /* -- CTA / Contact: stack vertically, form full width -- */
+  .cta-wrapper { grid-template-columns: 1fr; gap: 32px; }
+  .cta-text h2 { font-size: 2rem; }
+  .cta-text p { font-size: 0.95rem; margin-bottom: 24px; }
+  .cta-highlight { font-size: 0.9rem; }
+  .cta-form { padding: 28px 20px; border-radius: 18px; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea { min-height: 48px; }
+
+  /* -- Footer: columns stack vertically -- */
+  .footer { padding: 60px 0 0; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .footer-bottom-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  /* -- Search results header stack -- */
+  .search-results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .search-results-header h2 { font-size: 1.4rem; }
+
+  /* -- Touch-friendly buttons (min 44px) -- */
+  .btn-primary,
+  .btn-secondary {
+    min-height: 48px;
+    padding: 12px 24px;
+  }
+  .btn-view-details {
+    min-height: 44px;
+    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .agent-contact-btn { width: 44px; height: 44px; }
+  .social-btn { width: 44px; height: 44px; }
+  .form-submit { min-height: 48px; font-size: 1rem; }
+  .newsletter-form button { min-height: 44px; }
+
+  /* -- All images: ensure proper fit -- */
+  .property-image img,
+  .category-card img,
+  .neighborhood-image img,
+  .agent-avatar img,
+  .testimonial-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ---------- Small phones (480px): iPhone SE, 375px, etc. ---------- */
+@media (max-width: 480px) {
+  .container { padding: 0 16px; }
+
+  .hero h1 { font-size: 2rem; }
+  .hero-subtitle { font-size: 0.92rem; line-height: 1.65; }
+  .hero-content { padding-top: 72px; }
+
+  .section-header h2 { font-size: 1.6rem; }
+  .section-header p { font-size: 0.88rem; }
+
+  /* Categories: single column on small phone */
+  .categories-grid { grid-template-columns: 1fr; }
+  .category-card { height: 180px; }
+
+  /* Agents: single column on small phone */
+  .agents-grid { grid-template-columns: 1fr; }
+  .agent-avatar { width: 100px; height: 100px; }
+  .agent-card { padding: 28px 20px; }
+
+  /* Neighborhoods: single column on small phone */
+  .neighborhoods-grid { grid-template-columns: 1fr; }
+  .neighborhood-image { height: 200px; }
+
+  /* Property card tweaks */
+  .property-price { font-size: 1.3rem; }
+  .property-name { font-size: 1rem; }
+  .property-features { gap: 10px; }
+  .property-feature { font-size: 0.8rem; }
+  .property-feature span { white-space: nowrap; }
+
+  /* CTA */
+  .cta-text h2 { font-size: 1.7rem; }
+  .cta-highlight { font-size: 0.88rem; }
+  .cta-form { padding: 24px 16px; }
+
+  /* Newsletter form stacks */
+  .newsletter-form { flex-direction: column; }
+  .newsletter-form button { width: 100%; min-height: 44px; }
+  .newsletter-form input { min-height: 44px; }
+
+  /* Stats */
+  .hero-stats { gap: 16px 32px; padding-bottom: 40px; }
+  .hero-stat .number { font-size: 1.8rem; }
+
+  /* Testimonials */
+  .testimonial-text { font-size: 0.9rem; }
+
+  /* Search results */
+  .search-results-header h2 { font-size: 1.3rem; }
+
+  /* Steps */
+  .step-number { width: 80px; height: 80px; }
+  .step-card h3 { font-size: 1.1rem; }
+  .step-card p { font-size: 0.88rem; }
+}
+
+/* ---------- Very small phones (360px Android, etc.) ---------- */
+@media (max-width: 374px) {
+  .hero h1 { font-size: 1.75rem; letter-spacing: -0.8px; }
+  .hero-badge { font-size: 0.72rem; padding: 5px 12px; }
+  .hero-search { padding: 16px 12px; }
+  .search-tab { padding: 7px 12px; font-size: 0.8rem; }
+
+  .property-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .btn-view-details {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .cta-text h2 { font-size: 1.5rem; }
+  .section-header h2 { font-size: 1.45rem; }
+  .footer-bottom-links { gap: 12px; font-size: 0.8rem; }
+
+  .neighborhood-stats { grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .neighborhood-stat .stat-value { font-size: 0.8rem; }
+  .neighborhood-stat .stat-label { font-size: 0.6rem; }
+
+  .agent-contacts { gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#0EA5E9"/>
+        <path d="M16 6L6 14V26H12V20H20V26H26V14L16 6Z" fill="white"/>
+        <rect x="14" y="10" width="4" height="4" rx="1" fill="#0EA5E9"/>
+      </svg>
+      Prime<span>Nest</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#hero">Home</a>
+      <a href="#properties">Properties</a>
+      <a href="#services">Services</a>
+      <a href="#agents">Agents</a>
+      <a href="#about">About</a>
+      <a href="#cta">Contact</a>
+      <a href="#cta" class="nav-cta">List Your Property</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="hero-bg-image">
+    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&h=900&fit=crop" alt="Luxury home exterior" loading="eager">
+  </div>
+  <div class="hero-bg-pattern"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="4" fill="#0EA5E9"/><circle cx="8" cy="8" r="7" stroke="#0EA5E9" stroke-width="2" opacity="0.3"/></svg>
+        #1 Real Estate Agency in the Region
+      </div>
+      <h1>Find Your<br><span class="highlight">Dream Home</span></h1>
+      <p class="hero-subtitle">Discover exceptional properties tailored to your lifestyle. From luxury estates to modern apartments, PrimeNest Realty makes your real estate journey seamless and rewarding.</p>
+
+      <!-- Search Bar -->
+      <div class="hero-search">
+        <div class="search-tabs">
+          <button class="search-tab active" data-tab="buy">Buy</button>
+          <button class="search-tab" data-tab="rent">Rent</button>
+          <button class="search-tab" data-tab="sell">Sell</button>
+        </div>
+        <div class="search-fields">
+          <div class="search-field">
+            <label>Location</label>
+            <select id="searchLocation">
+              <option value="">All Locations</option>
+              <option value="downtown">Downtown</option>
+              <option value="suburbs">Suburban Area</option>
+              <option value="waterfront">Waterfront</option>
+              <option value="hillside">Hillside</option>
+              <option value="urban">Urban Center</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label>Property Type</label>
+            <select id="searchType">
+              <option value="">All Types</option>
+              <option value="house">House</option>
+              <option value="apartment">Apartment</option>
+              <option value="villa">Villa</option>
+              <option value="commercial">Commercial</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label>Min Price</label>
+            <input type="number" id="searchMinPrice" placeholder="$0" min="0">
+          </div>
+          <div class="search-field">
+            <label>Max Price</label>
+            <input type="number" id="searchMaxPrice" placeholder="Any" min="0">
+          </div>
+          <button class="search-btn" id="searchBtn" onclick="performSearch()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="number">2,500<span>+</span></span>
+          <span class="label">Properties</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">1,200<span>+</span></span>
+          <span class="label">Happy Clients</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">15<span>+</span></span>
+          <span class="label">Years Experience</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SEARCH RESULTS ============ -->
+<div class="search-results-section" id="searchResults">
+  <div class="container">
+    <div class="search-results-header">
+      <h2>Search Results</h2>
+      <span class="search-results-count" id="resultsCount"></span>
+    </div>
+    <div class="search-results-grid" id="resultsGrid"></div>
+  </div>
+</div>
+
+<!-- ============ FEATURED PROPERTIES ============ -->
+<section id="properties">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Featured Properties</h2>
+      <p>Handpicked properties that match the highest standards of quality, location, and value.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="properties-grid" id="propertiesGrid">
+      <!-- Properties injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section id="categories">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Browse by Category</h2>
+      <p>Find exactly what you are looking for by exploring our property categories.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="categories-grid">
+      <div class="category-card fade-in">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop" alt="Houses" loading="lazy">
+        <div class="category-overlay">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3>Houses</h3>
+          <p class="category-count">842 Properties</p>
+        </div>
+      </div>
+      <div class="category-card fade-in">
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=300&fit=crop" alt="Apartments" loading="lazy">
+        <div class="category-overlay">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+          </div>
+          <h3>Apartments</h3>
+          <p class="category-count">1,204 Properties</p>
+        </div>
+      </div>
+      <div class="category-card fade-in">
+        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&h=300&fit=crop" alt="Villas" loading="lazy">
+        <div class="category-overlay">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/><circle cx="12" cy="10" r="2"/></svg>
+          </div>
+          <h3>Villas</h3>
+          <p class="category-count">256 Properties</p>
+        </div>
+      </div>
+      <div class="category-card fade-in">
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop" alt="Commercial" loading="lazy">
+        <div class="category-overlay">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3"/><line x1="12" y1="12" x2="12" y2="12.01"/></svg>
+          </div>
+          <h3>Commercial</h3>
+          <p class="category-count">185 Properties</p>
+        </div>
+      </div>
+      <div class="category-card fade-in">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=300&fit=crop" alt="Land" loading="lazy">
+        <div class="category-overlay">
+          <div class="category-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><line x1="7.5" y1="4.21" x2="12" y2="8"/><line x1="12" y1="8" x2="16.5" y2="4.21"/><line x1="12" y1="8" x2="12" y2="22"/></svg>
+          </div>
+          <h3>Land</h3>
+          <p class="category-count">137 Properties</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>How It Works</h2>
+      <p>Three simple steps to finding your perfect property with PrimeNest Realty.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-in">
+        <div class="step-number" style="background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(14,165,233,0.05))">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <h3>Search Properties</h3>
+        <p>Browse thousands of listings using our advanced search filters. Find properties that match your exact criteria and budget.</p>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-number" style="background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(249,115,22,0.05))">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+        </div>
+        <h3>Schedule Visits</h3>
+        <p>Book property tours at your convenience. Our agents will guide you through each property and answer all your questions.</p>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-number" style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05))">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <h3>Own Your Home</h3>
+        <p>Complete the purchase with our full legal and financial support. Move into your dream property with confidence and peace of mind.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Our Services</h2>
+      <p>Comprehensive real estate solutions designed to meet every need of buyers, sellers, and investors.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-in">
+        <div class="service-icon" style="background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(14,165,233,0.05))">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Buy a Home</h3>
+        <p>Find your ideal home from our extensive portfolio of verified properties. We handle everything from selection to closing.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon" style="background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(249,115,22,0.05))">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
+        <h3>Sell a Property</h3>
+        <p>Get maximum value for your property with our strategic marketing, professional photography, and expert negotiation.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon" style="background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05))">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Property Management</h3>
+        <p>Hassle-free property management services including tenant screening, maintenance coordination, and rent collection.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05))">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <h3>Investment Consulting</h3>
+        <p>Data-driven investment strategies to maximize your real estate portfolio returns with comprehensive market analysis.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon" style="background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(236,72,153,0.05))">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>Home Valuation</h3>
+        <p>Accurate, comprehensive property valuations backed by market data, comparable sales analysis, and expert assessment.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h3>Legal Support</h3>
+        <p>Expert legal assistance for all real estate transactions including contracts, title searches, and regulatory compliance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AGENTS ============ -->
+<section id="agents">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Meet Our Agents</h2>
+      <p>Our experienced team of real estate professionals is dedicated to helping you find the perfect property.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="agents-grid">
+      <div class="agent-card fade-in">
+        <div class="agent-avatar">
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop" alt="James Mitchell" loading="lazy">
+        </div>
+        <h3>James Mitchell</h3>
+        <p class="agent-title">Senior Real Estate Agent</p>
+        <p class="agent-stats"><strong>320</strong> Properties Sold</p>
+        <div class="agent-contacts">
+          <button class="agent-contact-btn" aria-label="Call agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="Email agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="LinkedIn profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="agent-card fade-in">
+        <div class="agent-avatar">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop" alt="Sarah Reynolds" loading="lazy">
+        </div>
+        <h3>Sarah Reynolds</h3>
+        <p class="agent-title">Luxury Property Specialist</p>
+        <p class="agent-stats"><strong>275</strong> Properties Sold</p>
+        <div class="agent-contacts">
+          <button class="agent-contact-btn" aria-label="Call agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="Email agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="LinkedIn profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="agent-card fade-in">
+        <div class="agent-avatar">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop" alt="David Chen" loading="lazy">
+        </div>
+        <h3>David Chen</h3>
+        <p class="agent-title">Commercial Real Estate</p>
+        <p class="agent-stats"><strong>198</strong> Properties Sold</p>
+        <div class="agent-contacts">
+          <button class="agent-contact-btn" aria-label="Call agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="Email agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="LinkedIn profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="agent-card fade-in">
+        <div class="agent-avatar">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop" alt="Emily Watson" loading="lazy">
+        </div>
+        <h3>Emily Watson</h3>
+        <p class="agent-title">Residential Specialist</p>
+        <p class="agent-stats"><strong>245</strong> Properties Sold</p>
+        <div class="agent-contacts">
+          <button class="agent-contact-btn" aria-label="Call agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="Email agent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </button>
+          <button class="agent-contact-btn" aria-label="LinkedIn profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>What Our Clients Say</h2>
+      <p>Real stories from real clients who found their perfect properties through PrimeNest Realty.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="quote-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#E2E8F0"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+        </div>
+        <div class="testimonial-stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testimonial-text">"PrimeNest made the entire home-buying process incredibly smooth. James found us the perfect family home within our budget in just three weeks. Could not recommend them more highly!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop" alt="Michael Davis" loading="lazy">
+          </div>
+          <div class="testimonial-author-info">
+            <h4>Michael & Karen Davis</h4>
+            <p>Homebuyers, Waterfront District</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="quote-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#E2E8F0"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+        </div>
+        <div class="testimonial-stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testimonial-text">"Selling our property through PrimeNest was the best decision. Sarah's market knowledge and negotiation skills got us 15% above our asking price. Truly outstanding service from start to finish."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop" alt="Robert Patterson" loading="lazy">
+          </div>
+          <div class="testimonial-author-info">
+            <h4>Robert Patterson</h4>
+            <p>Property Seller, Downtown</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="quote-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#E2E8F0"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+        </div>
+        <div class="testimonial-stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#F97316"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testimonial-text">"As a first-time investor, I was nervous. David guided me through every step with patience and expertise. My rental property is now generating excellent returns. Truly a game-changer."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop" alt="Amanda Liu" loading="lazy">
+          </div>
+          <div class="testimonial-author-info">
+            <h4>Amanda Liu</h4>
+            <p>Property Investor, Hillside</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEIGHBORHOODS ============ -->
+<section id="neighborhoods">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Explore Neighborhoods</h2>
+      <p>Discover the most sought-after neighborhoods with detailed insights and property trends.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="neighborhoods-grid">
+      <div class="neighborhood-card fade-in">
+        <div class="neighborhood-image">
+          <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500&h=400&fit=crop" alt="Downtown cityscape" loading="lazy">
+          <div class="neighborhood-info">
+            <h3>Downtown</h3>
+            <p>The vibrant heart of the city</p>
+          </div>
+        </div>
+        <div class="neighborhood-stats">
+          <div class="neighborhood-stat">
+            <div class="stat-value">$425K</div>
+            <div class="stat-label">Avg Price</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Schools</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">9.2</div>
+            <div class="stat-label">Transit</div>
+          </div>
+        </div>
+      </div>
+      <div class="neighborhood-card fade-in">
+        <div class="neighborhood-image">
+          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&h=400&fit=crop" alt="Suburban home" loading="lazy">
+          <div class="neighborhood-info">
+            <h3>Suburban Heights</h3>
+            <p>Family-friendly neighborhoods</p>
+          </div>
+        </div>
+        <div class="neighborhood-stats">
+          <div class="neighborhood-stat">
+            <div class="stat-value">$350K</div>
+            <div class="stat-label">Avg Price</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">18</div>
+            <div class="stat-label">Schools</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">7.5</div>
+            <div class="stat-label">Transit</div>
+          </div>
+        </div>
+      </div>
+      <div class="neighborhood-card fade-in">
+        <div class="neighborhood-image">
+          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&h=400&fit=crop" alt="Waterfront" loading="lazy">
+          <div class="neighborhood-info">
+            <h3>Waterfront District</h3>
+            <p>Luxury living by the water</p>
+          </div>
+        </div>
+        <div class="neighborhood-stats">
+          <div class="neighborhood-stat">
+            <div class="stat-value">$680K</div>
+            <div class="stat-label">Avg Price</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">8</div>
+            <div class="stat-label">Schools</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">8.8</div>
+            <div class="stat-label">Transit</div>
+          </div>
+        </div>
+      </div>
+      <div class="neighborhood-card fade-in">
+        <div class="neighborhood-image">
+          <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&h=400&fit=crop" alt="Hillside mountains" loading="lazy">
+          <div class="neighborhood-info">
+            <h3>Hillside Estates</h3>
+            <p>Panoramic views and serenity</p>
+          </div>
+        </div>
+        <div class="neighborhood-stats">
+          <div class="neighborhood-stat">
+            <div class="stat-value">$520K</div>
+            <div class="stat-label">Avg Price</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">6</div>
+            <div class="stat-label">Schools</div>
+          </div>
+          <div class="neighborhood-stat">
+            <div class="stat-value">6.3</div>
+            <div class="stat-label">Transit</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA / CONTACT ============ -->
+<section id="cta">
+  <div class="cta-bg-image">
+    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&h=600&fit=crop" alt="Beautiful interior" loading="lazy">
+  </div>
+  <div class="container">
+    <div class="cta-wrapper">
+      <div class="cta-text fade-in-left">
+        <h2>Ready to Find Your<br>Dream Home?</h2>
+        <p>Get in touch with our team of experts and take the first step toward your perfect property. We are here to guide you through every step of the journey.</p>
+        <div class="cta-highlights">
+          <div class="cta-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Free property consultation and market analysis
+          </div>
+          <div class="cta-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Expert guidance from certified agents
+          </div>
+          <div class="cta-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Access to exclusive off-market listings
+          </div>
+          <div class="cta-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Full legal and financial support included
+          </div>
+        </div>
+      </div>
+      <div class="cta-form fade-in-right">
+        <h3>Get In Touch</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="john@example.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" placeholder="+1 (555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label>Property Interest</label>
+            <select>
+              <option value="">Select interest</option>
+              <option>Buying a Home</option>
+              <option>Selling a Property</option>
+              <option>Renting</option>
+              <option>Investment</option>
+              <option>Property Management</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Tell us about your dream property..."></textarea>
+        </div>
+        <button class="form-submit" onclick="handleFormSubmit(this)">Send Message</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0EA5E9"/><path d="M16 6L6 14V26H12V20H20V26H26V14L16 6Z" fill="white"/><rect x="14" y="10" width="4" height="4" rx="1" fill="#0EA5E9"/></svg>
+          Prime<span>Nest</span>
+        </h3>
+        <p>PrimeNest Realty is your trusted partner in finding the perfect property. With over 15 years of experience, we deliver exceptional real estate services with integrity and expertise.</p>
+        <div class="footer-socials">
+          <button class="social-btn" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </button>
+          <button class="social-btn" aria-label="Twitter">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+          </button>
+          <button class="social-btn" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </button>
+          <button class="social-btn" aria-label="LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#properties">Properties</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#agents">Our Agents</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#cta">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Property Types</h4>
+        <ul>
+          <li><a href="#categories">Houses</a></li>
+          <li><a href="#categories">Apartments</a></li>
+          <li><a href="#categories">Villas</a></li>
+          <li><a href="#categories">Commercial</a></li>
+          <li><a href="#categories">Land</a></li>
+          <li><a href="#categories">New Construction</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Contact Us</h4>
+        <div class="footer-contact-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>123 Realty Avenue, Suite 400<br>Metropolitan City, MC 10001</span>
+        </div>
+        <div class="footer-contact-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+1 (555) 123-4567</span>
+        </div>
+        <div class="footer-contact-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>hello@primenestrealty.com</span>
+        </div>
+        <div class="footer-newsletter">
+          <p>Subscribe to our newsletter</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email address">
+            <button onclick="handleNewsletter(this)">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>2024 PrimeNest Realty. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============ PROPERTY DATA ============
+const propertyImages = [
+  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&h=400&fit=crop'
+];
+
+const agentPhotos = {
+  'JM': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop',
+  'SR': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop',
+  'DC': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop',
+  'EW': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop'
+};
+
+const properties = [
+  {
+    id: 1,
+    name: "Sunset Villa Estate",
+    address: "142 Oceanview Drive, Waterfront",
+    price: 1250000,
+    priceDisplay: "$1,250,000",
+    type: "villa",
+    badge: "For Sale",
+    badgeClass: "badge-sale",
+    beds: 5,
+    baths: 4,
+    sqft: "4,200",
+    agent: "James Mitchell",
+    agentInitials: "JM",
+    agentColor: "linear-gradient(135deg, #0EA5E9, #0284C7)",
+    location: "waterfront",
+    image: propertyImages[0]
+  },
+  {
+    id: 2,
+    name: "Metropolitan Loft",
+    address: "88 Central Blvd, Downtown",
+    price: 3200,
+    priceDisplay: "$3,200",
+    period: "/month",
+    type: "apartment",
+    badge: "For Rent",
+    badgeClass: "badge-rent",
+    beds: 2,
+    baths: 2,
+    sqft: "1,100",
+    agent: "Sarah Reynolds",
+    agentInitials: "SR",
+    agentColor: "linear-gradient(135deg, #F97316, #EA580C)",
+    location: "downtown",
+    image: propertyImages[1]
+  },
+  {
+    id: 3,
+    name: "Greenfield Family Home",
+    address: "27 Maple Lane, Suburban Area",
+    price: 685000,
+    priceDisplay: "$685,000",
+    type: "house",
+    badge: "For Sale",
+    badgeClass: "badge-sale",
+    beds: 4,
+    baths: 3,
+    sqft: "2,800",
+    agent: "Emily Watson",
+    agentInitials: "EW",
+    agentColor: "linear-gradient(135deg, #10B981, #059669)",
+    location: "suburbs",
+    image: propertyImages[2]
+  },
+  {
+    id: 4,
+    name: "Skyline Penthouse",
+    address: "500 Tower Place, Downtown",
+    price: 2100000,
+    priceDisplay: "$2,100,000",
+    type: "apartment",
+    badge: "For Sale",
+    badgeClass: "badge-sale",
+    beds: 3,
+    baths: 3,
+    sqft: "2,400",
+    agent: "David Chen",
+    agentInitials: "DC",
+    agentColor: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+    location: "downtown",
+    image: propertyImages[3]
+  },
+  {
+    id: 5,
+    name: "Hillcrest Modern Retreat",
+    address: "75 Summit Road, Hillside",
+    price: 920000,
+    priceDisplay: "$920,000",
+    type: "house",
+    badge: "For Sale",
+    badgeClass: "badge-sale",
+    beds: 4,
+    baths: 3,
+    sqft: "3,100",
+    agent: "James Mitchell",
+    agentInitials: "JM",
+    agentColor: "linear-gradient(135deg, #0EA5E9, #0284C7)",
+    location: "hillside",
+    image: propertyImages[4]
+  },
+  {
+    id: 6,
+    name: "The Commerce Hub",
+    address: "200 Business Park, Urban Center",
+    price: 4500,
+    priceDisplay: "$4,500",
+    period: "/month",
+    type: "commercial",
+    badge: "For Rent",
+    badgeClass: "badge-rent",
+    beds: 0,
+    baths: 2,
+    sqft: "5,500",
+    agent: "David Chen",
+    agentInitials: "DC",
+    agentColor: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+    location: "urban",
+    image: propertyImages[5]
+  }
+];
+
+// ============ SVG ICONS ============
+const icons = {
+  bed: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>',
+  bath: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/><path d="M6 12V5a2 2 0 0 1 2-2h3v2.25"/><line x1="4" y1="20" x2="5" y2="22"/><line x1="20" y1="20" x2="19" y2="22"/></svg>',
+  area: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>',
+  heart: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  rooms: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3"/></svg>',
+  pin: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+};
+
+// ============ RENDER PROPERTY CARD ============
+function renderPropertyCard(prop) {
+  const bedsLabel = prop.type === 'commercial' ? 'Rooms' : 'Beds';
+  const bedsIcon = prop.type === 'commercial' ? icons.rooms : icons.bed;
+  const agentPhoto = agentPhotos[prop.agentInitials];
+  const agentAvatarHTML = agentPhoto
+    ? `<div class="agent-avatar-small"><img src="${agentPhoto}" alt="${prop.agent}" loading="lazy"></div>`
+    : `<div class="agent-avatar-small" style="background: ${prop.agentColor}">${prop.agentInitials}</div>`;
+
+  return `
+    <div class="property-card fade-in">
+      <div class="property-image">
+        <img src="${prop.image}" alt="${prop.name}" loading="lazy">
+        <span class="property-badge ${prop.badgeClass}">${prop.badge}</span>
+        <button class="property-favorite" aria-label="Add to favorites" onclick="toggleFavorite(this)">
+          ${icons.heart}
+        </button>
+      </div>
+      <div class="property-info">
+        <div class="property-price">${prop.priceDisplay}${prop.period ? '<span class="period">' + prop.period + '</span>' : ''}</div>
+        <h3 class="property-name">${prop.name}</h3>
+        <p class="property-address">${icons.pin} ${prop.address}</p>
+        <div class="property-features">
+          <div class="property-feature">${bedsIcon} <span>${prop.beds} ${bedsLabel}</span></div>
+          <div class="property-feature">${icons.bath} <span>${prop.baths} Baths</span></div>
+          <div class="property-feature">${icons.area} <span>${prop.sqft} sqft</span></div>
+        </div>
+        <div class="property-footer">
+          <div class="property-agent-info">
+            ${agentAvatarHTML}
+            <span class="property-agent-name">${prop.agent}</span>
+          </div>
+          <button class="btn-view-details">View Details</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ INITIALIZE PROPERTIES ============
+function initProperties() {
+  const grid = document.getElementById('propertiesGrid');
+  grid.innerHTML = properties.map(renderPropertyCard).join('');
+  observeElements();
+}
+
+// ============ SEARCH FUNCTIONALITY ============
+function performSearch() {
+  const location = document.getElementById('searchLocation').value;
+  const type = document.getElementById('searchType').value;
+  const minPrice = parseInt(document.getElementById('searchMinPrice').value) || 0;
+  const maxPrice = parseInt(document.getElementById('searchMaxPrice').value) || Infinity;
+
+  const results = properties.filter(p => {
+    if (location && p.location !== location) return false;
+    if (type && p.type !== type) return false;
+    if (p.price < minPrice) return false;
+    if (p.price > maxPrice) return false;
+    return true;
+  });
+
+  const section = document.getElementById('searchResults');
+  const grid = document.getElementById('resultsGrid');
+  const count = document.getElementById('resultsCount');
+
+  if (results.length > 0) {
+    grid.innerHTML = results.map(renderPropertyCard).join('');
+    count.textContent = results.length + ' propert' + (results.length === 1 ? 'y' : 'ies') + ' found';
+  } else {
+    grid.innerHTML = '<div class="no-results"><h3>No properties found</h3><p>Try adjusting your search criteria for more results.</p></div>';
+    count.textContent = '0 properties found';
+  }
+
+  section.classList.add('active');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  observeElements();
+}
+
+// ============ FAVORITE TOGGLE ============
+function toggleFavorite(btn) {
+  btn.classList.toggle('favorited');
+  if (btn.classList.contains('favorited')) {
+    btn.style.background = '#EF4444';
+    btn.querySelector('svg').setAttribute('fill', '#fff');
+    btn.querySelector('svg').setAttribute('stroke', '#fff');
+  } else {
+    btn.style.background = 'rgba(255,255,255,0.92)';
+    btn.querySelector('svg').setAttribute('fill', 'none');
+    btn.querySelector('svg').setAttribute('stroke', '#94A3B8');
+  }
+}
+
+// ============ NAVBAR ============
+const navbar = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+const navOverlay = document.getElementById('navOverlay');
+
+function closeMobileMenu() {
+  hamburger.classList.remove('active');
+  navLinks.classList.remove('open');
+  navOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function openMobileMenu() {
+  hamburger.classList.add('active');
+  navLinks.classList.add('open');
+  navOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+hamburger.addEventListener('click', () => {
+  if (navLinks.classList.contains('open')) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+});
+
+// Close mobile menu on overlay click
+navOverlay.addEventListener('click', closeMobileMenu);
+
+// Close mobile menu on link click
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', closeMobileMenu);
+});
+
+// ============ SEARCH TABS ============
+document.querySelectorAll('.search-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// ============ PARALLAX EFFECT ============
+window.addEventListener('scroll', () => {
+  const heroImg = document.querySelector('.hero-bg-image img');
+  if (heroImg) {
+    const scrolled = window.scrollY;
+    const rate = scrolled * 0.35;
+    heroImg.style.transform = 'translateY(' + rate + 'px) scale(1.1)';
+  }
+});
+
+// ============ SCROLL ANIMATIONS ============
+function observeElements() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, index * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .scale-in').forEach(el => {
+    if (!el.classList.contains('visible')) {
+      observer.observe(el);
+    }
+  });
+}
+
+// ============ COUNTER ANIMATION ============
+function animateCounters() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const text = el.textContent;
+        const match = text.match(/^([\d,]+)/);
+        if (match) {
+          const target = parseInt(match[1].replace(/,/g, ''));
+          const suffix = text.replace(match[1], '');
+          let current = 0;
+          const increment = target / 60;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              current = target;
+              clearInterval(timer);
+            }
+            el.innerHTML = Math.floor(current).toLocaleString() + suffix;
+          }, 20);
+        }
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.hero-stat .number').forEach(el => observer.observe(el));
+}
+
+// ============ FORM HANDLING ============
+function handleFormSubmit(btn) {
+  const form = btn.closest('.cta-form');
+  const inputs = form.querySelectorAll('input, select, textarea');
+  let valid = true;
+  inputs.forEach(input => {
+    if (input.type !== 'submit' && input.value.trim() === '' && input.tagName !== 'SELECT') {
+      input.style.borderColor = '#EF4444';
+      valid = false;
+      setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.12)'; }, 2000);
+    }
+  });
+  if (valid) {
+    btn.textContent = 'Message Sent!';
+    btn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+    inputs.forEach(input => { if (input.tagName === 'TEXTAREA' || input.tagName === 'INPUT') input.value = ''; });
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = 'linear-gradient(135deg, #F97316, #EA580C)';
+    }, 3000);
+  }
+}
+
+function handleNewsletter(btn) {
+  const input = btn.previousElementSibling;
+  if (input.value.trim() && input.value.includes('@')) {
+    btn.textContent = 'Subscribed!';
+    btn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+    input.value = '';
+    setTimeout(() => {
+      btn.textContent = 'Subscribe';
+      btn.style.background = 'linear-gradient(135deg, #0EA5E9, #0284C7)';
+    }, 3000);
+  } else {
+    input.style.borderColor = '#EF4444';
+    setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.12)'; }, 2000);
+  }
+}
+
+// ============ SMOOTH SCROLL ============
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ============ INITIALIZE ============
+document.addEventListener('DOMContentLoaded', () => {
+  initProperties();
+  animateCounters();
+  observeElements();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockPulse — Inventory & Sales Tracker</title>
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES & RESET
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sidebar-width:260px;
+  --sidebar-collapsed:72px;
+  --header-height:64px;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:14px;
+  --radius-xl:18px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.1),0 4px 8px rgba(0,0,0,.05);
+  --shadow-xl:0 20px 50px rgba(0,0,0,.15);
+  --transition-fast:.2s cubic-bezier(.4,0,.2,1);
+  --transition-med:.35s cubic-bezier(.4,0,.2,1);
+  --transition-slow:.5s cubic-bezier(.4,0,.2,1);
+  /* Light Mode */
+  --bg-primary:#F8FAFC;
+  --bg-secondary:#FFFFFF;
+  --bg-tertiary:#F1F5F9;
+  --text-primary:#0F172A;
+  --text-secondary:#475569;
+  --text-muted:#94A3B8;
+  --border-color:#E2E8F0;
+  --border-hover:#CBD5E1;
+  --blue:#3B82F6;
+  --blue-light:#DBEAFE;
+  --blue-dark:#1D4ED8;
+  --green:#10B981;
+  --green-light:#D1FAE5;
+  --red:#EF4444;
+  --red-light:#FEE2E2;
+  --orange:#F59E0B;
+  --orange-light:#FEF3C7;
+  --purple:#8B5CF6;
+  --purple-light:#EDE9FE;
+  --sidebar-bg:#0F172A;
+  --sidebar-text:#94A3B8;
+  --sidebar-active:#3B82F6;
+  --sidebar-hover:rgba(59,130,246,.08);
+  --table-row-hover:rgba(59,130,246,.04);
+  --table-stripe:rgba(248,250,252,.6);
+  --input-bg:#F8FAFC;
+  --modal-overlay:rgba(15,23,42,.5);
+  --card-gradient-1:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);
+  --card-gradient-2:linear-gradient(135deg,#10B981 0%,#059669 100%);
+  --card-gradient-3:linear-gradient(135deg,#8B5CF6 0%,#7C3AED 100%);
+  --card-gradient-4:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);
+}
+[data-theme="dark"]{
+  --bg-primary:#0F172A;
+  --bg-secondary:#1E293B;
+  --bg-tertiary:#334155;
+  --text-primary:#F1F5F9;
+  --text-secondary:#CBD5E1;
+  --text-muted:#64748B;
+  --border-color:#334155;
+  --border-hover:#475569;
+  --blue:#60A5FA;
+  --blue-light:rgba(59,130,246,.15);
+  --blue-dark:#93BBFD;
+  --green:#34D399;
+  --green-light:rgba(16,185,129,.15);
+  --red:#F87171;
+  --red-light:rgba(239,68,68,.15);
+  --orange:#FBBF24;
+  --orange-light:rgba(245,158,11,.15);
+  --purple:#A78BFA;
+  --purple-light:rgba(139,92,246,.15);
+  --sidebar-bg:#0B1120;
+  --table-row-hover:rgba(59,130,246,.06);
+  --table-stripe:rgba(30,41,59,.4);
+  --input-bg:#1E293B;
+  --modal-overlay:rgba(0,0,0,.65);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.2),0 1px 2px rgba(0,0,0,.15);
+  --shadow-md:0 4px 12px rgba(0,0,0,.25),0 2px 4px rgba(0,0,0,.15);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.35),0 4px 8px rgba(0,0,0,.2);
+  --shadow-xl:0 20px 50px rgba(0,0,0,.45);
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  line-height:1.6;
+  transition:background var(--transition-med),color var(--transition-med);
+  overflow-x:hidden;
+  min-height:100vh;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;border:none;outline:none;background:none}
+input,select,textarea{font-family:inherit;outline:none}
+img{display:block;max-width:100%}
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.app-layout{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;
+  width:var(--sidebar-width);
+  background:var(--sidebar-bg);
+  display:flex;flex-direction:column;
+  z-index:100;
+  transition:width var(--transition-med),transform var(--transition-med);
+  overflow:hidden;
+}
+.sidebar.collapsed{width:var(--sidebar-collapsed)}
+.sidebar-header{
+  display:flex;align-items:center;gap:12px;
+  padding:20px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  min-height:64px;
+  flex-shrink:0;
+}
+.sidebar-logo{
+  display:flex;align-items:center;gap:10px;
+  white-space:nowrap;overflow:hidden;
+}
+.sidebar-logo svg{flex-shrink:0;width:32px;height:32px}
+.sidebar-logo span{
+  font-size:1.25rem;font-weight:700;
+  color:#F1F5F9;letter-spacing:-.5px;
+  transition:opacity var(--transition-fast);
+}
+.sidebar.collapsed .sidebar-logo span{opacity:0;width:0}
+.sidebar-toggle{
+  margin-left:auto;
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:var(--radius-sm);
+  color:#94A3B8;
+  transition:background var(--transition-fast),color var(--transition-fast);
+  flex-shrink:0;
+}
+.sidebar-toggle:hover{background:rgba(255,255,255,.1);color:#F1F5F9}
+.sidebar.collapsed .sidebar-toggle{margin-left:0}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;overflow-x:hidden}
+.nav-section-label{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;
+  color:#475569;padding:16px 12px 6px;
+  white-space:nowrap;overflow:hidden;
+  transition:opacity var(--transition-fast);
+}
+.sidebar.collapsed .nav-section-label{opacity:0;height:0;padding:0;margin:0}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:var(--radius-md);
+  color:var(--sidebar-text);
+  font-size:.9rem;font-weight:500;
+  white-space:nowrap;overflow:hidden;
+  transition:all var(--transition-fast);
+  margin-bottom:2px;
+  position:relative;
+}
+.nav-item svg{flex-shrink:0;width:20px;height:20px;opacity:.7;transition:opacity var(--transition-fast)}
+.nav-item:hover{background:var(--sidebar-hover);color:#E2E8F0}
+.nav-item:hover svg{opacity:1}
+.nav-item.active{
+  background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.08));
+  color:#60A5FA;
+}
+.nav-item.active svg{opacity:1;color:#60A5FA}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;border-radius:0 3px 3px 0;background:#3B82F6;
+}
+.nav-item .nav-label{transition:opacity var(--transition-fast)}
+.sidebar.collapsed .nav-item .nav-label{opacity:0;width:0}
+.sidebar.collapsed .nav-item{justify-content:center;padding:10px}
+.sidebar-footer{
+  padding:16px;border-top:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;overflow:hidden;
+}
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3B82F6,#8B5CF6);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:.85rem;
+  flex-shrink:0;
+}
+.user-info{white-space:nowrap;overflow:hidden;transition:opacity var(--transition-fast)}
+.user-info .name{color:#E2E8F0;font-size:.85rem;font-weight:600}
+.user-info .role{color:#64748B;font-size:.7rem}
+.sidebar.collapsed .user-info{opacity:0;width:0}
+
+/* MAIN AREA */
+.main-area{
+  flex:1;
+  margin-left:var(--sidebar-width);
+  transition:margin-left var(--transition-med);
+  display:flex;flex-direction:column;
+  min-height:100vh;
+}
+.sidebar.collapsed ~ .main-area{margin-left:var(--sidebar-collapsed)}
+
+/* HEADER */
+.top-header{
+  position:sticky;top:0;z-index:50;
+  height:var(--header-height);
+  background:var(--bg-secondary);
+  border-bottom:1px solid var(--border-color);
+  display:flex;align-items:center;
+  padding:0 28px;gap:16px;
+  backdrop-filter:blur(12px);
+  transition:background var(--transition-med),border-color var(--transition-med);
+}
+.mobile-menu-btn{
+  display:none;
+  width:36px;height:36px;
+  align-items:center;justify-content:center;
+  border-radius:var(--radius-sm);
+  color:var(--text-secondary);
+}
+.search-container{
+  position:relative;flex:1;max-width:420px;
+}
+.search-container svg{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:var(--text-muted);pointer-events:none;
+}
+.search-input{
+  width:100%;height:40px;
+  padding:0 16px 0 42px;
+  border:1.5px solid var(--border-color);
+  border-radius:var(--radius-lg);
+  background:var(--input-bg);
+  color:var(--text-primary);
+  font-size:.88rem;
+  transition:all var(--transition-fast);
+}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.search-input::placeholder{color:var(--text-muted)}
+.header-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.header-date{
+  font-size:.82rem;color:var(--text-secondary);
+  white-space:nowrap;padding-right:8px;
+  border-right:1px solid var(--border-color);
+  margin-right:4px;
+}
+.icon-btn{
+  position:relative;
+  width:38px;height:38px;
+  border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-secondary);
+  transition:all var(--transition-fast);
+}
+.icon-btn:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.icon-btn svg{width:20px;height:20px}
+.notif-badge{
+  position:absolute;top:4px;right:4px;
+  width:18px;height:18px;
+  background:var(--red);
+  color:#fff;font-size:.6rem;font-weight:700;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg-secondary);
+}
+.theme-toggle{
+  width:38px;height:38px;
+  border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-secondary);
+  transition:all var(--transition-fast);
+}
+.theme-toggle:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.theme-toggle svg{width:20px;height:20px}
+.theme-toggle .icon-moon{display:none}
+[data-theme="dark"] .theme-toggle .icon-sun{display:none}
+[data-theme="dark"] .theme-toggle .icon-moon{display:block}
+
+/* CONTENT */
+.content{padding:28px;flex:1}
+
+/* ============================================================
+   DASHBOARD CARDS
+   ============================================================ */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  margin-bottom:28px;
+}
+.stat-card{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  display:flex;align-items:flex-start;justify-content:space-between;
+  transition:all var(--transition-fast);
+  position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  border-radius:4px 0 0 4px;
+}
+.stat-card:nth-child(1)::before{background:linear-gradient(180deg,#3B82F6,#2563EB)}
+.stat-card:nth-child(2)::before{background:linear-gradient(180deg,#10B981,#059669)}
+.stat-card:nth-child(3)::before{background:linear-gradient(180deg,#8B5CF6,#7C3AED)}
+.stat-card:nth-child(4)::before{background:linear-gradient(180deg,#F59E0B,#D97706)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-info{display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:.78rem;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{font-size:1.75rem;font-weight:800;letter-spacing:-.5px;line-height:1.2}
+.stat-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 8px;border-radius:20px;
+  font-size:.7rem;font-weight:600;
+  margin-top:4px;width:fit-content;
+}
+.stat-badge.up{background:var(--green-light);color:var(--green)}
+.stat-badge.down{background:var(--red-light);color:var(--red)}
+.stat-badge.warn{background:var(--orange-light);color:var(--orange)}
+.stat-icon{
+  width:48px;height:48px;
+  border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.stat-icon svg{width:24px;height:24px}
+.stat-card:nth-child(1) .stat-icon{background:var(--blue-light);color:var(--blue)}
+.stat-card:nth-child(2) .stat-icon{background:var(--green-light);color:var(--green)}
+.stat-card:nth-child(3) .stat-icon{background:var(--purple-light);color:var(--purple)}
+.stat-card:nth-child(4) .stat-icon{background:var(--orange-light);color:var(--orange)}
+
+/* ============================================================
+   CHART SECTION
+   ============================================================ */
+.chart-section{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  padding:24px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  margin-bottom:28px;
+  transition:background var(--transition-med),border-color var(--transition-med);
+}
+.chart-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.chart-title{font-size:1.05rem;font-weight:700}
+.chart-controls{display:flex;gap:4px}
+.chart-btn{
+  padding:6px 14px;border-radius:var(--radius-sm);
+  font-size:.78rem;font-weight:600;
+  color:var(--text-muted);
+  transition:all var(--transition-fast);
+}
+.chart-btn:hover{color:var(--text-primary);background:var(--bg-tertiary)}
+.chart-btn.active{background:var(--blue);color:#fff}
+.chart-area{position:relative;height:260px;display:flex;align-items:flex-end;gap:0;padding:0 0 30px 50px}
+.chart-grid{
+  position:absolute;left:50px;right:0;top:0;bottom:30px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.chart-grid-line{
+  border-bottom:1px dashed var(--border-color);
+  position:relative;height:0;
+}
+.chart-grid-line span{
+  position:absolute;right:calc(100% + 8px);top:-8px;
+  font-size:.65rem;color:var(--text-muted);white-space:nowrap;
+}
+.chart-bars{
+  display:flex;align-items:flex-end;justify-content:space-around;
+  flex:1;height:100%;position:relative;z-index:2;
+  padding-bottom:0;
+}
+.chart-bar-wrapper{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  flex:1;height:100%;justify-content:flex-end;
+  position:relative;
+}
+.chart-bar{
+  width:clamp(24px,60%,48px);
+  border-radius:var(--radius-sm) var(--radius-sm) 2px 2px;
+  background:linear-gradient(180deg,#60A5FA,#3B82F6);
+  position:relative;
+  transition:all var(--transition-fast);
+  min-height:4px;
+  cursor:pointer;
+}
+.chart-bar:hover{filter:brightness(1.15);transform:scaleX(1.08)}
+.chart-bar-tooltip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--sidebar-bg);color:#F1F5F9;
+  padding:5px 10px;border-radius:var(--radius-sm);
+  font-size:.72rem;font-weight:600;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity var(--transition-fast);
+  z-index:5;
+}
+.chart-bar-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--sidebar-bg);
+}
+.chart-bar:hover .chart-bar-tooltip{opacity:1}
+.chart-bar-label{
+  font-size:.72rem;color:var(--text-muted);font-weight:500;
+  position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);
+}
+
+/* ============================================================
+   INVENTORY TABLE SECTION
+   ============================================================ */
+.table-section{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  margin-bottom:28px;
+  transition:background var(--transition-med),border-color var(--transition-med);
+  overflow:hidden;
+}
+.table-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;
+  border-bottom:1px solid var(--border-color);
+  gap:12px;
+  flex-wrap:wrap;
+}
+.table-toolbar-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.table-title{font-size:1.05rem;font-weight:700;white-space:nowrap}
+.category-filters{display:flex;gap:4px;flex-wrap:wrap}
+.cat-btn{
+  padding:5px 14px;border-radius:20px;
+  font-size:.76rem;font-weight:600;
+  color:var(--text-muted);
+  border:1.5px solid var(--border-color);
+  transition:all var(--transition-fast);
+  white-space:nowrap;
+}
+.cat-btn:hover{border-color:var(--blue);color:var(--blue)}
+.cat-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.table-toolbar-right{display:flex;align-items:center;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:var(--radius-md);
+  font-size:.82rem;font-weight:600;
+  transition:all var(--transition-fast);
+  white-space:nowrap;
+}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-outline{border:1.5px solid var(--border-color);color:var(--text-secondary)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-danger:hover{background:#DC2626}
+.btn-success{background:var(--green);color:#fff}
+.btn-success:hover{background:#059669}
+
+/* Bulk Actions Bar */
+.bulk-bar{
+  display:none;
+  align-items:center;gap:12px;
+  padding:12px 24px;
+  background:var(--blue-light);
+  border-bottom:1px solid var(--border-color);
+  animation:slideDown .25s ease;
+}
+.bulk-bar.visible{display:flex}
+.bulk-count{font-size:.85rem;font-weight:600;color:var(--blue)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead{background:var(--bg-tertiary);transition:background var(--transition-med)}
+th{
+  padding:12px 16px;
+  font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;
+  color:var(--text-muted);
+  text-align:left;
+  white-space:nowrap;
+  user-select:none;
+  position:relative;
+}
+th.sortable{cursor:pointer}
+th.sortable:hover{color:var(--text-primary)}
+th .sort-arrow{margin-left:4px;font-size:.6rem;opacity:.4}
+th.sort-active .sort-arrow{opacity:1;color:var(--blue)}
+td{
+  padding:12px 16px;
+  font-size:.85rem;
+  border-bottom:1px solid var(--border-color);
+  vertical-align:middle;
+  transition:background var(--transition-fast);
+}
+tr:hover td{background:var(--table-row-hover)}
+tr:nth-child(even) td{background:var(--table-stripe)}
+tr:nth-child(even):hover td{background:var(--table-row-hover)}
+.product-cell{display:flex;align-items:center;gap:12px}
+.product-thumb{
+  width:42px;height:42px;border-radius:var(--radius-sm);
+  object-fit:cover;flex-shrink:0;
+  border:1px solid var(--border-color);
+}
+.product-name{font-weight:600;color:var(--text-primary)}
+.product-sku{font-size:.72rem;color:var(--text-muted)}
+.status-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 12px;border-radius:20px;
+  font-size:.72rem;font-weight:600;
+  white-space:nowrap;
+}
+.status-badge::before{content:'';width:6px;height:6px;border-radius:50%}
+.status-instock{background:var(--green-light);color:var(--green)}
+.status-instock::before{background:var(--green)}
+.status-lowstock{background:var(--orange-light);color:var(--orange)}
+.status-lowstock::before{background:var(--orange)}
+.status-outofstock{background:var(--red-light);color:var(--red)}
+.status-outofstock::before{background:var(--red)}
+.actions-cell{display:flex;gap:6px}
+.action-btn{
+  width:32px;height:32px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);
+  transition:all var(--transition-fast);
+}
+.action-btn:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.action-btn.delete:hover{background:var(--red-light);color:var(--red)}
+.action-btn svg{width:15px;height:15px}
+input[type="checkbox"]{
+  width:16px;height:16px;
+  accent-color:var(--blue);
+  cursor:pointer;
+}
+
+/* Pagination */
+.pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;
+  border-top:1px solid var(--border-color);
+}
+.page-info{font-size:.8rem;color:var(--text-muted)}
+.page-btns{display:flex;gap:4px}
+.page-btn{
+  min-width:34px;height:34px;
+  border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;font-weight:600;
+  color:var(--text-secondary);
+  border:1px solid var(--border-color);
+  transition:all var(--transition-fast);
+}
+.page-btn:hover{border-color:var(--blue);color:var(--blue)}
+.page-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+/* ============================================================
+   SALES LOG + LOW STOCK
+   ============================================================ */
+.bottom-grid{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  gap:20px;
+  margin-bottom:28px;
+}
+.panel{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  transition:background var(--transition-med),border-color var(--transition-med);
+  overflow:hidden;
+}
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;
+  border-bottom:1px solid var(--border-color);
+}
+.panel-title{font-size:.95rem;font-weight:700}
+.sale-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 22px;
+  border-bottom:1px solid var(--border-color);
+  transition:background var(--transition-fast);
+}
+.sale-row:hover{background:var(--table-row-hover)}
+.sale-row:last-child{border-bottom:none}
+.sale-info{display:flex;flex-direction:column;gap:2px}
+.sale-product{font-weight:600;font-size:.85rem}
+.sale-time{font-size:.72rem;color:var(--text-muted)}
+.sale-details{text-align:right}
+.sale-qty{font-size:.78rem;color:var(--text-muted)}
+.sale-revenue{font-weight:700;color:var(--green);font-size:.88rem}
+/* Low stock alerts */
+.alert-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 22px;
+  border-bottom:1px solid var(--border-color);
+  transition:background var(--transition-fast);
+}
+.alert-item:hover{background:var(--table-row-hover)}
+.alert-item:last-child{border-bottom:none}
+.alert-info{display:flex;flex-direction:column;gap:2px}
+.alert-name{font-weight:600;font-size:.85rem}
+.alert-qty{font-size:.75rem;color:var(--red);font-weight:600}
+.btn-sm{
+  padding:5px 12px;border-radius:var(--radius-sm);
+  font-size:.72rem;font-weight:600;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:var(--modal-overlay);
+  backdrop-filter:blur(6px);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--transition-med);
+}
+.modal-overlay.active{opacity:1;pointer-events:all}
+.modal{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-xl);
+  width:95%;max-width:520px;
+  max-height:90vh;overflow-y:auto;
+  transform:translateY(20px) scale(.97);
+  transition:transform var(--transition-med);
+}
+.modal-overlay.active .modal{transform:translateY(0) scale(1)}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 26px 0;
+}
+.modal-title{font-size:1.15rem;font-weight:700}
+.modal-close{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);
+  transition:all var(--transition-fast);
+}
+.modal-close:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.modal-body{padding:20px 26px 26px}
+.form-group{margin-bottom:16px}
+.form-label{
+  display:block;font-size:.78rem;font-weight:600;
+  color:var(--text-secondary);margin-bottom:6px;
+}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:10px 14px;
+  border:1.5px solid var(--border-color);
+  border-radius:var(--radius-md);
+  background:var(--input-bg);
+  color:var(--text-primary);
+  font-size:.88rem;
+  transition:all var(--transition-fast);
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(59,130,246,.1);
+}
+.form-input.error,.form-select.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+.form-textarea{min-height:80px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-footer{
+  display:flex;justify-content:flex-end;gap:10px;
+  padding:0 26px 22px;
+}
+
+/* Confirm Dialog */
+.confirm-overlay{
+  position:fixed;inset:0;
+  background:var(--modal-overlay);
+  backdrop-filter:blur(4px);
+  z-index:300;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--transition-fast);
+}
+.confirm-overlay.active{opacity:1;pointer-events:all}
+.confirm-box{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-xl);
+  padding:30px;
+  width:90%;max-width:400px;
+  text-align:center;
+  transform:scale(.9);
+  transition:transform var(--transition-med);
+}
+.confirm-overlay.active .confirm-box{transform:scale(1)}
+.confirm-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--red-light);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.confirm-icon svg{width:28px;height:28px;color:var(--red)}
+.confirm-title{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.confirm-text{font-size:.88rem;color:var(--text-secondary);margin-bottom:22px}
+.confirm-btns{display:flex;gap:10px;justify-content:center}
+
+/* Restock Modal */
+.restock-overlay{
+  position:fixed;inset:0;
+  background:var(--modal-overlay);
+  backdrop-filter:blur(4px);
+  z-index:250;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--transition-fast);
+}
+.restock-overlay.active{opacity:1;pointer-events:all}
+
+/* Record Sale Modal */
+.sale-modal-overlay{
+  position:fixed;inset:0;
+  background:var(--modal-overlay);
+  backdrop-filter:blur(4px);
+  z-index:250;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--transition-fast);
+}
+.sale-modal-overlay.active{opacity:1;pointer-events:all}
+
+/* Notification Panel */
+.notif-panel{
+  position:fixed;top:var(--header-height);right:0;
+  width:340px;max-height:calc(100vh - var(--header-height));
+  background:var(--bg-secondary);
+  border-left:1px solid var(--border-color);
+  box-shadow:var(--shadow-lg);
+  z-index:90;
+  transform:translateX(100%);
+  transition:transform var(--transition-med);
+  overflow-y:auto;
+}
+.notif-panel.open{transform:translateX(0)}
+.notif-header{padding:18px 20px;border-bottom:1px solid var(--border-color);font-weight:700;font-size:.95rem}
+.notif-item{
+  padding:14px 20px;border-bottom:1px solid var(--border-color);
+  font-size:.82rem;color:var(--text-secondary);
+  display:flex;gap:10px;
+}
+.notif-item:hover{background:var(--table-row-hover)}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:5px}
+.notif-dot.warn{background:var(--orange)}
+.notif-dot.danger{background:var(--red)}
+
+/* TOAST */
+.toast-container{
+  position:fixed;bottom:24px;right:24px;z-index:400;
+  display:flex;flex-direction:column-reverse;gap:10px;
+}
+.toast{
+  padding:14px 20px;border-radius:var(--radius-md);
+  background:var(--sidebar-bg);color:#F1F5F9;
+  font-size:.85rem;font-weight:500;
+  box-shadow:var(--shadow-lg);
+  animation:toastIn .35s ease,toastOut .35s ease 2.5s forwards;
+  display:flex;align-items:center;gap:10px;
+  max-width:360px;
+}
+.toast.success{border-left:4px solid var(--green)}
+.toast.error{border-left:4px solid var(--red)}
+.toast.info{border-left:4px solid var(--blue)}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-8px)}}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1200px){
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
+  .bottom-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:var(--sidebar-width) !important}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .main-area{margin-left:0 !important}
+  .mobile-menu-btn{display:flex}
+  .cards-grid{grid-template-columns:1fr 1fr}
+  .top-header{padding:0 16px}
+  .content{padding:16px}
+  .header-date{display:none}
+  .chart-area{height:200px}
+  .form-row{grid-template-columns:1fr}
+  .table-toolbar{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:480px){
+  .cards-grid{grid-template-columns:1fr}
+}
+
+/* Page sections hidden by default for nav */
+.page-section{display:none}
+.page-section.active-page{display:block}
+
+/* Settings page */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.settings-card{
+  background:var(--bg-secondary);border-radius:var(--radius-lg);
+  padding:24px;box-shadow:var(--shadow-sm);border:1px solid var(--border-color);
+}
+.settings-card h3{font-size:.95rem;font-weight:700;margin-bottom:16px}
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border-color);
+}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:.85rem;font-weight:500}
+.setting-desc{font-size:.72rem;color:var(--text-muted)}
+/* Toggle switch */
+.toggle{
+  width:42px;height:24px;
+  background:var(--border-color);
+  border-radius:12px;
+  position:relative;cursor:pointer;
+  transition:background var(--transition-fast);
+}
+.toggle.on{background:var(--blue)}
+.toggle::after{
+  content:'';position:absolute;
+  width:18px;height:18px;
+  border-radius:50%;background:#fff;
+  top:3px;left:3px;
+  transition:transform var(--transition-fast);
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.toggle.on::after{transform:translateX(18px)}
+@media(max-width:768px){.settings-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   CHARTS ROW (Bar Chart + Donut Chart side by side)
+   ============================================================ */
+.charts-row{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:20px;
+  margin-bottom:28px;
+}
+.donut-section{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  padding:24px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  transition:background var(--transition-med),border-color var(--transition-med);
+  display:flex;flex-direction:column;
+}
+.donut-chart-area{
+  display:flex;align-items:center;justify-content:center;
+  gap:24px;flex:1;padding:12px 0;
+}
+.donut-svg-wrap{position:relative;width:180px;height:180px;flex-shrink:0}
+.donut-svg-wrap svg{width:100%;height:100%}
+.donut-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.donut-center-value{font-size:1.4rem;font-weight:800;line-height:1.2}
+.donut-center-label{font-size:.68rem;color:var(--text-muted);font-weight:500}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.donut-legend-item{display:flex;align-items:center;gap:10px;font-size:.82rem}
+.donut-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.donut-legend-label{color:var(--text-secondary);font-weight:500;flex:1}
+.donut-legend-value{font-weight:700;font-size:.85rem}
+@keyframes donutGrow{from{stroke-dasharray:0 377}to{}}
+
+@media(max-width:1200px){
+  .charts-row{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .donut-chart-area{flex-direction:column}
+  .donut-svg-wrap{width:150px;height:150px}
+}
+
+/* ============================================================
+   QUICK STATS ROW
+   ============================================================ */
+.quick-stats-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:28px;
+}
+.quick-stat{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-md);
+  padding:16px 20px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  display:flex;align-items:center;gap:14px;
+  transition:all var(--transition-fast);
+}
+.quick-stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.quick-stat-icon{
+  width:40px;height:40px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.quick-stat-icon svg{width:20px;height:20px}
+.quick-stat-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.quick-stat-label{font-size:.7rem;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.quick-stat-value{font-size:1.05rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quick-stat-sub{font-size:.68rem;font-weight:600}
+@media(max-width:1200px){.quick-stats-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.quick-stats-row{grid-template-columns:1fr}}
+
+/* ============================================================
+   ACTIVITY FEED
+   ============================================================ */
+.activity-feed{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border-color);
+  margin-bottom:28px;
+  transition:background var(--transition-med),border-color var(--transition-med);
+  overflow:hidden;
+}
+.activity-list{max-height:300px;overflow-y:auto}
+.activity-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 22px;
+  border-bottom:1px solid var(--border-color);
+  transition:background var(--transition-fast);
+}
+.activity-item:hover{background:var(--table-row-hover)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{
+  width:10px;height:10px;border-radius:50%;
+  flex-shrink:0;margin-top:4px;
+}
+.activity-dot.green{background:var(--green)}
+.activity-dot.blue{background:var(--blue)}
+.activity-dot.orange{background:var(--orange)}
+.activity-dot.purple{background:#8B5CF6}
+[data-theme="dark"] .activity-dot.purple{background:#A78BFA}
+.activity-text{font-size:.84rem;color:var(--text-primary);line-height:1.4;flex:1}
+.activity-time{font-size:.7rem;color:var(--text-muted);white-space:nowrap;flex-shrink:0;margin-top:2px}
+
+/* ============================================================
+   INVENTORY STATUS SUMMARY BAR
+   ============================================================ */
+.status-summary{
+  padding:16px 24px;
+  border-bottom:1px solid var(--border-color);
+}
+.status-summary-label{
+  font-size:.75rem;font-weight:600;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.5px;
+  margin-bottom:10px;display:flex;align-items:center;gap:6px;
+}
+.status-bar{
+  display:flex;height:10px;border-radius:6px;overflow:hidden;
+  background:var(--bg-tertiary);margin-bottom:8px;
+}
+.status-bar-segment{
+  height:100%;
+  transition:width var(--transition-slow);
+  min-width:2px;
+}
+.status-bar-segment.in-stock{background:var(--green)}
+.status-bar-segment.low-stock{background:var(--orange)}
+.status-bar-segment.out-of-stock{background:var(--red)}
+.status-bar-labels{
+  display:flex;gap:16px;flex-wrap:wrap;
+}
+.status-bar-label{
+  display:flex;align-items:center;gap:6px;
+  font-size:.75rem;color:var(--text-secondary);font-weight:500;
+}
+.status-bar-label-dot{width:8px;height:8px;border-radius:2px}
+.status-bar-label-dot.in-stock{background:var(--green)}
+.status-bar-label-dot.low-stock{background:var(--orange)}
+.status-bar-label-dot.out-of-stock{background:var(--red)}
+
+/* ============================================================
+   PRODUCT DETAILS MODAL
+   ============================================================ */
+.detail-modal-overlay{
+  position:fixed;inset:0;
+  background:var(--modal-overlay);
+  backdrop-filter:blur(6px);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--transition-med);
+}
+.detail-modal-overlay.active{opacity:1;pointer-events:all}
+.detail-modal{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-xl);
+  width:95%;max-width:560px;
+  max-height:90vh;overflow-y:auto;
+  transform:translateY(20px) scale(.97);
+  transition:transform var(--transition-med);
+}
+.detail-modal-overlay.active .detail-modal{transform:translateY(0) scale(1)}
+.detail-modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 26px 0;
+}
+.detail-modal-body{padding:20px 26px 26px}
+.detail-product-hero{
+  display:flex;gap:20px;margin-bottom:20px;
+  padding-bottom:20px;border-bottom:1px solid var(--border-color);
+}
+.detail-product-img{
+  width:100px;height:100px;border-radius:var(--radius-md);
+  object-fit:cover;border:1px solid var(--border-color);
+  flex-shrink:0;
+}
+.detail-product-main{flex:1;display:flex;flex-direction:column;gap:4px}
+.detail-product-name{font-size:1.15rem;font-weight:700}
+.detail-product-sku{font-size:.78rem;color:var(--text-muted)}
+.detail-info-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  margin-bottom:20px;
+}
+.detail-info-item{display:flex;flex-direction:column;gap:2px}
+.detail-info-label{font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.detail-info-value{font-size:.9rem;font-weight:600}
+.detail-sales-history{
+  background:var(--bg-tertiary);border-radius:var(--radius-md);
+  padding:16px;margin-bottom:16px;
+}
+.detail-sales-history h4{font-size:.82rem;font-weight:700;margin-bottom:10px}
+.detail-sales-row{
+  display:flex;justify-content:space-between;
+  font-size:.82rem;padding:4px 0;
+}
+.detail-sales-row span:last-child{font-weight:600;color:var(--green)}
+.detail-stock-bar-container{margin-bottom:16px}
+.detail-stock-bar-container h4{font-size:.82rem;font-weight:700;margin-bottom:8px}
+.detail-stock-bar-track{
+  height:12px;border-radius:6px;background:var(--bg-tertiary);
+  overflow:hidden;position:relative;
+}
+.detail-stock-bar-fill{
+  height:100%;border-radius:6px;
+  transition:width var(--transition-slow);
+}
+.detail-stock-bar-label{
+  display:flex;justify-content:space-between;margin-top:4px;
+  font-size:.72rem;color:var(--text-muted);
+}
+@media(max-width:480px){
+  .detail-product-hero{flex-direction:column;align-items:center;text-align:center}
+  .detail-info-grid{grid-template-columns:1fr}
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUTS MODAL
+   ============================================================ */
+.shortcuts-modal-overlay{
+  position:fixed;inset:0;
+  background:var(--modal-overlay);
+  backdrop-filter:blur(6px);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity var(--transition-med);
+}
+.shortcuts-modal-overlay.active{opacity:1;pointer-events:all}
+.shortcuts-modal{
+  background:var(--bg-secondary);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-xl);
+  width:95%;max-width:420px;
+  transform:translateY(20px) scale(.97);
+  transition:transform var(--transition-med);
+}
+.shortcuts-modal-overlay.active .shortcuts-modal{transform:translateY(0) scale(1)}
+.shortcut-list{padding:16px 26px 26px}
+.shortcut-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--border-color);
+}
+.shortcut-item:last-child{border-bottom:none}
+.shortcut-desc{font-size:.85rem;color:var(--text-secondary)}
+.shortcut-keys{display:flex;gap:4px}
+.kbd{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:3px 8px;border-radius:var(--radius-sm);
+  background:var(--bg-tertiary);border:1px solid var(--border-color);
+  font-size:.72rem;font-weight:700;font-family:inherit;
+  color:var(--text-primary);min-width:28px;
+  box-shadow:0 1px 0 var(--border-color);
+}
+
+/* ============================================================
+   TABLE ROW EXPAND
+   ============================================================ */
+.expand-btn{
+  width:28px;height:28px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);
+  transition:all var(--transition-fast);
+  cursor:pointer;
+  background:none;border:none;
+}
+.expand-btn:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.expand-btn svg{
+  width:14px;height:14px;
+  transition:transform var(--transition-fast);
+}
+.expand-btn.expanded svg{transform:rotate(90deg)}
+.expand-row{display:none}
+.expand-row.visible{display:table-row}
+.expand-row td{
+  padding:0 16px 16px 56px;
+  background:var(--bg-tertiary);
+  border-bottom:1px solid var(--border-color);
+}
+.expand-content{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;
+  padding:16px 0 4px;
+  animation:expandIn .3s ease;
+}
+@keyframes expandIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.expand-detail{display:flex;flex-direction:column;gap:2px}
+.expand-detail-label{font-size:.7rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.expand-detail-value{font-size:.84rem;font-weight:500;color:var(--text-primary)}
+@media(max-width:768px){
+  .expand-content{grid-template-columns:1fr}
+  .expand-row td{padding-left:16px}
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print{
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+  body{background:#fff !important;color:#000 !important}
+  .sidebar,.top-header,.mobile-menu-btn,.notif-panel,.toast-container,
+  .modal-overlay,.confirm-overlay,.restock-overlay,.sale-modal-overlay,
+  .detail-modal-overlay,.shortcuts-modal-overlay,
+  .bulk-bar,.pagination,.table-toolbar-right,.actions-cell,
+  .chart-section,.charts-row,.donut-section,.quick-stats-row,
+  .activity-feed,.bottom-grid,.cards-grid,.status-summary,
+  .category-filters,.page-section:not(.active-page),
+  .expand-btn,input[type="checkbox"]{
+    display:none !important;
+  }
+  .main-area{margin-left:0 !important}
+  .content{padding:0 !important}
+  .table-section{
+    border:none !important;
+    box-shadow:none !important;
+  }
+  .table-toolbar{
+    border-bottom:2px solid #000 !important;
+    padding:10px 0 !important;
+  }
+  .table-title{font-size:1.3rem !important}
+  table{min-width:auto !important}
+  th{background:#f0f0f0 !important;color:#000 !important;font-size:.7rem !important}
+  td{font-size:.8rem !important;padding:8px 12px !important;border-bottom:1px solid #ddd !important}
+  .product-thumb{width:30px;height:30px}
+  .status-badge{border:1px solid currentColor !important}
+  .expand-row{display:none !important}
+  @page{margin:1cm;size:landscape}
+}
+</style>
+</head>
+<body>
+<div class="app-layout">
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 32 32" fill="none"><rect x="2" y="6" width="28" height="20" rx="4" fill="#3B82F6" opacity=".15"/><path d="M6 20l5-6 4 4 5-7 6 9" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="10" r="2.5" fill="#60A5FA"><animate attributeName="opacity" values="1;.3;1" dur="2s" repeatCount="indefinite"/></circle></svg>
+      <span>StockPulse</span>
+    </div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" data-page="inventory" onclick="navigate('inventory',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <span class="nav-label">Inventory</span>
+    </a>
+    <a class="nav-item" data-page="additem" onclick="navigate('additem',this);openModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span class="nav-label">Add Item</span>
+    </a>
+    <a class="nav-item" data-page="sales" onclick="navigate('sales',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span class="nav-label">Sales</span>
+    </a>
+    <div class="nav-section-label">Analytics</div>
+    <a class="nav-item" data-page="reports" onclick="navigate('reports',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+      <span class="nav-label">Reports</span>
+    </a>
+    <div class="nav-section-label">System</div>
+    <a class="nav-item" data-page="settings" onclick="navigate('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">A</div>
+    <div class="user-info">
+      <div class="name">Admin</div>
+      <div class="role">Store Manager</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<div class="main-area">
+  <!-- HEADER -->
+  <header class="top-header">
+    <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('mobile-open')" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="search-container">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="search-input" id="globalSearch" placeholder="Search products, SKUs, categories..." oninput="handleSearch(this.value)">
+    </div>
+    <div class="header-right">
+      <span class="header-date" id="headerDate"></span>
+      <button class="icon-btn" onclick="toggleNotifPanel()" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="notifBadge">5</span>
+      </button>
+      <button class="icon-btn" onclick="openShortcutsModal()" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-header">Notifications</div>
+    <div class="notif-item"><span class="notif-dot danger"></span><div><strong>USB-C Hub</strong> is out of stock.<br><small style="color:var(--text-muted)">2 minutes ago</small></div></div>
+    <div class="notif-item"><span class="notif-dot warn"></span><div><strong>Classic Backpack</strong> low stock &mdash; only 5 left.<br><small style="color:var(--text-muted)">15 minutes ago</small></div></div>
+    <div class="notif-item"><span class="notif-dot"></span><div>New sale recorded: <strong>Running Sneakers</strong> x2.<br><small style="color:var(--text-muted)">42 minutes ago</small></div></div>
+    <div class="notif-item"><span class="notif-dot warn"></span><div><strong>Aviator Sunglasses</strong> low stock &mdash; only 8 left.<br><small style="color:var(--text-muted)">1 hour ago</small></div></div>
+    <div class="notif-item"><span class="notif-dot"></span><div>Daily report is ready to download.<br><small style="color:var(--text-muted)">3 hours ago</small></div></div>
+  </div>
+
+  <div class="content">
+    <!-- ========== DASHBOARD PAGE ========== -->
+    <div class="page-section active-page" id="page-dashboard">
+      <!-- STAT CARDS -->
+      <div class="cards-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Total Products</span>
+            <span class="stat-value" data-count="1247">0</span>
+            <span class="stat-badge up"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1L9 6H1z" fill="currentColor"/></svg> +3.2%</span>
+          </div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Total Revenue</span>
+            <span class="stat-value" data-count="48592" data-prefix="$" data-decimals="2">$0</span>
+            <span class="stat-badge up"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1L9 6H1z" fill="currentColor"/></svg> +12.5%</span>
+          </div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Items Sold Today</span>
+            <span class="stat-value" data-count="84">0</span>
+            <span class="stat-badge up"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1L9 6H1z" fill="currentColor"/></svg> +8.1%</span>
+          </div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Low Stock Alerts</span>
+            <span class="stat-value" data-count="13" id="lowStockCount">0</span>
+            <span class="stat-badge warn"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1l4.33 7.5H.67z" fill="currentColor"/></svg> Needs attention</span>
+          </div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        </div>
+      </div>
+      <!-- CHARTS ROW -->
+      <div class="charts-row">
+        <div class="chart-section" style="margin-bottom:0">
+          <div class="chart-header">
+            <span class="chart-title">Revenue This Week</span>
+            <div class="chart-controls">
+              <button class="chart-btn active">Week</button>
+              <button class="chart-btn">Month</button>
+              <button class="chart-btn">Year</button>
+            </div>
+          </div>
+          <div class="chart-area">
+            <div class="chart-grid">
+              <div class="chart-grid-line"><span>$10k</span></div>
+              <div class="chart-grid-line"><span>$8k</span></div>
+              <div class="chart-grid-line"><span>$6k</span></div>
+              <div class="chart-grid-line"><span>$4k</span></div>
+              <div class="chart-grid-line"><span>$2k</span></div>
+              <div class="chart-grid-line"><span>$0</span></div>
+            </div>
+            <div class="chart-bars" id="chartBars"></div>
+          </div>
+        </div>
+        <!-- DONUT CHART -->
+        <div class="donut-section">
+          <div class="chart-header">
+            <span class="chart-title">Categories Breakdown</span>
+          </div>
+          <div class="donut-chart-area" id="donutChartArea">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK STATS ROW -->
+      <div class="quick-stats-row" id="quickStatsRow">
+        <div class="quick-stat">
+          <div class="quick-stat-icon" style="background:var(--blue-light);color:var(--blue)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="quick-stat-info">
+            <span class="quick-stat-label">Avg. Order Value</span>
+            <span class="quick-stat-value">$42.50</span>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-icon" style="background:var(--green-light);color:var(--green)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="quick-stat-info">
+            <span class="quick-stat-label">Return Rate</span>
+            <span class="quick-stat-value" style="color:var(--green)">2.3%</span>
+            <span class="quick-stat-sub" style="color:var(--green)">Below target</span>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-icon" style="background:var(--purple-light);color:var(--purple)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div class="quick-stat-info">
+            <span class="quick-stat-label">Top Selling</span>
+            <span class="quick-stat-value" style="font-size:.92rem">Wireless Headphones</span>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <div class="quick-stat-icon" style="background:var(--orange-light);color:var(--orange)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          </div>
+          <div class="quick-stat-info">
+            <span class="quick-stat-label">Stock Turnover</span>
+            <span class="quick-stat-value">4.2x</span>
+            <span class="quick-stat-sub" style="color:var(--text-muted)">per quarter</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY FEED -->
+      <div class="activity-feed">
+        <div class="panel-header">
+          <span class="panel-title">Recent Activity</span>
+          <span style="font-size:.72rem;color:var(--text-muted);font-weight:500">Live</span>
+        </div>
+        <div class="activity-list" id="activityFeed">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== INVENTORY PAGE ========== -->
+    <div class="page-section" id="page-inventory">
+      <!-- Shown in inventory page only — same table -->
+    </div>
+
+    <!-- ========== SALES PAGE ========== -->
+    <div class="page-section" id="page-sales">
+    </div>
+
+    <!-- ========== REPORTS PAGE ========== -->
+    <div class="page-section" id="page-reports">
+      <div class="chart-section" style="margin-bottom:20px">
+        <div class="chart-header"><span class="chart-title">Monthly Revenue Trend</span></div>
+        <p style="color:var(--text-secondary);font-size:.88rem;padding:20px 0">Reports and advanced analytics will appear here. Use the Export CSV button to download current inventory data.</p>
+        <button class="btn btn-primary" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Inventory CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS PAGE ========== -->
+    <div class="page-section" id="page-settings">
+      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:20px">Settings</h2>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>General</h3>
+          <div class="setting-row">
+            <div><div class="setting-label">Dark Mode</div><div class="setting-desc">Switch between light and dark theme</div></div>
+            <div class="toggle" id="settingDarkMode" onclick="toggleTheme();this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Email Notifications</div><div class="setting-desc">Receive alerts via email</div></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Low Stock Threshold</div><div class="setting-desc">Alert when quantity drops below</div></div>
+            <input type="number" class="form-input" style="width:80px" value="10">
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3>Store Information</h3>
+          <div class="form-group"><label class="form-label">Store Name</label><input class="form-input" value="StockPulse Demo Store"></div>
+          <div class="form-group"><label class="form-label">Currency</label><select class="form-select"><option>USD ($)</option><option>EUR</option><option>GBP</option></select></div>
+          <div class="form-group"><label class="form-label">Timezone</label><select class="form-select"><option>UTC-5 (EST)</option><option>UTC+0 (GMT)</option><option>UTC+1 (CET)</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SHARED: TABLE + SALES LOG + ALERTS (visible on dashboard & inventory) ========== -->
+    <div id="sharedContent">
+      <!-- INVENTORY TABLE -->
+      <div class="table-section" id="inventoryTableSection">
+        <!-- STATUS SUMMARY BAR -->
+        <div class="status-summary" id="statusSummary">
+          <!-- Rendered by JS -->
+        </div>
+        <div class="table-toolbar">
+          <div class="table-toolbar-left">
+            <span class="table-title">Inventory</span>
+            <div class="category-filters" id="categoryFilters">
+              <button class="cat-btn active" data-cat="All" onclick="filterCategory('All',this)">All</button>
+              <button class="cat-btn" data-cat="Electronics" onclick="filterCategory('Electronics',this)">Electronics</button>
+              <button class="cat-btn" data-cat="Clothing" onclick="filterCategory('Clothing',this)">Clothing</button>
+              <button class="cat-btn" data-cat="Accessories" onclick="filterCategory('Accessories',this)">Accessories</button>
+              <button class="cat-btn" data-cat="Footwear" onclick="filterCategory('Footwear',this)">Footwear</button>
+            </div>
+          </div>
+          <div class="table-toolbar-right">
+            <button class="btn btn-outline" onclick="window.print()" title="Print inventory">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print
+            </button>
+            <button class="btn btn-outline" onclick="exportCSV()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button class="btn btn-primary" onclick="openModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Product
+            </button>
+          </div>
+        </div>
+        <div class="bulk-bar" id="bulkBar">
+          <span class="bulk-count" id="bulkCount">0 selected</span>
+          <button class="btn btn-danger btn-sm" onclick="bulkDelete()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            Delete Selected
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">Export Selected</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
+                <th>Product</th>
+                <th class="sortable" onclick="sortTable('sku')">SKU <span class="sort-arrow">&#9650;</span></th>
+                <th class="sortable" onclick="sortTable('category')">Category <span class="sort-arrow">&#9650;</span></th>
+                <th class="sortable" onclick="sortTable('quantity')">Qty <span class="sort-arrow">&#9650;</span></th>
+                <th class="sortable" onclick="sortTable('price')">Price <span class="sort-arrow">&#9650;</span></th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th style="width:36px"></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+      <!-- BOTTOM GRID: Sales Log + Low Stock -->
+      <div class="bottom-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Recent Sales</span>
+            <button class="btn btn-primary btn-sm" onclick="openSaleModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Record Sale
+            </button>
+          </div>
+          <div id="salesLog"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Low Stock Alerts</span>
+            <span class="stat-badge warn" id="lowStockBadge">0 items</span>
+          </div>
+          <div id="lowStockAlerts"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+<!-- Add/Edit Product Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Add New Product</span>
+      <button class="modal-close" onclick="closeModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editIndex" value="-1">
+      <div class="form-group">
+        <label class="form-label">Product Name *</label>
+        <input type="text" class="form-input" id="fieldName" placeholder="e.g. Wireless Earbuds">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">SKU *</label>
+          <input type="text" class="form-input" id="fieldSKU" placeholder="Auto-generated">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-select" id="fieldCategory">
+            <option value="">Select category</option>
+            <option>Electronics</option>
+            <option>Clothing</option>
+            <option>Accessories</option>
+            <option>Footwear</option>
+            <option>Office Supplies</option>
+            <option>Food</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Quantity *</label>
+          <input type="number" class="form-input" id="fieldQty" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price ($) *</label>
+          <input type="number" class="form-input" id="fieldPrice" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="fieldDesc" placeholder="Optional product description"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="fieldStatus">
+          <option value="In Stock">In Stock</option>
+          <option value="Low Stock">Low Stock</option>
+          <option value="Out of Stock">Out of Stock</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation -->
+<div class="confirm-overlay" id="confirmDelete">
+  <div class="confirm-box">
+    <div class="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+    <div class="confirm-title">Delete Product?</div>
+    <div class="confirm-text">Are you sure? This action cannot be undone.</div>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDeleteAction()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Restock Modal -->
+<div class="restock-overlay" id="restockModal">
+  <div class="confirm-box" style="text-align:left">
+    <div class="modal-title" style="margin-bottom:16px">Restock Product</div>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:4px" id="restockProductName"></p>
+    <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:16px" id="restockCurrentQty"></p>
+    <div class="form-group">
+      <label class="form-label">Add Quantity</label>
+      <input type="number" class="form-input" id="restockQty" min="1" value="25" placeholder="Quantity to add">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-outline" onclick="closeRestock()">Cancel</button>
+      <button class="btn btn-success" onclick="confirmRestock()">Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Record Sale Modal -->
+<div class="sale-modal-overlay" id="saleModal">
+  <div class="confirm-box" style="text-align:left;max-width:440px">
+    <div class="modal-title" style="margin-bottom:16px">Record a Sale</div>
+    <div class="form-group">
+      <label class="form-label">Product</label>
+      <select class="form-select" id="saleProduct" onchange="updateSaleTotal()"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <input type="number" class="form-input" id="saleQty" min="1" value="1" oninput="updateSaleTotal()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total</label>
+        <input type="text" class="form-input" id="saleTotal" readonly style="font-weight:700;color:var(--green)">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-outline" onclick="closeSaleModal()">Cancel</button>
+      <button class="btn btn-success" onclick="confirmSale()">Record Sale</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Details Modal -->
+<div class="detail-modal-overlay" id="detailModal">
+  <div class="detail-modal">
+    <div class="detail-modal-header">
+      <span class="modal-title">Product Details</span>
+      <button class="modal-close" onclick="closeDetailModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="detail-modal-body" id="detailModalBody">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Keyboard Shortcuts Modal -->
+<div class="shortcuts-modal-overlay" id="shortcutsModal">
+  <div class="shortcuts-modal">
+    <div class="modal-header" style="padding-bottom:0">
+      <span class="modal-title">Keyboard Shortcuts</span>
+      <button class="modal-close" onclick="closeShortcutsModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="shortcut-list">
+      <div class="shortcut-item">
+        <span class="shortcut-desc">Add new product</span>
+        <div class="shortcut-keys"><span class="kbd">Ctrl</span><span class="kbd">N</span></div>
+      </div>
+      <div class="shortcut-item">
+        <span class="shortcut-desc">Focus search</span>
+        <div class="shortcut-keys"><span class="kbd">Ctrl</span><span class="kbd">F</span></div>
+      </div>
+      <div class="shortcut-item">
+        <span class="shortcut-desc">Export CSV</span>
+        <div class="shortcut-keys"><span class="kbd">Ctrl</span><span class="kbd">E</span></div>
+      </div>
+      <div class="shortcut-item">
+        <span class="shortcut-desc">Close any modal</span>
+        <div class="shortcut-keys"><span class="kbd">Esc</span></div>
+      </div>
+      <div class="shortcut-item">
+        <span class="shortcut-desc">Show this help</span>
+        <div class="shortcut-keys"><span class="kbd">?</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const IMAGES = [
+  'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=60&h=60&fit=crop',
+  'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=60&h=60&fit=crop',
+];
+
+let inventory = [
+  {name:'Premium Watch',sku:'WCH-001',category:'Accessories',quantity:45,price:299.99,img:IMAGES[0],desc:'Elegant stainless steel watch'},
+  {name:'Wireless Headphones',sku:'ELC-002',category:'Electronics',quantity:120,price:89.99,img:IMAGES[1],desc:'Noise-cancelling bluetooth'},
+  {name:'DSLR Camera',sku:'ELC-003',category:'Electronics',quantity:18,price:1249.00,img:IMAGES[2],desc:'24MP professional camera'},
+  {name:'Running Sneakers',sku:'FTW-004',category:'Footwear',quantity:62,price:129.99,img:IMAGES[3],desc:'Lightweight performance shoes'},
+  {name:'Classic Backpack',sku:'ACC-005',category:'Accessories',quantity:5,price:79.99,img:IMAGES[4],desc:'Durable canvas backpack'},
+  {name:'Cotton T-Shirt',sku:'CLT-006',category:'Clothing',quantity:200,price:24.99,img:IMAGES[5],desc:'100% organic cotton'},
+  {name:'Leather Messenger Bag',sku:'ACC-007',category:'Accessories',quantity:33,price:149.99,img:IMAGES[6],desc:'Genuine leather satchel'},
+  {name:'Pullover Hoodie',sku:'CLT-008',category:'Clothing',quantity:88,price:54.99,img:IMAGES[7],desc:'Fleece-lined comfort'},
+  {name:'Chronograph Watch',sku:'ACC-009',category:'Accessories',quantity:8,price:349.99,img:IMAGES[8],desc:'Multi-function dial'},
+  {name:'Casual Button Shirt',sku:'CLT-010',category:'Clothing',quantity:0,price:44.99,img:IMAGES[9],desc:'Slim fit casual shirt'},
+  {name:'Sport Sneakers',sku:'FTW-011',category:'Footwear',quantity:75,price:109.99,img:IMAGES[10],desc:'Breathable mesh upper'},
+  {name:'Designer Perfume',sku:'ACC-012',category:'Accessories',quantity:7,price:189.99,img:IMAGES[11],desc:'50ml eau de parfum'},
+  {name:'Aviator Sunglasses',sku:'ACC-013',category:'Accessories',quantity:8,price:159.99,img:IMAGES[12],desc:'UV400 polarized lenses'},
+  {name:'High-Top Sneakers',sku:'FTW-014',category:'Footwear',quantity:42,price:139.99,img:IMAGES[13],desc:'Retro basketball style'},
+  {name:'Polarized Sunglasses',sku:'ACC-015',category:'Accessories',quantity:3,price:119.99,img:IMAGES[14],desc:'Acetate frame'},
+  {name:'USB-C Hub',sku:'ELC-016',category:'Electronics',quantity:0,price:59.99,img:IMAGES[1],desc:'7-in-1 adapter'},
+  {name:'Wool Overcoat',sku:'CLT-017',category:'Clothing',quantity:14,price:249.99,img:IMAGES[7],desc:'Italian wool blend'},
+];
+
+let salesLog = [
+  {time:'10:42 AM',product:'Running Sneakers',qty:2,price:129.99},
+  {time:'09:15 AM',product:'Wireless Headphones',qty:3,price:89.99},
+  {time:'08:55 AM',product:'Cotton T-Shirt',qty:5,price:24.99},
+  {time:'Yesterday',product:'Premium Watch',qty:1,price:299.99},
+  {time:'Yesterday',product:'DSLR Camera',qty:1,price:1249.00},
+  {time:'Yesterday',product:'Pullover Hoodie',qty:4,price:54.99},
+];
+
+let currentPage = 1;
+const PAGE_SIZE = 8;
+let currentSort = {key:'',dir:'asc'};
+let currentCategory = 'All';
+let searchTerm = '';
+let deleteTarget = -1;
+let restockTarget = -1;
+let selectedRows = new Set();
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  const st = document.getElementById('settingDarkMode');
+  if(st) st.classList.toggle('on',next==='dark');
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function navigate(page, el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active-page'));
+  const target = document.getElementById('page-'+page);
+  if(target) target.classList.add('active-page');
+  const shared = document.getElementById('sharedContent');
+  if(page==='dashboard'||page==='inventory'){
+    shared.style.display='block';
+  } else if(page==='sales'){
+    shared.style.display='block';
+  } else {
+    shared.style.display='none';
+  }
+  // Close mobile menu
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+/* ============================================================
+   DATE
+   ============================================================ */
+function setDate(){
+  const d = new Date();
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('headerDate').textContent = d.toLocaleDateString('en-US',opts);
+}
+
+/* ============================================================
+   ANIMATED COUNTERS
+   ============================================================ */
+function animateCounters(){
+  document.querySelectorAll('.stat-value[data-count]').forEach(el=>{
+    const target = parseFloat(el.dataset.count);
+    const prefix = el.dataset.prefix||'';
+    const decimals = parseInt(el.dataset.decimals)||0;
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now){
+      const elapsed = now - start;
+      const progress = Math.min(elapsed/duration,1);
+      const eased = 1 - Math.pow(1-progress,3);
+      let val = eased * target;
+      if(decimals>0){
+        el.textContent = prefix + val.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+      } else {
+        el.textContent = prefix + Math.round(val).toLocaleString('en-US');
+      }
+      if(progress<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+/* ============================================================
+   CHART
+   ============================================================ */
+function renderChart(){
+  const data = [
+    {day:'Mon',val:5200},{day:'Tue',val:4800},{day:'Wed',val:6100},
+    {day:'Thu',val:5500},{day:'Fri',val:7200},{day:'Sat',val:8900},{day:'Sun',val:6300}
+  ];
+  const max = 10000;
+  const container = document.getElementById('chartBars');
+  container.innerHTML = '';
+  data.forEach((d,i)=>{
+    const pct = (d.val/max)*100;
+    const wrapper = document.createElement('div');
+    wrapper.className='chart-bar-wrapper';
+    wrapper.innerHTML=`
+      <div class="chart-bar" style="height:${pct}%;animation:barGrow .6s ease ${i*80}ms both">
+        <div class="chart-bar-tooltip">$${(d.val/1000).toFixed(1)}k</div>
+      </div>
+      <span class="chart-bar-label">${d.day}</span>`;
+    container.appendChild(wrapper);
+  });
+  // Inject bar animation
+  if(!document.getElementById('barAnim')){
+    const style=document.createElement('style');
+    style.id='barAnim';
+    style.textContent='@keyframes barGrow{from{height:0;opacity:0}to{opacity:1}}';
+    document.head.appendChild(style);
+  }
+  // Chart button toggle
+  document.querySelectorAll('.chart-btn').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.chart-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+}
+
+/* ============================================================
+   INVENTORY TABLE
+   ============================================================ */
+function getStatus(qty){
+  if(qty<=0) return 'Out of Stock';
+  if(qty<10) return 'Low Stock';
+  return 'In Stock';
+}
+function statusClass(s){
+  if(s==='In Stock') return 'status-instock';
+  if(s==='Low Stock') return 'status-lowstock';
+  return 'status-outofstock';
+}
+
+function getFilteredInventory(){
+  let items = [...inventory];
+  if(currentCategory!=='All'){
+    items = items.filter(it=>it.category===currentCategory);
+  }
+  if(searchTerm){
+    const q = searchTerm.toLowerCase();
+    items = items.filter(it=>
+      it.name.toLowerCase().includes(q)||
+      it.sku.toLowerCase().includes(q)||
+      it.category.toLowerCase().includes(q)
+    );
+  }
+  if(currentSort.key){
+    items.sort((a,b)=>{
+      let va=a[currentSort.key], vb=b[currentSort.key];
+      if(typeof va==='string') va=va.toLowerCase();
+      if(typeof vb==='string') vb=vb.toLowerCase();
+      if(va<vb) return currentSort.dir==='asc'?-1:1;
+      if(va>vb) return currentSort.dir==='asc'?1:-1;
+      return 0;
+    });
+  }
+  return items;
+}
+
+let expandedRows = new Set();
+
+function renderTable(){
+  const filtered = getFilteredInventory();
+  const totalPages = Math.max(1, Math.ceil(filtered.length/PAGE_SIZE));
+  if(currentPage>totalPages) currentPage=totalPages;
+  const start = (currentPage-1)*PAGE_SIZE;
+  const pageItems = filtered.slice(start, start+PAGE_SIZE);
+
+  const tbody = document.getElementById('inventoryBody');
+  tbody.innerHTML='';
+  const suppliers = ['SupplyChain Co.','Global Imports Ltd.','Prime Distributors','WholeSale Direct','FastShip Inc.'];
+  const lastUpdated = ['2 hours ago','Yesterday','3 days ago','1 week ago','2 weeks ago'];
+  pageItems.forEach(item=>{
+    const idx = inventory.indexOf(item);
+    const status = getStatus(item.quantity);
+    const checked = selectedRows.has(idx)?'checked':'';
+    const isExpanded = expandedRows.has(idx);
+    const supplierName = suppliers[idx % suppliers.length];
+    const lastUpd = lastUpdated[idx % lastUpdated.length];
+    const description = item.desc || 'No description available';
+    tbody.innerHTML+=`
+      <tr>
+        <td><input type="checkbox" data-idx="${idx}" ${checked} onchange="toggleRow(${idx},this.checked)"></td>
+        <td>
+          <div class="product-cell">
+            <img src="${item.img}" alt="${item.name}" class="product-thumb" loading="lazy" onerror="this.style.background='var(--bg-tertiary)';this.alt='IMG'">
+            <div>
+              <div class="product-name" style="cursor:pointer;color:var(--blue)" onclick="openDetailModal(${idx})" title="View details">${item.name}</div>
+              <div class="product-sku">${item.sku}</div>
+            </div>
+          </div>
+        </td>
+        <td>${item.sku}</td>
+        <td>${item.category}</td>
+        <td style="font-weight:600">${item.quantity}</td>
+        <td>$${item.price.toFixed(2)}</td>
+        <td><span class="status-badge ${statusClass(status)}">${status}</span></td>
+        <td>
+          <div class="actions-cell">
+            <button class="action-btn" onclick="editProduct(${idx})" title="Edit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="action-btn delete" onclick="deleteProduct(${idx})" title="Delete">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </button>
+          </div>
+        </td>
+        <td>
+          <button class="expand-btn ${isExpanded?'expanded':''}" onclick="toggleExpandRow(${idx})" title="Expand details">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </td>
+      </tr>
+      <tr class="expand-row ${isExpanded?'visible':''}" id="expand-${idx}">
+        <td colspan="9">
+          <div class="expand-content">
+            <div class="expand-detail">
+              <span class="expand-detail-label">Description</span>
+              <span class="expand-detail-value">${description}</span>
+            </div>
+            <div class="expand-detail">
+              <span class="expand-detail-label">Supplier</span>
+              <span class="expand-detail-value">${supplierName}</span>
+            </div>
+            <div class="expand-detail">
+              <span class="expand-detail-label">Last Updated</span>
+              <span class="expand-detail-value">${lastUpd}</span>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  });
+
+  // Pagination
+  const pag = document.getElementById('pagination');
+  const showStart = filtered.length?start+1:0;
+  const showEnd = Math.min(start+PAGE_SIZE, filtered.length);
+  let pagHTML = `<span class="page-info">Showing ${showStart}-${showEnd} of ${filtered.length} products</span><div class="page-btns">`;
+  pagHTML+=`<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>&#8592;</button>`;
+  for(let i=1;i<=totalPages;i++){
+    pagHTML+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  pagHTML+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages?'disabled':''}>&#8594;</button></div>`;
+  pag.innerHTML=pagHTML;
+
+  updateBulkBar();
+  updateSelectAllCheckbox();
+  renderStatusBar();
+}
+
+function goPage(p){
+  const filtered = getFilteredInventory();
+  const totalPages = Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+  if(p<1||p>totalPages) return;
+  currentPage=p;
+  renderTable();
+}
+
+function sortTable(key){
+  if(currentSort.key===key){
+    currentSort.dir=currentSort.dir==='asc'?'desc':'asc';
+  } else {
+    currentSort={key,dir:'asc'};
+  }
+  // Update header arrows
+  document.querySelectorAll('th.sortable').forEach(th=>{
+    th.classList.remove('sort-active');
+    const arrow = th.querySelector('.sort-arrow');
+    if(arrow) arrow.innerHTML='&#9650;';
+  });
+  const activeTh = document.querySelector(`th[onclick="sortTable('${key}')"]`);
+  if(activeTh){
+    activeTh.classList.add('sort-active');
+    const arrow = activeTh.querySelector('.sort-arrow');
+    if(arrow) arrow.innerHTML = currentSort.dir==='asc'?'&#9650;':'&#9660;';
+  }
+  currentPage=1;
+  renderTable();
+}
+
+function filterCategory(cat, btn){
+  currentCategory=cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  currentPage=1;
+  selectedRows.clear();
+  renderTable();
+}
+
+function handleSearch(val){
+  searchTerm=val;
+  currentPage=1;
+  selectedRows.clear();
+  renderTable();
+}
+
+/* Checkboxes */
+function toggleRow(idx, checked){
+  if(checked) selectedRows.add(idx);
+  else selectedRows.delete(idx);
+  updateBulkBar();
+  updateSelectAllCheckbox();
+}
+function toggleSelectAll(cb){
+  const filtered = getFilteredInventory();
+  const start = (currentPage-1)*PAGE_SIZE;
+  const pageItems = filtered.slice(start,start+PAGE_SIZE);
+  pageItems.forEach(item=>{
+    const idx=inventory.indexOf(item);
+    if(cb.checked) selectedRows.add(idx);
+    else selectedRows.delete(idx);
+  });
+  renderTable();
+}
+function updateSelectAllCheckbox(){
+  const cb=document.getElementById('selectAll');
+  const filtered=getFilteredInventory();
+  const start=(currentPage-1)*PAGE_SIZE;
+  const pageItems=filtered.slice(start,start+PAGE_SIZE);
+  if(pageItems.length===0){cb.checked=false;return;}
+  cb.checked=pageItems.every(item=>selectedRows.has(inventory.indexOf(item)));
+}
+function updateBulkBar(){
+  const bar=document.getElementById('bulkBar');
+  const count=selectedRows.size;
+  if(count>0){
+    bar.classList.add('visible');
+    document.getElementById('bulkCount').textContent=count+' selected';
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+function bulkDelete(){
+  if(selectedRows.size===0) return;
+  deleteTarget='bulk';
+  document.getElementById('confirmDelete').classList.add('active');
+}
+
+/* ============================================================
+   MODAL (Add/Edit)
+   ============================================================ */
+function generateSKU(){
+  const cats = {Electronics:'ELC',Clothing:'CLT',Accessories:'ACC',Footwear:'FTW','Office Supplies':'OFS',Food:'FD'};
+  const cat = document.getElementById('fieldCategory').value;
+  const prefix = cats[cat]||'GEN';
+  const num = String(inventory.length+1).padStart(3,'0');
+  return prefix+'-'+num;
+}
+
+function openModal(idx){
+  const modal = document.getElementById('productModal');
+  if(typeof idx==='number'){
+    // Edit mode
+    const item = inventory[idx];
+    document.getElementById('modalTitle').textContent='Edit Product';
+    document.getElementById('modalSaveBtn').textContent='Update Product';
+    document.getElementById('editIndex').value=idx;
+    document.getElementById('fieldName').value=item.name;
+    document.getElementById('fieldSKU').value=item.sku;
+    document.getElementById('fieldCategory').value=item.category;
+    document.getElementById('fieldQty').value=item.quantity;
+    document.getElementById('fieldPrice').value=item.price;
+    document.getElementById('fieldDesc').value=item.desc||'';
+    document.getElementById('fieldStatus').value=getStatus(item.quantity);
+  } else {
+    // Add mode
+    document.getElementById('modalTitle').textContent='Add New Product';
+    document.getElementById('modalSaveBtn').textContent='Save Product';
+    document.getElementById('editIndex').value=-1;
+    document.getElementById('fieldName').value='';
+    document.getElementById('fieldSKU').value=generateSKU();
+    document.getElementById('fieldCategory').value='';
+    document.getElementById('fieldQty').value='';
+    document.getElementById('fieldPrice').value='';
+    document.getElementById('fieldDesc').value='';
+    document.getElementById('fieldStatus').value='In Stock';
+  }
+  clearFormErrors();
+  modal.classList.add('active');
+}
+
+function closeModal(){
+  document.getElementById('productModal').classList.remove('active');
+}
+
+function clearFormErrors(){
+  document.querySelectorAll('.form-input.error,.form-select.error').forEach(el=>el.classList.remove('error'));
+}
+
+function saveProduct(){
+  clearFormErrors();
+  const name=document.getElementById('fieldName').value.trim();
+  const sku=document.getElementById('fieldSKU').value.trim();
+  const cat=document.getElementById('fieldCategory').value;
+  const qty=parseInt(document.getElementById('fieldQty').value);
+  const price=parseFloat(document.getElementById('fieldPrice').value);
+  const desc=document.getElementById('fieldDesc').value.trim();
+  let valid=true;
+
+  if(!name){document.getElementById('fieldName').classList.add('error');valid=false}
+  if(!sku){document.getElementById('fieldSKU').classList.add('error');valid=false}
+  if(!cat){document.getElementById('fieldCategory').classList.add('error');valid=false}
+  if(isNaN(qty)||qty<0){document.getElementById('fieldQty').classList.add('error');valid=false}
+  if(isNaN(price)||price<0){document.getElementById('fieldPrice').classList.add('error');valid=false}
+  if(!valid) return;
+
+  const editIdx = parseInt(document.getElementById('editIndex').value);
+  if(editIdx>=0){
+    // Update
+    inventory[editIdx] = {...inventory[editIdx],name,sku,category:cat,quantity:qty,price,desc};
+    showToast('Product updated successfully','success');
+  } else {
+    // Add
+    const img = IMAGES[inventory.length % IMAGES.length];
+    inventory.push({name,sku,category:cat,quantity:qty,price,desc,img});
+    showToast('Product added successfully','success');
+  }
+  closeModal();
+  renderTable();
+  renderLowStock();
+  updateDashboardCounts();
+}
+
+function editProduct(idx){
+  openModal(idx);
+}
+
+/* ============================================================
+   DELETE
+   ============================================================ */
+function deleteProduct(idx){
+  deleteTarget=idx;
+  document.getElementById('confirmDelete').classList.add('active');
+}
+function closeConfirm(){
+  document.getElementById('confirmDelete').classList.remove('active');
+  deleteTarget=-1;
+}
+function confirmDeleteAction(){
+  if(deleteTarget==='bulk'){
+    // Delete selected (descending to keep indices valid)
+    const indices=[...selectedRows].sort((a,b)=>b-a);
+    indices.forEach(i=>inventory.splice(i,1));
+    selectedRows.clear();
+    showToast(indices.length+' products deleted','info');
+  } else if(deleteTarget>=0){
+    inventory.splice(deleteTarget,1);
+    selectedRows.delete(deleteTarget);
+    showToast('Product deleted','info');
+  }
+  closeConfirm();
+  renderTable();
+  renderLowStock();
+  updateDashboardCounts();
+}
+
+/* ============================================================
+   SALES LOG
+   ============================================================ */
+function renderSalesLog(){
+  const el=document.getElementById('salesLog');
+  el.innerHTML='';
+  salesLog.slice(0,6).forEach(s=>{
+    el.innerHTML+=`
+      <div class="sale-row">
+        <div class="sale-info">
+          <span class="sale-product">${s.product}</span>
+          <span class="sale-time">${s.time}</span>
+        </div>
+        <div class="sale-details">
+          <div class="sale-qty">x${s.qty}</div>
+          <div class="sale-revenue">+$${(s.qty*s.price).toFixed(2)}</div>
+        </div>
+      </div>`;
+  });
+}
+
+function openSaleModal(){
+  const sel=document.getElementById('saleProduct');
+  sel.innerHTML='';
+  inventory.filter(it=>it.quantity>0).forEach((it,i)=>{
+    const idx=inventory.indexOf(it);
+    sel.innerHTML+=`<option value="${idx}">${it.name} ($${it.price.toFixed(2)}) — ${it.quantity} in stock</option>`;
+  });
+  updateSaleTotal();
+  document.getElementById('saleModal').classList.add('active');
+}
+function closeSaleModal(){
+  document.getElementById('saleModal').classList.remove('active');
+}
+function updateSaleTotal(){
+  const idx=parseInt(document.getElementById('saleProduct').value);
+  const qty=parseInt(document.getElementById('saleQty').value)||1;
+  if(isNaN(idx)||!inventory[idx]){document.getElementById('saleTotal').value='$0.00';return;}
+  document.getElementById('saleTotal').value='$'+(inventory[idx].price*qty).toFixed(2);
+}
+function confirmSale(){
+  const idx=parseInt(document.getElementById('saleProduct').value);
+  const qty=parseInt(document.getElementById('saleQty').value)||1;
+  if(isNaN(idx)||!inventory[idx]) return;
+  const item=inventory[idx];
+  if(qty>item.quantity){showToast('Not enough stock!','error');return;}
+  item.quantity-=qty;
+  const now=new Date();
+  const timeStr=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  salesLog.unshift({time:timeStr,product:item.name,qty,price:item.price});
+  closeSaleModal();
+  renderTable();
+  renderSalesLog();
+  renderLowStock();
+  updateDashboardCounts();
+  showToast(`Sale recorded: ${item.name} x${qty}`,'success');
+}
+
+/* ============================================================
+   LOW STOCK ALERTS
+   ============================================================ */
+function renderLowStock(){
+  const el=document.getElementById('lowStockAlerts');
+  const low=inventory.filter(it=>it.quantity>0&&it.quantity<10);
+  const out=inventory.filter(it=>it.quantity<=0);
+  const all=[...out,...low];
+  el.innerHTML='';
+  if(all.length===0){
+    el.innerHTML='<div style="padding:20px 22px;color:var(--text-muted);font-size:.85rem">All items are well stocked!</div>';
+  }
+  all.forEach(item=>{
+    const idx=inventory.indexOf(item);
+    const isOut=item.quantity<=0;
+    el.innerHTML+=`
+      <div class="alert-item">
+        <div class="alert-info">
+          <span class="alert-name">${item.name}</span>
+          <span class="alert-qty">${isOut?'Out of Stock':'Only '+item.quantity+' left'}</span>
+        </div>
+        <button class="btn btn-success btn-sm" onclick="openRestock(${idx})">Restock</button>
+      </div>`;
+  });
+  document.getElementById('lowStockBadge').textContent=all.length+' items';
+  const lsc=document.getElementById('lowStockCount');
+  if(lsc) lsc.textContent=all.length;
+}
+
+function openRestock(idx){
+  restockTarget=idx;
+  const item=inventory[idx];
+  document.getElementById('restockProductName').textContent=item.name;
+  document.getElementById('restockCurrentQty').textContent='Current stock: '+item.quantity;
+  document.getElementById('restockQty').value=25;
+  document.getElementById('restockModal').classList.add('active');
+}
+function closeRestock(){
+  document.getElementById('restockModal').classList.remove('active');
+  restockTarget=-1;
+}
+function confirmRestock(){
+  if(restockTarget<0) return;
+  const addQty=parseInt(document.getElementById('restockQty').value)||0;
+  if(addQty<=0){showToast('Enter a valid quantity','error');return;}
+  inventory[restockTarget].quantity+=addQty;
+  closeRestock();
+  renderTable();
+  renderLowStock();
+  updateDashboardCounts();
+  showToast('Restocked '+inventory[restockTarget].name+' (+'+addQty+')','success');
+}
+
+/* ============================================================
+   EXPORT CSV
+   ============================================================ */
+function exportCSV(){
+  let csv='Name,SKU,Category,Quantity,Price,Status\n';
+  const items = selectedRows.size>0 ? [...selectedRows].map(i=>inventory[i]).filter(Boolean) : inventory;
+  items.forEach(it=>{
+    csv+=`"${it.name}","${it.sku}","${it.category}",${it.quantity},${it.price.toFixed(2)},"${getStatus(it.quantity)}"\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='stockpulse_inventory.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('CSV downloaded ('+items.length+' items)','success');
+}
+
+/* ============================================================
+   DASHBOARD COUNTS UPDATE
+   ============================================================ */
+function updateDashboardCounts(){
+  const totalProducts = document.querySelector('.stat-card:nth-child(1) .stat-value');
+  if(totalProducts) totalProducts.textContent = inventory.length.toLocaleString('en-US');
+  // Revenue from sales log
+  let totalRev=0;
+  salesLog.forEach(s=>totalRev+=s.qty*s.price);
+  const revEl = document.querySelector('.stat-card:nth-child(2) .stat-value');
+  if(revEl) revEl.textContent = '$'+totalRev.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  // Items sold
+  let totalSold=0;
+  salesLog.forEach(s=>totalSold+=s.qty);
+  const soldEl = document.querySelector('.stat-card:nth-child(3) .stat-value');
+  if(soldEl) soldEl.textContent = totalSold.toLocaleString('en-US');
+}
+
+/* ============================================================
+   NOTIFICATION PANEL
+   ============================================================ */
+function toggleNotifPanel(){
+  document.getElementById('notifPanel').classList.toggle('open');
+}
+// Close on click outside
+document.addEventListener('click',function(e){
+  const panel=document.getElementById('notifPanel');
+  if(panel.classList.contains('open')&&!panel.contains(e.target)&&!e.target.closest('.icon-btn')){
+    panel.classList.remove('open');
+  }
+});
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg, type='info'){
+  const container=document.getElementById('toastContainer');
+  const toast=document.createElement('div');
+  toast.className='toast '+type;
+  toast.textContent=msg;
+  container.appendChild(toast);
+  setTimeout(()=>{if(toast.parentNode)toast.parentNode.removeChild(toast)},3000);
+}
+
+/* ============================================================
+   EXPAND ROWS
+   ============================================================ */
+function toggleExpandRow(idx){
+  if(expandedRows.has(idx)){
+    expandedRows.delete(idx);
+  } else {
+    expandedRows.add(idx);
+  }
+  const row = document.getElementById('expand-'+idx);
+  if(row) row.classList.toggle('visible', expandedRows.has(idx));
+  const btn = row ? row.previousElementSibling.querySelector('.expand-btn') : null;
+  if(btn) btn.classList.toggle('expanded', expandedRows.has(idx));
+}
+
+/* ============================================================
+   DONUT CHART
+   ============================================================ */
+function renderDonutChart(){
+  const categories = [
+    {name:'Electronics', pct:35, color:'#3B82F6'},
+    {name:'Clothing', pct:25, color:'#8B5CF6'},
+    {name:'Accessories', pct:20, color:'#F59E0B'},
+    {name:'Footwear', pct:20, color:'#10B981'}
+  ];
+  const r = 60;
+  const circumference = 2 * Math.PI * r; // ~376.99
+  let offset = 0;
+  let circlesHTML = '';
+  categories.forEach((cat, i) => {
+    const segLen = (cat.pct / 100) * circumference;
+    const dashOffset = circumference - offset;
+    circlesHTML += `<circle cx="80" cy="80" r="${r}" fill="none"
+      stroke="${cat.color}" stroke-width="22"
+      stroke-dasharray="${segLen} ${circumference - segLen}"
+      stroke-dashoffset="${dashOffset}"
+      transform="rotate(-90 80 80)"
+      style="animation:donutGrow .8s ease ${i*150}ms both">
+      <title>${cat.name}: ${cat.pct}%</title>
+    </circle>`;
+    offset += segLen;
+  });
+
+  let legendHTML = '';
+  categories.forEach(cat => {
+    legendHTML += `<div class="donut-legend-item">
+      <span class="donut-legend-dot" style="background:${cat.color}"></span>
+      <span class="donut-legend-label">${cat.name}</span>
+      <span class="donut-legend-value">${cat.pct}%</span>
+    </div>`;
+  });
+
+  const container = document.getElementById('donutChartArea');
+  container.innerHTML = `
+    <div class="donut-svg-wrap">
+      <svg viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--border-color)" stroke-width="22" opacity=".3"/>
+        ${circlesHTML}
+      </svg>
+      <div class="donut-center">
+        <div class="donut-center-value">1,247</div>
+        <div class="donut-center-label">Total Items</div>
+      </div>
+    </div>
+    <div class="donut-legend">${legendHTML}</div>`;
+}
+
+/* ============================================================
+   ACTIVITY FEED
+   ============================================================ */
+function renderActivityFeed(){
+  const activities = [
+    {text:'New order #1084 received', time:'2 min ago', dot:'purple'},
+    {text:'Stock updated: Nike Air Max +50 units', time:'15 min ago', dot:'blue'},
+    {text:'Low stock alert: Leather Backpack', time:'1 hour ago', dot:'orange'},
+    {text:'Sale recorded: $149.99', time:'2 hours ago', dot:'green'},
+    {text:'New order #1083 received', time:'3 hours ago', dot:'purple'},
+    {text:'Inventory audit completed', time:'5 hours ago', dot:'blue'},
+  ];
+  const el = document.getElementById('activityFeed');
+  el.innerHTML = '';
+  activities.forEach(a => {
+    el.innerHTML += `
+      <div class="activity-item">
+        <span class="activity-dot ${a.dot}"></span>
+        <span class="activity-text">${a.text}</span>
+        <span class="activity-time">${a.time}</span>
+      </div>`;
+  });
+}
+
+/* ============================================================
+   INVENTORY STATUS SUMMARY BAR
+   ============================================================ */
+function renderStatusBar(){
+  const total = inventory.length;
+  if(total === 0) return;
+  const inStock = inventory.filter(it => it.quantity >= 10).length;
+  const lowStock = inventory.filter(it => it.quantity > 0 && it.quantity < 10).length;
+  const outOfStock = inventory.filter(it => it.quantity <= 0).length;
+  const inPct = ((inStock/total)*100).toFixed(1);
+  const lowPct = ((lowStock/total)*100).toFixed(1);
+  const outPct = ((outOfStock/total)*100).toFixed(1);
+
+  const el = document.getElementById('statusSummary');
+  el.innerHTML = `
+    <div class="status-summary-label">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Inventory Health
+    </div>
+    <div class="status-bar">
+      <div class="status-bar-segment in-stock" style="width:${inPct}%" title="In Stock: ${inStock}"></div>
+      <div class="status-bar-segment low-stock" style="width:${lowPct}%" title="Low Stock: ${lowStock}"></div>
+      <div class="status-bar-segment out-of-stock" style="width:${outPct}%" title="Out of Stock: ${outOfStock}"></div>
+    </div>
+    <div class="status-bar-labels">
+      <span class="status-bar-label"><span class="status-bar-label-dot in-stock"></span>In Stock: ${inStock} (${inPct}%)</span>
+      <span class="status-bar-label"><span class="status-bar-label-dot low-stock"></span>Low Stock: ${lowStock} (${lowPct}%)</span>
+      <span class="status-bar-label"><span class="status-bar-label-dot out-of-stock"></span>Out of Stock: ${outOfStock} (${outPct}%)</span>
+    </div>`;
+}
+
+/* ============================================================
+   PRODUCT DETAILS MODAL
+   ============================================================ */
+function openDetailModal(idx){
+  const item = inventory[idx];
+  if(!item) return;
+  const status = getStatus(item.quantity);
+  const maxCapacity = 200;
+  const stockPct = Math.min((item.quantity / maxCapacity) * 100, 100);
+  let barColor = 'var(--green)';
+  if(item.quantity <= 0) barColor = 'var(--red)';
+  else if(item.quantity < 10) barColor = 'var(--orange)';
+
+  const weekSold = Math.floor(Math.random() * 20) + 5;
+  const monthSold = weekSold * 4 + Math.floor(Math.random() * 10);
+  const restockDates = ['Jul 28, 2026','Aug 1, 2026','Jul 15, 2026','Aug 5, 2026','Jun 20, 2026'];
+  const lastRestock = restockDates[idx % restockDates.length];
+
+  const body = document.getElementById('detailModalBody');
+  body.innerHTML = `
+    <div class="detail-product-hero">
+      <img src="${item.img}" alt="${item.name}" class="detail-product-img" onerror="this.style.background='var(--bg-tertiary)'">
+      <div class="detail-product-main">
+        <div class="detail-product-name">${item.name}</div>
+        <div class="detail-product-sku">${item.sku}</div>
+        <div style="margin-top:8px"><span class="status-badge ${statusClass(status)}">${status}</span></div>
+        <div style="margin-top:auto;font-size:1.3rem;font-weight:800;color:var(--blue)">$${item.price.toFixed(2)}</div>
+      </div>
+    </div>
+    <div class="detail-info-grid">
+      <div class="detail-info-item">
+        <span class="detail-info-label">Category</span>
+        <span class="detail-info-value">${item.category}</span>
+      </div>
+      <div class="detail-info-item">
+        <span class="detail-info-label">Quantity in Stock</span>
+        <span class="detail-info-value">${item.quantity} units</span>
+      </div>
+      <div class="detail-info-item">
+        <span class="detail-info-label">SKU</span>
+        <span class="detail-info-value">${item.sku}</span>
+      </div>
+      <div class="detail-info-item">
+        <span class="detail-info-label">Last Restocked</span>
+        <span class="detail-info-value">${lastRestock}</span>
+      </div>
+    </div>
+    <div class="detail-sales-history">
+      <h4>Sales History</h4>
+      <div class="detail-sales-row">
+        <span>Sold this week</span>
+        <span>${weekSold} units</span>
+      </div>
+      <div class="detail-sales-row">
+        <span>Sold this month</span>
+        <span>${monthSold} units</span>
+      </div>
+      <div class="detail-sales-row">
+        <span>Revenue this month</span>
+        <span>$${(monthSold * item.price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+      </div>
+    </div>
+    <div class="detail-stock-bar-container">
+      <h4>Stock Level (max capacity: ${maxCapacity})</h4>
+      <div class="detail-stock-bar-track">
+        <div class="detail-stock-bar-fill" style="width:${stockPct}%;background:${barColor}"></div>
+      </div>
+      <div class="detail-stock-bar-label">
+        <span>${item.quantity} units</span>
+        <span>${stockPct.toFixed(0)}% capacity</span>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-top:4px">${item.desc || 'No description available.'}</p>`;
+
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function closeDetailModal(){
+  document.getElementById('detailModal').classList.remove('active');
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUTS MODAL
+   ============================================================ */
+function openShortcutsModal(){
+  document.getElementById('shortcutsModal').classList.add('active');
+}
+function closeShortcutsModal(){
+  document.getElementById('shortcutsModal').classList.remove('active');
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded',function(){
+  setDate();
+  animateCounters();
+  renderChart();
+  renderDonutChart();
+  renderTable();
+  renderSalesLog();
+  renderLowStock();
+  renderActivityFeed();
+  renderStatusBar();
+  // Auto-generate SKU on category change
+  document.getElementById('fieldCategory').addEventListener('change',function(){
+    if(parseInt(document.getElementById('editIndex').value)<0){
+      document.getElementById('fieldSKU').value=generateSKU();
+    }
+  });
+  // Close modals on overlay click
+  document.getElementById('productModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+  document.getElementById('confirmDelete').addEventListener('click',function(e){if(e.target===this)closeConfirm()});
+  document.getElementById('restockModal').addEventListener('click',function(e){if(e.target===this)closeRestock()});
+  document.getElementById('saleModal').addEventListener('click',function(e){if(e.target===this)closeSaleModal()});
+  document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetailModal()});
+  document.getElementById('shortcutsModal').addEventListener('click',function(e){if(e.target===this)closeShortcutsModal()});
+  // Keyboard shortcuts
+  document.addEventListener('keydown',function(e){
+    // Escape closes all modals
+    if(e.key==='Escape'){
+      closeModal();closeConfirm();closeRestock();closeSaleModal();
+      closeDetailModal();closeShortcutsModal();
+      document.getElementById('notifPanel').classList.remove('open');
+      return;
+    }
+    // Don't trigger shortcuts when typing in input fields
+    const tag = document.activeElement.tagName.toLowerCase();
+    const isInput = tag==='input'||tag==='textarea'||tag==='select';
+    // Ctrl+N = Add new product
+    if(e.ctrlKey && e.key==='n'){
+      e.preventDefault();
+      openModal();
+      return;
+    }
+    // Ctrl+F = Focus search
+    if(e.ctrlKey && e.key==='f'){
+      e.preventDefault();
+      document.getElementById('globalSearch').focus();
+      return;
+    }
+    // Ctrl+E = Export CSV
+    if(e.ctrlKey && e.key==='e'){
+      e.preventDefault();
+      exportCSV();
+      return;
+    }
+    // ? = Show shortcuts (only when not in input)
+    if(e.key==='?' && !isInput){
+      openShortcutsModal();
+      return;
+    }
+  });
+});
+</script>
+</body>
+</html>

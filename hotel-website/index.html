@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Azure Palace | Luxury Boutique Hotel</title>
+<meta name="description" content="The Azure Palace - A 5-star luxury boutique hotel where luxury meets serenity. Experience world-class hospitality, exquisite dining, and unparalleled comfort.">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  overflow-x: hidden;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+ul { list-style: none; }
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4 { font-family: Georgia, 'Times New Roman', Times, serif; font-weight: 400; }
+.section-label {
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 0.8rem;
+  color: #C9A96E;
+  margin-bottom: 0.75rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+}
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: #0C1B33;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+.section-desc {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  color: #666;
+  font-size: 1.05rem;
+}
+.gold-line {
+  width: 60px;
+  height: 2px;
+  background: #C9A96E;
+  margin: 1.25rem auto 2rem;
+}
+
+/* ===== COLORS ===== */
+:root {
+  --navy: #0C1B33;
+  --azure: #1E90FF;
+  --gold: #C9A96E;
+  --gold-light: #d4b97a;
+  --white: #ffffff;
+  --offwhite: #F8F6F0;
+  --dark: #1a1a1a;
+  --gray: #666666;
+  --light-gray: #e8e8e8;
+}
+
+/* ===== NAVIGATION ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 1.25rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.4s ease;
+}
+.navbar.scrolled {
+  background: rgba(12, 27, 51, 0.97);
+  padding: 0.75rem 5%;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 30px rgba(0,0,0,0.15);
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nav-logo svg { width: 36px; height: 36px; }
+.nav-logo-text {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.35rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+.nav-logo-sub {
+  display: block;
+  font-size: 0.55rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: color 0.3s;
+  position: relative;
+  font-weight: 500;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  background: transparent;
+  border: 1px solid var(--gold) !important;
+  color: var(--gold) !important;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.8rem !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+.nav-cta:hover {
+  background: var(--gold) !important;
+  color: var(--navy) !important;
+}
+.nav-cta::after { display: none !important; }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1001;
+}
+.hamburger span {
+  width: 25px;
+  height: 2px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&h=900&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  will-change: transform;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(12, 27, 51, 0.65) 0%,
+    rgba(12, 27, 51, 0.50) 50%,
+    rgba(12, 27, 51, 0.75) 100%
+  );
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  padding: 0 1.5rem;
+  max-width: 800px;
+}
+.hero-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+.hero-stars svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--gold);
+}
+.hero-sub {
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+  letter-spacing: 2px;
+}
+.hero-tagline {
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-style: italic;
+  opacity: 0.9;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+.hero-btns {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 1rem 2.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+  min-width: 180px;
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(201,169,110,0.3);
+}
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.5);
+  padding: 1rem 2.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+  min-width: 180px;
+}
+.btn-outline:hover {
+  border-color: #fff;
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+.hero-scroll {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  animation: bounce 2s infinite;
+}
+.hero-scroll svg {
+  width: 28px;
+  height: 28px;
+  stroke: rgba(255,255,255,0.6);
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+  40% { transform: translateX(-50%) translateY(-8px); }
+  60% { transform: translateX(-50%) translateY(-4px); }
+}
+
+/* ===== SECTIONS ===== */
+.section { padding: 6rem 5%; }
+.section-center { text-align: center; }
+
+/* ===== DIVIDER ===== */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0 5%;
+}
+.section-divider span {
+  flex: 1;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.section-divider svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--gold);
+  opacity: 0.7;
+}
+
+/* ===== ABOUT ===== */
+.about { background: var(--offwhite); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.about-img {
+  position: relative;
+  overflow: hidden;
+}
+.about-img img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+}
+.about-img::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  right: -15px;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--gold);
+  z-index: -1;
+}
+.about-text .section-label { text-align: left; }
+.about-text .section-title { text-align: left; }
+.about-text .gold-line { margin: 1.25rem 0 2rem; }
+.about-text p {
+  color: #555;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.about-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--light-gray);
+}
+.about-stat-num {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 2.2rem;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.about-stat-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gray);
+}
+
+/* ===== ROOMS ===== */
+.rooms { background: #fff; }
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+.room-card {
+  background: #fff;
+  border: 1px solid #eee;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  position: relative;
+}
+.room-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  border-color: transparent;
+}
+.room-img-wrap {
+  overflow: hidden;
+  height: 240px;
+  position: relative;
+}
+.room-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.room-card:hover .room-img-wrap img { transform: scale(1.08); }
+.room-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.3rem 0.75rem;
+  font-weight: 600;
+}
+.room-info { padding: 1.5rem; }
+.room-name {
+  font-size: 1.25rem;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.room-desc {
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.room-amenities {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.room-amenity {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #888;
+}
+.room-amenity svg { width: 16px; height: 16px; stroke: #999; fill: none; }
+.room-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+.room-price {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.3rem;
+  color: var(--navy);
+}
+.room-price span {
+  font-size: 0.8rem;
+  color: var(--gray);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.btn-book {
+  background: var(--navy);
+  color: #fff;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+.btn-book:hover { background: var(--gold); color: var(--navy); }
+
+/* ===== AMENITIES ===== */
+.amenities { background: var(--offwhite); }
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.amenity-card {
+  position: relative;
+  overflow: hidden;
+  height: 320px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.amenity-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.amenity-card:hover img { transform: scale(1.1); }
+.amenity-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(12,27,51,0.85) 0%, rgba(12,27,51,0.2) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem;
+  transition: all 0.4s ease;
+}
+.amenity-card:hover .amenity-overlay {
+  background: linear-gradient(to top, rgba(12,27,51,0.9) 0%, rgba(12,27,51,0.4) 60%, rgba(12,27,51,0.1) 100%);
+}
+.amenity-icon {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+.amenity-card:hover .amenity-icon { background: var(--gold); }
+.amenity-icon svg { width: 20px; height: 20px; stroke: var(--gold); fill: none; }
+.amenity-card:hover .amenity-icon svg { stroke: var(--navy); }
+.amenity-card h3 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+.amenity-card p {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+.amenity-card:hover p { max-height: 80px; opacity: 1; }
+
+/* ===== GALLERY ===== */
+.gallery { background: #fff; }
+.gallery-grid {
+  column-count: 3;
+  column-gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.gallery-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(12,27,51,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.gallery-hover span {
+  color: #fff;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  border: 1px solid rgba(255,255,255,0.5);
+  padding: 0.6rem 1.5rem;
+}
+.gallery-item:hover .gallery-hover { opacity: 1; }
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.lightbox.active { display: flex; opacity: 1; }
+.lightbox img {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+}
+.lightbox-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+.lightbox-close svg { width: 32px; height: 32px; stroke: #fff; }
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+.lightbox-nav svg { width: 24px; height: 24px; stroke: #fff; fill: none; }
+.lightbox-prev { left: 2rem; }
+.lightbox-next { right: 2rem; }
+
+/* ===== OFFERS ===== */
+.offers { background: var(--navy); color: #fff; }
+.offers .section-title { color: #fff; }
+.offers .section-desc { color: rgba(255,255,255,0.6); }
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.offer-card {
+  border: 1px solid rgba(201,169,110,0.25);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  background: rgba(255,255,255,0.03);
+}
+.offer-card:hover {
+  border-color: var(--gold);
+  background: rgba(201,169,110,0.05);
+  transform: translateY(-5px);
+}
+.offer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
+  border-top: 2px solid var(--gold);
+  border-left: 2px solid var(--gold);
+}
+.offer-tag {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.3rem 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+.offer-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+.offer-card p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+.btn-offer {
+  color: var(--gold);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 2px;
+  transition: all 0.3s;
+  background: none;
+  font-weight: 600;
+}
+.btn-offer:hover { color: var(--gold-light); border-color: var(--gold-light); }
+
+/* ===== REVIEWS ===== */
+.reviews { background: var(--offwhite); }
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.review-card {
+  background: #fff;
+  padding: 2.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+}
+.review-card:hover {
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  transform: translateY(-4px);
+}
+.review-quote {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 4rem;
+  color: #eee;
+  line-height: 1;
+}
+.review-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 1.25rem;
+}
+.review-stars svg { width: 16px; height: 16px; fill: var(--gold); }
+.review-text {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.review-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}
+.review-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--navy);
+}
+.review-country {
+  font-size: 0.8rem;
+  color: var(--gray);
+}
+
+/* ===== BOOKING ===== */
+.booking {
+  background: linear-gradient(135deg, var(--navy) 0%, #152a4a 100%);
+  position: relative;
+}
+.booking::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&h=900&fit=crop') center/cover;
+  opacity: 0.08;
+}
+.booking-container {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.booking .section-title { color: #fff; }
+.booking .section-desc { color: rgba(255,255,255,0.6); }
+.booking-form {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 3rem;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.form-group { display: flex; flex-direction: column; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 0.9rem 1rem;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+  outline: none;
+  width: 100%;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+}
+.form-group select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+.form-group select option { background: var(--navy); color: #fff; }
+.form-group textarea { resize: vertical; min-height: 100px; }
+.btn-submit {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 1.1rem 3rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.btn-submit:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(201,169,110,0.25);
+}
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 3rem;
+}
+.form-success svg { width: 60px; height: 60px; stroke: var(--gold); margin-bottom: 1.5rem; }
+.form-success h3 { color: #fff; font-size: 1.5rem; margin-bottom: 0.75rem; }
+.form-success p { color: rgba(255,255,255,0.6); }
+.form-error {
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: none;
+}
+
+/* ===== LOCATION ===== */
+.location { background: #fff; }
+.location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+.location-info .section-label { text-align: left; }
+.location-info .section-title { text-align: left; }
+.location-info .gold-line { margin: 1.25rem 0 2rem; }
+.location-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.location-address svg { width: 24px; height: 24px; stroke: var(--gold); fill: none; flex-shrink: 0; margin-top: 2px; }
+.location-address p { color: #555; font-size: 1rem; line-height: 1.7; }
+.nearby-title {
+  font-size: 1.1rem;
+  color: var(--navy);
+  margin-bottom: 1rem;
+}
+.nearby-list li {
+  padding: 0.6rem 0;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.nearby-list li svg { width: 16px; height: 16px; stroke: var(--gold); fill: none; }
+.btn-directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  background: var(--navy);
+  color: #fff;
+  padding: 0.9rem 2rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+.btn-directions:hover { background: var(--gold); color: var(--navy); }
+.btn-directions svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+.map-placeholder {
+  width: 100%;
+  height: 450px;
+  background: linear-gradient(135deg, #1a3a5c 0%, #0C1B33 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.map-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.map-pin {
+  position: relative;
+  z-index: 1;
+  animation: pinFloat 3s ease-in-out infinite;
+}
+.map-pin svg { width: 50px; height: 50px; fill: var(--gold); }
+.map-label {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
+}
+@keyframes pinFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--navy);
+  color: rgba(255,255,255,0.7);
+  padding: 5rem 5% 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.footer-brand .nav-logo { margin-bottom: 1.25rem; }
+.footer-brand p { font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.5rem; }
+.footer-social {
+  display: flex;
+  gap: 0.75rem;
+}
+.footer-social a {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.footer-social a:hover { border-color: var(--gold); background: rgba(201,169,110,0.1); }
+.footer-social svg { width: 16px; height: 16px; fill: rgba(255,255,255,0.6); }
+.footer-social a:hover svg { fill: var(--gold); }
+.footer h4 {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+}
+.footer ul li { margin-bottom: 0.75rem; }
+.footer ul a {
+  font-size: 0.9rem;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.footer ul a:hover { color: var(--gold); }
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem !important;
+}
+.footer-contact li svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; flex-shrink: 0; margin-top: 2px; }
+.footer-newsletter { margin-top: 1.5rem; }
+.newsletter-form {
+  display: flex;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.newsletter-form input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: none;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+}
+.newsletter-form input::placeholder { color: rgba(255,255,255,0.3); }
+.newsletter-form button {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 0.8rem 1.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  transition: background 0.3s;
+  border: none;
+  cursor: pointer;
+}
+.newsletter-form button:hover { background: var(--gold-light); }
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+.footer-bottom-links { display: flex; gap: 2rem; }
+.footer-bottom-links a { transition: color 0.3s; }
+.footer-bottom-links a:hover { color: var(--gold); }
+
+/* ===== ANIMATIONS ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ===== BACK TO TOP ===== */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  border: none;
+}
+.back-to-top.show { opacity: 1; visibility: visible; }
+.back-to-top:hover { background: var(--navy); }
+.back-to-top svg { width: 20px; height: 20px; stroke: var(--navy); fill: none; }
+.back-to-top:hover svg { stroke: var(--gold); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(12, 27, 51, 0.98);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .about-img img { height: 350px; }
+  .about-img::after { display: none; }
+  .about-text .section-label,
+  .about-text .section-title,
+  .about-text .gold-line { text-align: center; margin-left: auto; margin-right: auto; }
+  .about-stats { justify-content: center; }
+  .rooms-grid { grid-template-columns: 1fr; max-width: 500px; }
+  .amenities-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { column-count: 2; }
+  .offers-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+  .reviews-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+  .booking-form { padding: 2rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .location-grid { grid-template-columns: 1fr; }
+  .map-placeholder { height: 300px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; gap: 0.75rem; text-align: center; }
+  .section { padding: 4rem 5%; }
+  .hero-bg { background-attachment: scroll; }
+}
+@media (max-width: 480px) {
+  .amenities-grid { grid-template-columns: 1fr; }
+  .gallery-grid { column-count: 1; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .about-stats { flex-direction: column; align-items: center; text-align: center; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-btns { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-outline { width: 100%; max-width: 280px; text-align: center; }
+  .booking-form { padding: 1.5rem; }
+  .navbar { padding: 1rem 4%; }
+}
+@media (max-width: 375px) {
+  .hero-sub { letter-spacing: 3px; font-size: 0.7rem; }
+  .section { padding: 3rem 4%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="navbar" id="navbar">
+  <a href="#hero" class="nav-logo">
+    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 2L22 10L30 12L24 18L25 26L18 22L11 26L12 18L6 12L14 10L18 2Z" fill="#C9A96E"/>
+      <circle cx="18" cy="18" r="16" stroke="#C9A96E" stroke-width="1" fill="none"/>
+    </svg>
+    <div class="nav-logo-text">
+      The Azure Palace
+      <span class="nav-logo-sub">Luxury Boutique Hotel</span>
+    </div>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="#about">About</a>
+    <a href="#rooms">Rooms</a>
+    <a href="#amenities">Amenities</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#booking" class="nav-cta">Book Now</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-stars">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+    <p class="hero-sub">Welcome to</p>
+    <h1>The Azure Palace</h1>
+    <p class="hero-tagline">Where Luxury Meets Serenity</p>
+    <div class="hero-btns">
+      <a href="#booking" class="btn-primary">Book Your Stay</a>
+      <a href="#rooms" class="btn-outline">Explore Rooms</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="7 13 12 18 17 13"></polyline>
+      <line x1="12" y1="5" x2="12" y2="18"></line>
+    </svg>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== ABOUT ===== -->
+<section class="section about" id="about">
+  <div class="about-grid">
+    <div class="about-img reveal">
+      <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500&h=400&fit=crop" alt="The Azure Palace lobby" loading="lazy">
+    </div>
+    <div class="about-text reveal reveal-delay-2">
+      <p class="section-label">Our Story</p>
+      <h2 class="section-title">A Legacy of Timeless Elegance</h2>
+      <div class="gold-line"></div>
+      <p>Nestled along the sun-kissed Mediterranean coast, The Azure Palace has been a beacon of refined hospitality since 1998. Every detail -- from the hand-selected Italian marble in our lobby to the Egyptian cotton linens in each suite -- speaks to our unwavering commitment to excellence.</p>
+      <p>Our award-winning staff anticipates your every desire, crafting bespoke experiences that transform a simple stay into an unforgettable journey. Whether you seek the tranquility of our infinity pool or the vibrant flavors of our Michelin-inspired restaurant, The Azure Palace promises moments that linger long after departure.</p>
+      <div class="about-stats">
+        <div>
+          <div class="about-stat-num">150+</div>
+          <div class="about-stat-label">Luxury Rooms</div>
+        </div>
+        <div>
+          <div class="about-stat-num">5-Star</div>
+          <div class="about-stat-label">Rating</div>
+        </div>
+        <div>
+          <div class="about-stat-num">Since 1998</div>
+          <div class="about-stat-label">Established</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== ROOMS ===== -->
+<section class="section rooms section-center" id="rooms">
+  <p class="section-label">Accommodations</p>
+  <h2 class="section-title">Rooms &amp; Suites</h2>
+  <div class="gold-line"></div>
+  <p class="section-desc">Each of our meticulously designed rooms offers a private sanctuary of comfort, where every detail has been curated for the discerning traveler.</p>
+  <div class="rooms-grid">
+    <!-- Room 1 -->
+    <div class="room-card reveal">
+      <div class="room-img-wrap">
+        <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&h=400&fit=crop" alt="Deluxe Room" loading="lazy">
+      </div>
+      <div class="room-info">
+        <h3 class="room-name">Deluxe Room</h3>
+        <p class="room-desc">Elegant comfort with panoramic city views and premium furnishings for the sophisticated traveler.</p>
+        <div class="room-amenities">
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            WiFi
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            TV
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            AC
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            Minibar
+          </span>
+        </div>
+        <div class="room-bottom">
+          <div class="room-price">$299 <span>/ night</span></div>
+          <a href="#booking" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <!-- Room 2 -->
+    <div class="room-card reveal reveal-delay-1">
+      <div class="room-img-wrap">
+        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=400&fit=crop" alt="Premium Suite" loading="lazy">
+        <span class="room-badge">Popular</span>
+      </div>
+      <div class="room-info">
+        <h3 class="room-name">Premium Suite</h3>
+        <p class="room-desc">Spacious living area with separate bedroom, marble bathroom, and a private balcony with sea views.</p>
+        <div class="room-amenities">
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            WiFi
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            TV
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            AC
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            Minibar
+          </span>
+        </div>
+        <div class="room-bottom">
+          <div class="room-price">$499 <span>/ night</span></div>
+          <a href="#booking" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <!-- Room 3 -->
+    <div class="room-card reveal reveal-delay-2">
+      <div class="room-img-wrap">
+        <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&h=400&fit=crop" alt="Royal Suite" loading="lazy">
+        <span class="room-badge">Exclusive</span>
+      </div>
+      <div class="room-info">
+        <h3 class="room-name">Royal Suite</h3>
+        <p class="room-desc">Opulent interiors with a grand sitting room, walk-in closet, rain shower, and dedicated butler service.</p>
+        <div class="room-amenities">
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            WiFi
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            TV
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            AC
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            Minibar
+          </span>
+        </div>
+        <div class="room-bottom">
+          <div class="room-price">$799 <span>/ night</span></div>
+          <a href="#booking" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <!-- Room 4 -->
+    <div class="room-card reveal reveal-delay-3">
+      <div class="room-img-wrap">
+        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=400&fit=crop" alt="Presidential Suite" loading="lazy">
+        <span class="room-badge">Ultra Luxury</span>
+      </div>
+      <div class="room-info">
+        <h3 class="room-name">Presidential Suite</h3>
+        <p class="room-desc">The pinnacle of luxury -- a private penthouse with panoramic terrace, jacuzzi, and personal chef on request.</p>
+        <div class="room-amenities">
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            WiFi
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            TV
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            AC
+          </span>
+          <span class="room-amenity">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            Minibar
+          </span>
+        </div>
+        <div class="room-bottom">
+          <div class="room-price">$1,299 <span>/ night</span></div>
+          <a href="#booking" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== AMENITIES ===== -->
+<section class="section amenities section-center" id="amenities">
+  <p class="section-label">World-Class Facilities</p>
+  <h2 class="section-title">Hotel Amenities</h2>
+  <div class="gold-line"></div>
+  <p class="section-desc">Discover a world of refined indulgence with our exceptional range of facilities, each designed to elevate your stay to the extraordinary.</p>
+  <div class="amenities-grid">
+    <!-- Infinity Pool -->
+    <div class="amenity-card reveal">
+      <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&h=400&fit=crop" alt="Infinity Pool" loading="lazy">
+      <div class="amenity-overlay">
+        <div class="amenity-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2"/><path d="M2 6h20"/></svg>
+        </div>
+        <h3>Infinity Pool</h3>
+        <p>A stunning rooftop infinity pool with breathtaking views of the coastline, heated year-round for your comfort.</p>
+      </div>
+    </div>
+    <!-- Luxury Spa -->
+    <div class="amenity-card reveal reveal-delay-1">
+      <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=500&h=400&fit=crop" alt="Luxury Spa" loading="lazy">
+      <div class="amenity-overlay">
+        <div class="amenity-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c-4.97 0-9-2.69-9-6v-2c0-3.31 4.03-6 9-6s9 2.69 9 6v2c0 3.31-4.03 6-9 6z"/><path d="M12 8V2"/><path d="M8 4l4 4 4-4"/></svg>
+        </div>
+        <h3>Luxury Spa</h3>
+        <p>Full-service spa offering signature treatments, aromatherapy, hot stone massages, and private relaxation suites.</p>
+      </div>
+    </div>
+    <!-- Fine Dining -->
+    <div class="amenity-card reveal reveal-delay-2">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&h=400&fit=crop" alt="Fine Dining" loading="lazy">
+      <div class="amenity-overlay">
+        <div class="amenity-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <h3>Fine Dining</h3>
+        <p>Three award-winning restaurants serving Mediterranean, Asian fusion, and contemporary European cuisines.</p>
+      </div>
+    </div>
+    <!-- Fitness Center -->
+    <div class="amenity-card reveal reveal-delay-1">
+      <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=400&fit=crop" alt="Fitness Center" loading="lazy">
+      <div class="amenity-overlay">
+        <div class="amenity-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M21 21l-1-1"/><path d="M3 3l1 1"/><path d="M18 22l4-4"/><path d="M2 6l4-4"/><path d="M3 10l7-7"/><path d="M14 21l7-7"/></svg>
+        </div>
+        <h3>Fitness Center</h3>
+        <p>State-of-the-art gym with personal trainers, yoga studio, and dedicated cardio and strength training zones.</p>
+      </div>
+    </div>
+    <!-- Grand Ballroom -->
+    <div class="amenity-card reveal reveal-delay-2">
+      <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500&h=400&fit=crop" alt="Grand Ballroom" loading="lazy">
+      <div class="amenity-overlay">
+        <div class="amenity-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M3 12h18"/><path d="M3 7l4.5 5L3 17"/><path d="M21 7l-4.5 5L21 17"/></svg>
+        </div>
+        <h3>Grand Ballroom</h3>
+        <p>A magnificent 500-capacity ballroom for weddings, galas, and corporate events, with full event planning services.</p>
+      </div>
+    </div>
+    <!-- Concierge -->
+    <div class="amenity-card reveal reveal-delay-3">
+      <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500&h=400&fit=crop" alt="Concierge Service" loading="lazy">
+      <div class="amenity-overlay">
+        <div class="amenity-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Concierge Service</h3>
+        <p>24/7 dedicated concierge team for private tours, restaurant reservations, yacht charters, and bespoke experiences.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== GALLERY ===== -->
+<section class="section gallery section-center" id="gallery">
+  <p class="section-label">Visual Journey</p>
+  <h2 class="section-title">Photo Gallery</h2>
+  <div class="gold-line"></div>
+  <p class="section-desc">A glimpse into the world of unparalleled luxury that awaits you at The Azure Palace.</p>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal" onclick="openLightbox(0)">
+      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500&h=600&fit=crop" alt="Hotel Exterior" loading="lazy">
+      <div class="gallery-hover"><span>View</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-1" onclick="openLightbox(1)">
+      <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500&h=600&fit=crop" alt="Hotel View" loading="lazy">
+      <div class="gallery-hover"><span>View</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-2" onclick="openLightbox(2)">
+      <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500&h=600&fit=crop" alt="Hotel Front" loading="lazy">
+      <div class="gallery-hover"><span>View</span></div>
+    </div>
+    <div class="gallery-item reveal" onclick="openLightbox(3)">
+      <img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=500&h=600&fit=crop" alt="Hotel Morning" loading="lazy">
+      <div class="gallery-hover"><span>View</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-1" onclick="openLightbox(4)">
+      <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=500&h=600&fit=crop" alt="Hotel Bathroom" loading="lazy">
+      <div class="gallery-hover"><span>View</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-2" onclick="openLightbox(5)">
+      <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=500&h=600&fit=crop" alt="Hotel Balcony" loading="lazy">
+      <div class="gallery-hover"><span>View</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close lightbox">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+  <button class="lightbox-nav lightbox-prev" onclick="changeLightbox(-1)" aria-label="Previous image">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <img id="lightboxImg" src="" alt="Gallery image">
+  <button class="lightbox-nav lightbox-next" onclick="changeLightbox(1)" aria-label="Next image">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== SPECIAL OFFERS ===== -->
+<section class="section offers section-center" id="offers">
+  <p class="section-label">Exclusive Offers</p>
+  <h2 class="section-title">Special Packages</h2>
+  <div class="gold-line"></div>
+  <p class="section-desc">Take advantage of our carefully curated packages, designed to make your stay even more memorable.</p>
+  <div class="offers-grid">
+    <div class="offer-card reveal">
+      <span class="offer-tag">Romance</span>
+      <h3>Honeymoon Package</h3>
+      <p>Celebrate your love with 20% off our Royal Suite, including champagne on arrival, couples spa treatment, and a private candlelit dinner by the sea.</p>
+      <button class="btn-offer">Learn More</button>
+    </div>
+    <div class="offer-card reveal reveal-delay-1">
+      <span class="offer-tag">Best Value</span>
+      <h3>Weekend Getaway</h3>
+      <p>Escape the ordinary -- book 3 nights and only pay for 2. Includes full breakfast, late checkout, and complimentary access to our wellness center.</p>
+      <button class="btn-offer">Learn More</button>
+    </div>
+    <div class="offer-card reveal reveal-delay-2">
+      <span class="offer-tag">Wellness</span>
+      <h3>Spa &amp; Stay</h3>
+      <p>Book 2 or more nights and receive a complimentary 90-minute signature spa treatment. Rejuvenate your body and soul in our award-winning spa.</p>
+      <button class="btn-offer">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== REVIEWS ===== -->
+<section class="section reviews section-center" id="reviews">
+  <p class="section-label">Testimonials</p>
+  <h2 class="section-title">Guest Reviews</h2>
+  <div class="gold-line"></div>
+  <p class="section-desc">Hear from guests who have experienced the magic of The Azure Palace firsthand.</p>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <span class="review-quote">"</span>
+      <div class="review-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <p class="review-text">An absolutely extraordinary experience. The attention to detail is unmatched -- from the moment we arrived, every staff member made us feel like royalty. The Royal Suite exceeded all expectations.</p>
+      <div class="review-author">
+        <img class="review-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop" alt="James Hartford" loading="lazy">
+        <div>
+          <div class="review-name">James Hartford</div>
+          <div class="review-country">United Kingdom</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal reveal-delay-1">
+      <span class="review-quote">"</span>
+      <div class="review-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <p class="review-text">We chose The Azure Palace for our anniversary and it was the best decision. The spa was heavenly, the dining was world-class, and waking up to those ocean views each morning was pure bliss.</p>
+      <div class="review-author">
+        <img class="review-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop" alt="Sophia Laurent" loading="lazy">
+        <div>
+          <div class="review-name">Sophia Laurent</div>
+          <div class="review-country">France</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal reveal-delay-2">
+      <span class="review-quote">"</span>
+      <div class="review-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <p class="review-text">As a frequent traveler to luxury hotels worldwide, I can say The Azure Palace stands among the very best. The Presidential Suite is phenomenal, and the concierge arranged the most incredible private yacht tour.</p>
+      <div class="review-author">
+        <img class="review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop" alt="Marcus Chen" loading="lazy">
+        <div>
+          <div class="review-name">Marcus Chen</div>
+          <div class="review-country">United States</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== BOOKING ===== -->
+<section class="section booking section-center" id="booking">
+  <div class="booking-container">
+    <p class="section-label">Reservations</p>
+    <h2 class="section-title">Book Your Stay</h2>
+    <div class="gold-line"></div>
+    <p class="section-desc">Secure your room at The Azure Palace and begin your journey into luxury.</p>
+    <div class="booking-form" id="bookingFormWrap">
+      <form id="bookingForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="Your full name" required>
+            <span class="form-error" id="nameError">Please enter your name</span>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com" required>
+            <span class="form-error" id="emailError">Please enter a valid email</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label for="roomType">Room Type</label>
+            <select id="roomType" required>
+              <option value="" disabled selected>Select a room</option>
+              <option value="deluxe">Deluxe Room -- $299/night</option>
+              <option value="premium">Premium Suite -- $499/night</option>
+              <option value="royal">Royal Suite -- $799/night</option>
+              <option value="presidential">Presidential Suite -- $1,299/night</option>
+            </select>
+            <span class="form-error" id="roomError">Please select a room type</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="checkin">Check-in Date</label>
+            <input type="date" id="checkin" required>
+            <span class="form-error" id="checkinError">Please select a check-in date</span>
+          </div>
+          <div class="form-group">
+            <label for="checkout">Check-out Date</label>
+            <input type="date" id="checkout" required>
+            <span class="form-error" id="checkoutError">Please select a check-out date</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="adults">Adults</label>
+            <select id="adults">
+              <option value="1">1 Adult</option>
+              <option value="2" selected>2 Adults</option>
+              <option value="3">3 Adults</option>
+              <option value="4">4 Adults</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="children">Children</label>
+            <select id="children">
+              <option value="0" selected>No Children</option>
+              <option value="1">1 Child</option>
+              <option value="2">2 Children</option>
+              <option value="3">3 Children</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label for="requests">Special Requests</label>
+            <textarea id="requests" placeholder="Any special requests or preferences for your stay..."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">Check Availability</button>
+      </form>
+      <div class="form-success" id="formSuccess">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <h3>Reservation Request Received</h3>
+        <p>Thank you for choosing The Azure Palace. Our reservations team will contact you shortly to confirm your booking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIVIDER ===== -->
+<div class="section-divider">
+  <span></span>
+  <svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l6 4.5L5.5 22 12 17l6.5 5L16 13.5 22 9h-7L12 2z"/></svg>
+  <span></span>
+</div>
+
+<!-- ===== LOCATION ===== -->
+<section class="section location" id="location">
+  <div class="location-grid">
+    <div class="location-info reveal">
+      <p class="section-label">Find Us</p>
+      <h2 class="section-title">Our Location</h2>
+      <div class="gold-line"></div>
+      <div class="location-address">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <p>42 Azure Boulevard, Coastal Drive<br>Monte Carlo, Monaco MC 98000<br>French Riviera</p>
+      </div>
+      <h4 class="nearby-title">Nearby Attractions</h4>
+      <ul class="nearby-list">
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Casino de Monte-Carlo -- 5 min walk
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Prince's Palace of Monaco -- 10 min walk
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Oceanographic Museum -- 15 min walk
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Larvotto Beach -- 8 min walk
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Nice Cote d'Azur Airport -- 30 min drive
+        </li>
+      </ul>
+      <a href="#" class="btn-directions">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+        Get Directions
+      </a>
+    </div>
+    <div class="map-placeholder reveal reveal-delay-2">
+      <div class="map-pin">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3" fill="#0C1B33"/></svg>
+      </div>
+      <p class="map-label">The Azure Palace</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#hero" class="nav-logo">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+          <path d="M18 2L22 10L30 12L24 18L25 26L18 22L11 26L12 18L6 12L14 10L18 2Z" fill="#C9A96E"/>
+          <circle cx="18" cy="18" r="16" stroke="#C9A96E" stroke-width="1" fill="none"/>
+        </svg>
+        <div class="nav-logo-text">
+          The Azure Palace
+          <span class="nav-logo-sub">Luxury Boutique Hotel</span>
+        </div>
+      </a>
+      <p>A timeless sanctuary of elegance on the Mediterranean coast. Since 1998, we have set the standard for luxury hospitality, offering guests an unparalleled experience of comfort and sophistication.</p>
+      <div class="footer-social">
+        <!-- Facebook -->
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <!-- Instagram -->
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/><circle cx="12" cy="12" r="5" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="rgba(255,255,255,0.6)"/></svg>
+        </a>
+        <!-- Twitter/X -->
+        <a href="#" aria-label="Twitter">
+          <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+        </a>
+        <!-- LinkedIn -->
+        <a href="#" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#rooms">Rooms & Suites</a></li>
+        <li><a href="#amenities">Amenities</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#offers">Special Offers</a></li>
+        <li><a href="#reviews">Guest Reviews</a></li>
+        <li><a href="#booking">Reservations</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Airport Transfer</a></li>
+        <li><a href="#">Valet Parking</a></li>
+        <li><a href="#">Room Service</a></li>
+        <li><a href="#">Laundry & Dry Cleaning</a></li>
+        <li><a href="#">Business Center</a></li>
+        <li><a href="#">Wedding Planning</a></li>
+        <li><a href="#">Private Events</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact Us</h4>
+      <ul class="footer-contact">
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>42 Azure Boulevard, Coastal Drive<br>Monte Carlo, Monaco MC 98000</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+377 93 00 00 00</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>reservations@azurepalace.com</span>
+        </li>
+      </ul>
+      <div class="footer-newsletter">
+        <h4>Newsletter</h4>
+        <p style="font-size:0.85rem; margin-bottom:0.75rem;">Subscribe for exclusive offers and updates.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('input').value=''; alert('Thank you for subscribing!');">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>2024 The Azure Palace. All rights reserved.</span>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Sitemap</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== BACK TO TOP ===== -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>
+</button>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+(function() {
+  'use strict';
+
+  // ===== NAVBAR SCROLL =====
+  var navbar = document.getElementById('navbar');
+  var backToTop = document.getElementById('backToTop');
+  var lastScroll = 0;
+
+  window.addEventListener('scroll', function() {
+    var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollY > 80) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+
+    if (scrollY > 600) {
+      backToTop.classList.add('show');
+    } else {
+      backToTop.classList.remove('show');
+    }
+
+    lastScroll = scrollY;
+  });
+
+  // ===== HAMBURGER MENU =====
+  var hamburger = document.getElementById('hamburger');
+  var navLinks = document.getElementById('navLinks');
+
+  hamburger.addEventListener('click', function() {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+  });
+
+  // Close menu on link click
+  var links = navLinks.querySelectorAll('a');
+  for (var i = 0; i < links.length; i++) {
+    links[i].addEventListener('click', function() {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('open');
+    });
+  }
+
+  // ===== PARALLAX HERO =====
+  var heroBg = document.querySelector('.hero-bg');
+
+  function parallax() {
+    if (window.innerWidth > 768) {
+      var scrollY = window.pageYOffset;
+      if (scrollY < window.innerHeight) {
+        heroBg.style.transform = 'translateY(' + (scrollY * 0.35) + 'px)';
+      }
+    }
+  }
+
+  window.addEventListener('scroll', parallax);
+
+  // ===== INTERSECTION OBSERVER (REVEAL ANIMATIONS) =====
+  var reveals = document.querySelectorAll('.reveal');
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    reveals.forEach(function(el) { observer.observe(el); });
+  } else {
+    // Fallback: show all
+    reveals.forEach(function(el) { el.classList.add('visible'); });
+  }
+
+  // ===== LIGHTBOX =====
+  var galleryImages = [
+    'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=1200&h=800&fit=crop'
+  ];
+  var currentLightbox = 0;
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+
+  window.openLightbox = function(index) {
+    currentLightbox = index;
+    lightboxImg.src = galleryImages[index];
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeLightbox = function() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  window.changeLightbox = function(dir) {
+    currentLightbox += dir;
+    if (currentLightbox < 0) currentLightbox = galleryImages.length - 1;
+    if (currentLightbox >= galleryImages.length) currentLightbox = 0;
+    lightboxImg.src = galleryImages[currentLightbox];
+  };
+
+  // Close lightbox on backdrop click
+  lightbox.addEventListener('click', function(e) {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') changeLightbox(-1);
+    if (e.key === 'ArrowRight') changeLightbox(1);
+  });
+
+  // ===== BOOKING FORM VALIDATION =====
+  var bookingForm = document.getElementById('bookingForm');
+  var formSuccess = document.getElementById('formSuccess');
+
+  bookingForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var valid = true;
+
+    // Name
+    var name = document.getElementById('fullName');
+    var nameError = document.getElementById('nameError');
+    if (!name.value.trim()) {
+      nameError.style.display = 'block';
+      valid = false;
+    } else {
+      nameError.style.display = 'none';
+    }
+
+    // Email
+    var email = document.getElementById('email');
+    var emailError = document.getElementById('emailError');
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+      emailError.style.display = 'block';
+      valid = false;
+    } else {
+      emailError.style.display = 'none';
+    }
+
+    // Room
+    var room = document.getElementById('roomType');
+    var roomError = document.getElementById('roomError');
+    if (!room.value) {
+      roomError.style.display = 'block';
+      valid = false;
+    } else {
+      roomError.style.display = 'none';
+    }
+
+    // Check-in
+    var checkin = document.getElementById('checkin');
+    var checkinError = document.getElementById('checkinError');
+    if (!checkin.value) {
+      checkinError.style.display = 'block';
+      valid = false;
+    } else {
+      checkinError.style.display = 'none';
+    }
+
+    // Check-out
+    var checkout = document.getElementById('checkout');
+    var checkoutError = document.getElementById('checkoutError');
+    if (!checkout.value) {
+      checkoutError.style.display = 'block';
+      valid = false;
+    } else if (checkin.value && checkout.value && checkout.value <= checkin.value) {
+      checkoutError.textContent = 'Check-out must be after check-in';
+      checkoutError.style.display = 'block';
+      valid = false;
+    } else {
+      checkoutError.style.display = 'none';
+    }
+
+    if (valid) {
+      bookingForm.style.display = 'none';
+      formSuccess.style.display = 'block';
+    }
+  });
+
+  // Clear error on input
+  var inputs = bookingForm.querySelectorAll('input, select, textarea');
+  inputs.forEach(function(input) {
+    input.addEventListener('input', function() {
+      var error = this.parentElement.querySelector('.form-error');
+      if (error) error.style.display = 'none';
+    });
+  });
+
+  // ===== SET MIN DATE FOR BOOKING =====
+  var today = new Date().toISOString().split('T')[0];
+  var checkinInput = document.getElementById('checkin');
+  var checkoutInput = document.getElementById('checkout');
+  if (checkinInput) checkinInput.setAttribute('min', today);
+  if (checkoutInput) checkoutInput.setAttribute('min', today);
+
+  checkinInput.addEventListener('change', function() {
+    checkoutInput.setAttribute('min', this.value);
+    if (checkoutInput.value && checkoutInput.value <= this.value) {
+      checkoutInput.value = '';
+    }
+  });
+
+  // ===== SMOOTH SCROLL FOR ANCHOR LINKS =====
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        var offset = 80;
+        var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
