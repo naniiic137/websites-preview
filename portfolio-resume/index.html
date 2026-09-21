@@ -9,10 +9,10 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;font-size:16px;overflow-x:hidden}
 body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;background:#0a0a1a;color:#e0e0e0;line-height:1.7;overflow-x:hidden}
-a{text-decoration:none;color:inherit}
+a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 ul{list-style:none}
 img{max-width:100%;display:block}
-button{cursor:pointer;border:none;outline:none;font-family:inherit}
+button{cursor:pointer;border:none;outline:none;font-family:inherit;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font-family:inherit;outline:none}
 
 /* ===== CSS VARIABLES ===== */
@@ -380,6 +380,32 @@ input,textarea,select{font-family:inherit;outline:none}
 
   /* Back to top: slightly smaller position */
   .back-to-top{bottom:24px;right:24px;width:44px;height:44px}
+
+  /* Mobile toggle: 44px minimum touch target */
+  .mobile-toggle{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;padding:10px}
+
+  /* Project overlay: always visible on touch devices since hover does not exist */
+  .project-thumb .overlay{opacity:1;background:linear-gradient(180deg,transparent 20%,rgba(10,10,26,0.75) 100%);align-items:flex-end;padding-bottom:16px}
+  .project-card:hover .overlay{background:linear-gradient(180deg,transparent 20%,rgba(10,10,26,0.75) 100%)}
+  .project-card:hover .project-thumb img{transform:none;filter:none}
+  .overlay-btn{transform:translateY(0)}
+  .project-card:hover .overlay-btn{transform:translateY(0)}
+  /* Disable hover lift on cards for touch devices */
+  .project-card:hover{transform:none}
+
+  /* Mobile menu links: 44px min touch targets */
+  .mobile-menu a{min-height:44px;display:flex;align-items:center}
+
+  /* Footer social: 44px min touch targets */
+  .footer-social .social-link{width:44px;height:44px}
+
+  /* Filter buttons: adequate touch targets */
+  .filter-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+
+  /* Disable hover transforms on cards for touch devices */
+  .skill-category:hover{transform:none}
+  .testimonial-card:hover{transform:none}
+  .timeline-content:hover{transform:none}
 }
 
 /* --- Phone (iPhone 14 / 390px, iPhone SE / 375px range) --- */
@@ -451,8 +477,8 @@ input,textarea,select{font-family:inherit;outline:none}
   .contact-info>p{font-size:0.92rem}
   .contact-form{padding:20px;border-radius:14px}
   .form-group label{font-size:0.82rem}
-  .form-group input,.form-group textarea,.form-group select{padding:12px 14px;font-size:0.88rem;border-radius:10px}
-  .form-submit{padding:14px;font-size:0.9rem;border-radius:40px}
+  .form-group input,.form-group textarea,.form-group select{padding:14px;font-size:0.88rem;border-radius:10px;min-height:44px}
+  .form-submit{padding:14px;font-size:0.9rem;border-radius:40px;min-height:48px}
 
   /* Section: tighter vertical rhythm */
   .section{padding:64px 0}
@@ -469,7 +495,7 @@ input,textarea,select{font-family:inherit;outline:none}
   .footer-bottom p{font-size:0.78rem}
 
   /* Back to top: accessible and visible */
-  .back-to-top{bottom:20px;right:20px;width:40px;height:40px}
+  .back-to-top{bottom:20px;right:20px;width:44px;height:44px}
   .back-to-top svg{width:18px;height:18px}
 
   /* All images constrained */

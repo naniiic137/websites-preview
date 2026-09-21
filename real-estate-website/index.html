@@ -1373,7 +1373,24 @@ section {
     z-index: 1001;
   }
   .nav-links.open { right: 0; }
-  .hamburger { display: flex; z-index: 1002; }
+  .hamburger {
+    display: flex;
+    z-index: 1002;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+  /* Touch-friendly nav links in mobile drawer */
+  .nav-links a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1rem;
+  }
   .nav-cta {
     width: 100%;
     text-align: center;
@@ -1541,6 +1558,16 @@ section {
     justify-content: center;
     gap: 16px;
   }
+  /* Touch-friendly footer links */
+  .footer-column ul li a {
+    min-height: 44px;
+    padding: 8px 0;
+  }
+  .footer-bottom-links a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 
   /* -- Search results header stack -- */
   .search-results-header {
@@ -1578,6 +1605,20 @@ section {
     height: 100%;
     object-fit: cover;
   }
+
+  /* -- Prevent text overflow on narrow screens -- */
+  .property-address,
+  .property-name,
+  .cta-highlight,
+  .footer-contact-item span {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* -- Ensure hero search does not overflow container -- */
+  .hero-search {
+    max-width: 100%;
+  }
 }
 
 /* ---------- Small phones (480px): iPhone SE, 375px, etc. ---------- */
@@ -1611,6 +1652,18 @@ section {
   .property-feature { font-size: 0.8rem; }
   .property-feature span { white-space: nowrap; }
 
+  /* Stack property footer on small phones */
+  .property-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .btn-view-details {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
   /* CTA */
   .cta-text h2 { font-size: 1.7rem; }
   .cta-highlight { font-size: 0.88rem; }
@@ -1643,17 +1696,6 @@ section {
   .hero-badge { font-size: 0.72rem; padding: 5px 12px; }
   .hero-search { padding: 16px 12px; }
   .search-tab { padding: 7px 12px; font-size: 0.8rem; }
-
-  .property-footer {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
-  .btn-view-details {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
 
   .cta-text h2 { font-size: 1.5rem; }
   .section-header h2 { font-size: 1.45rem; }
@@ -2654,13 +2696,21 @@ document.querySelectorAll('.search-tab').forEach(tab => {
   });
 });
 
-// ============ PARALLAX EFFECT ============
+// ============ PARALLAX EFFECT (disabled on mobile for performance) ============
 window.addEventListener('scroll', () => {
+  if (window.innerWidth <= 768) return;
   const heroImg = document.querySelector('.hero-bg-image img');
   if (heroImg) {
     const scrolled = window.scrollY;
     const rate = scrolled * 0.35;
     heroImg.style.transform = 'translateY(' + rate + 'px) scale(1.1)';
+  }
+});
+
+// ============ ESCAPE KEY CLOSES MOBILE MENU ============
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+    closeMobileMenu();
   }
 });
 

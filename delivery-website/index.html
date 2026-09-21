@@ -284,9 +284,13 @@ button, input, select, textarea {
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
-  padding: 4px;
+  padding: 8px;
   background: none;
   border: none;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
 }
 .hamburger span {
   width: 24px;
@@ -327,6 +331,7 @@ button, input, select, textarea {
   font-weight: 600;
   color: var(--white);
   transition: var(--transition);
+  padding: 12px 24px;
 }
 .mobile-nav a:hover { color: var(--blue); }
 
@@ -1622,6 +1627,45 @@ button, input, select, textarea {
   .footer-bottom-links {
     justify-content: center;
   }
+
+  /* Mobile touch targets: min 44px for all interactive elements */
+  .service-card .learn-more {
+    min-height: 44px;
+    padding: 10px 0;
+  }
+  .footer-social a {
+    width: 44px;
+    height: 44px;
+  }
+  .footer-col ul li a {
+    display: inline-block;
+    padding: 10px 0;
+  }
+  .footer-col ul li {
+    margin-bottom: 4px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS Safari auto-zoom on input focus */
+  }
+  .app-btn {
+    min-height: 44px;
+  }
+  .mobile-nav .btn {
+    min-width: 200px;
+    font-size: 16px;
+  }
+  .tracking-input-group input {
+    font-size: 16px; /* Prevents iOS Safari auto-zoom on input focus */
+  }
+  .footer-bottom-links a {
+    padding: 8px 4px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 }
 
 /* --- Small phone (480px and below: iPhone SE, small Android) --- */
@@ -1688,7 +1732,7 @@ button, input, select, textarea {
 
   /* Tracking */
   .tracking-input-group { padding: 6px; }
-  .tracking-input-group input { padding: 14px 14px; font-size: 14px; }
+  .tracking-input-group input { padding: 14px 14px; font-size: 16px; }
   .tracking-result { padding: 20px 14px; }
   .tracking-header .tracking-id { font-size: 13px; }
   .tracking-header .tracking-id strong { font-size: 15px; }

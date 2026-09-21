@@ -223,10 +223,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Mobile Nav */
 .mobile-nav {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100vh;
+  height: 100dvh;
   background: rgba(26, 26, 26, 0.98);
   z-index: 999;
   flex-direction: column;
@@ -234,9 +235,11 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   gap: 32px;
   opacity: 0;
-  transition: opacity 0.4s;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
-.mobile-nav.active { display: flex; opacity: 1; }
+.mobile-nav.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .mobile-nav a {
   font-size: 1.3rem;
   letter-spacing: 4px;
@@ -1012,7 +1015,7 @@ html { overflow-x: hidden; }
   }
 
   /* -- Hero -- */
-  .hero { min-height: 600px; }
+  .hero { min-height: 600px; min-height: 100svh; }
   .hero h1 {
     font-size: clamp(2rem, 6vw, 3rem);
     letter-spacing: 3px;
@@ -1029,6 +1032,11 @@ html { overflow-x: hidden; }
   /* -- About -- */
   .about-grid { grid-template-columns: 1fr; gap: 40px; }
   .about-image { max-height: 400px; }
+  .about-stats {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
 
   /* -- Menu cards stack vertically, image on top -- */
   .menu-card { flex-direction: column; }
@@ -1038,7 +1046,9 @@ html { overflow-x: hidden; }
     height: 200px;
     min-height: 200px;
   }
+  .menu-card-body { padding: 20px; }
   .menu-tab { min-height: 44px; }
+  .menu-card:hover { transform: none; }
 
   /* -- Gallery 2 columns, overlays always visible (no hover on touch) -- */
   .gallery-grid { grid-template-columns: 1fr 1fr; }
@@ -1091,15 +1101,25 @@ html { overflow-x: hidden; }
   /* -- Footer: single column -- */
   .footer-top { grid-template-columns: 1fr; gap: 36px; }
   .footer-bottom { justify-content: center; text-align: center; }
+  .social-link { width: 44px; height: 44px; }
 
   /* -- Buttons: 44px minimum touch target -- */
   .btn { padding: 14px 36px; min-height: 44px; }
+
+  /* -- Disable hover transforms on touch devices -- */
+  .about-image:hover img { transform: none; }
+  .menu-card:hover .menu-card-img img { transform: none; }
+  .gallery-item:hover img { transform: none; }
 }
 
 @media (max-width: 480px) {
 
-  /* -- Reduce container padding -- */
-  .container { padding: 0 16px; }
+  /* -- Reduce container padding, safe area for notched phones -- */
+  .container {
+    padding: 0 16px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
 
   /* -- Reduce section spacing -- */
   .section-padding { padding: 50px 0; }
@@ -1113,14 +1133,14 @@ html { overflow-x: hidden; }
   }
 
   /* -- Hero: readable text, accessible CTA -- */
-  .hero { min-height: 500px; }
+  .hero { min-height: 100svh; min-height: 500px; }
   .hero-content { padding: 0 12px; }
   .hero h1 {
     font-size: clamp(1.75rem, 7.5vw, 2.2rem);
     letter-spacing: 2px;
   }
   .hero-badge {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     letter-spacing: 3px;
     padding: 6px 16px;
     margin-bottom: 20px;
@@ -1139,9 +1159,13 @@ html { overflow-x: hidden; }
 
   /* -- Buttons -- */
   .btn {
-    padding: 12px 24px;
+    padding: 14px 28px;
     font-size: 0.8rem;
     letter-spacing: 2px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* -- About -- */
@@ -1160,32 +1184,49 @@ html { overflow-x: hidden; }
   }
   .stat { min-width: 80px; }
   .stat h4 { font-size: 1.8rem; }
-  .stat p { font-size: 0.7rem; letter-spacing: 1px; }
+  .stat p { font-size: 0.75rem; letter-spacing: 1px; }
 
-  /* -- Menu tabs and cards -- */
-  .menu-tabs { gap: 4px; }
-  .menu-tab {
-    padding: 10px 14px;
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
+  /* -- Menu tabs: horizontally scrollable -- */
+  .menu-tabs {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    padding-bottom: 8px;
+    scrollbar-width: none;
   }
-  .menu-card-img { height: 170px; min-height: 170px; }
+  .menu-tabs::-webkit-scrollbar { display: none; }
+  .menu-tab {
+    padding: 10px 16px;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .menu-card-img { height: 180px; min-height: 180px; }
   .menu-card-body { padding: 16px; }
-  .menu-card-top { gap: 8px; }
+  .menu-card-top {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
   .menu-card-name { font-size: 1rem; }
   .menu-card-price { font-size: 0.95rem; }
-  .menu-card-desc { font-size: 0.82rem; margin-bottom: 8px; }
+  .menu-card-desc { font-size: 0.85rem; margin-bottom: 8px; }
   .menu-card-tags { gap: 6px; }
-  .menu-card-tag { font-size: 0.6rem; padding: 2px 8px; }
+  .menu-card-tag { font-size: 0.65rem; padding: 3px 10px; }
   .menu-view-full { margin-top: 28px; }
 
   /* -- Gallery: single column -- */
-  .gallery-grid { grid-template-columns: 1fr; gap: 10px; }
+  .gallery-grid { grid-template-columns: 1fr; gap: 12px; }
   .gallery-item:nth-child(1) { aspect-ratio: 3/2; }
   .gallery-item:nth-child(4) { aspect-ratio: 3/2; }
 
-  /* -- Testimonials: fit on screen -- */
-  .testimonial-slide { padding: 0 4px; }
+  /* -- Testimonials: fit on screen, swipe hint -- */
+  .testimonial-slide { padding: 0 8px; }
   .testimonial-avatar { width: 56px; height: 56px; margin-bottom: 16px; }
   .testimonial-stars { margin-bottom: 16px; gap: 3px; }
   .testimonial-stars svg { width: 16px; height: 16px; }
@@ -1194,20 +1235,20 @@ html { overflow-x: hidden; }
     line-height: 1.7;
     margin-bottom: 20px;
   }
-  .testimonial-author { font-size: 0.75rem; letter-spacing: 2px; }
-  .testimonial-role { font-size: 0.7rem; }
+  .testimonial-author { font-size: 0.8rem; letter-spacing: 2px; }
+  .testimonial-role { font-size: 0.75rem; }
   .testimonial-nav { margin-top: 20px; }
 
   /* -- Reservation: full-width fields, prevent iOS zoom -- */
-  .reservation-wrapper { padding: 24px 14px; }
+  .reservation-wrapper { padding: 24px 16px; }
   .reservation-wrapper::before { display: none; }
-  .form-group label { font-size: 0.7rem; letter-spacing: 2px; }
+  .form-group label { font-size: 0.75rem; letter-spacing: 2px; }
   .form-group input,
   .form-group select,
   .form-group textarea {
     padding: 12px;
     font-size: 16px; /* Prevents iOS auto-zoom on focus */
-    min-height: 44px;
+    min-height: 48px;
   }
   .form-submit { margin-top: 20px; }
   .form-success { padding: 24px 12px; }
@@ -1217,12 +1258,12 @@ html { overflow-x: hidden; }
   /* -- Footer: single column, stacked newsletter -- */
   .footer-top { padding: 40px 0 32px; gap: 24px; }
   .footer-brand h3 { font-size: 1.25rem; letter-spacing: 3px; }
-  .footer-brand p { font-size: 0.85rem; margin-bottom: 16px; }
+  .footer-brand p { font-size: 0.88rem; margin-bottom: 16px; }
   .social-links { gap: 12px; }
   .social-link { width: 44px; height: 44px; }
   .footer-col h4 { margin-bottom: 16px; font-size: 0.75rem; }
-  .footer-col p, .footer-col li { font-size: 0.82rem; }
-  .footer-newsletter p { font-size: 0.85rem; margin-bottom: 16px; }
+  .footer-col p, .footer-col li { font-size: 0.85rem; }
+  .footer-newsletter p { font-size: 0.88rem; margin-bottom: 16px; }
   .newsletter-form {
     flex-direction: column;
     gap: 8px;
@@ -1231,23 +1272,68 @@ html { overflow-x: hidden; }
     border-radius: 2px;
     padding: 12px;
     font-size: 16px; /* Prevents iOS auto-zoom on focus */
-    min-height: 44px;
+    min-height: 48px;
   }
   .newsletter-form button {
     border-radius: 2px;
     padding: 14px;
-    min-height: 44px;
+    min-height: 48px;
     font-size: 0.8rem;
   }
   .footer-map { aspect-ratio: 2/1; margin-top: 16px; }
   .footer-map svg { width: 24px; height: 24px; }
-  .footer-map span { font-size: 0.7rem; letter-spacing: 1.5px; margin-left: 8px; }
+  .footer-map span { font-size: 0.75rem; letter-spacing: 1.5px; margin-left: 8px; }
   .footer-bottom { padding: 16px 0; }
-  .footer-bottom p { font-size: 0.7rem; }
+  .footer-bottom p { font-size: 0.75rem; }
+
+  /* -- Mobile nav links larger for small screens -- */
+  .mobile-nav a {
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    padding: 14px 24px;
+    min-height: 48px;
+  }
+  .mobile-nav { gap: 16px; }
 
   /* -- Divider -- */
   .divider { max-width: 200px; gap: 12px; }
   .divider-icon { width: 16px; height: 16px; }
+}
+
+/* ===== EXTRA SMALL PHONES (320px) ===== */
+@media (max-width: 360px) {
+  .container {
+    padding: 0 12px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  .hero h1 {
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+  }
+  .hero-badge {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    padding: 5px 12px;
+  }
+  .nav-logo { font-size: 1.1rem; letter-spacing: 2px; }
+  .nav-logo span { letter-spacing: 3px; font-size: 0.65em; }
+  .section-title { font-size: 1.4rem; letter-spacing: 1px; }
+  .about-text h2 { font-size: 1.2rem; }
+  .stat h4 { font-size: 1.5rem; }
+  .menu-card-name { font-size: 0.95rem; }
+  .reservation-wrapper { padding: 20px 12px; }
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    width: 100%;
+    text-align: center;
+  }
+  .mobile-nav a {
+    font-size: 1rem;
+    letter-spacing: 2px;
+  }
 }
 </style>
 </head>

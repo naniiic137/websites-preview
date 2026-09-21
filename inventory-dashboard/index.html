@@ -781,6 +781,21 @@ input[type="checkbox"]{
 @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-8px)}}
 
 /* ============================================================
+   SIDEBAR OVERLAY (mobile)
+   ============================================================ */
+.sidebar-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:99;
+  opacity:0;
+  transition:opacity var(--transition-med);
+  -webkit-tap-highlight-color:transparent;
+}
+.sidebar-overlay.active{display:block;opacity:1}
+body.sidebar-open{overflow:hidden}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media(max-width:1200px){
@@ -788,20 +803,183 @@ input[type="checkbox"]{
   .bottom-grid{grid-template-columns:1fr}
 }
 @media(max-width:768px){
+  /* Sidebar: slide-in overlay on mobile */
   .sidebar{transform:translateX(-100%);width:var(--sidebar-width) !important}
   .sidebar.mobile-open{transform:translateX(0)}
   .main-area{margin-left:0 !important}
   .mobile-menu-btn{display:flex}
-  .cards-grid{grid-template-columns:1fr 1fr}
-  .top-header{padding:0 16px}
-  .content{padding:16px}
+
+  /* Header */
+  .top-header{padding:0 12px;gap:8px}
   .header-date{display:none}
-  .chart-area{height:200px}
+  .search-container{max-width:none;min-width:0}
+  .search-input{height:44px;font-size:16px} /* 16px prevents iOS auto-zoom */
+  .header-right{gap:4px}
+
+  /* Touch targets: min 44px on all interactive elements */
+  .icon-btn,.theme-toggle{width:44px;height:44px}
+  .mobile-menu-btn{width:44px;height:44px}
+  .nav-item{padding:12px 14px;min-height:44px}
+
+  /* Content area */
+  .content{padding:16px 12px}
+
+  /* Stat cards */
+  .cards-grid{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+  .stat-card{padding:16px 14px}
+  .stat-value{font-size:1.35rem}
+  .stat-label{font-size:.72rem}
+  .stat-icon{width:40px;height:40px}
+  .stat-icon svg{width:20px;height:20px}
+
+  /* Charts row */
+  .charts-row{gap:12px;margin-bottom:20px}
+  .chart-section{padding:16px}
+  .chart-area{height:200px;padding:0 0 30px 36px}
+  .chart-grid{left:36px}
+  .chart-header{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:16px}
+  .chart-controls{flex-wrap:wrap}
+  .chart-btn{padding:8px 14px;min-height:40px;display:inline-flex;align-items:center}
+
+  /* Donut chart */
+  .donut-section{padding:16px}
+  .donut-chart-area{flex-direction:column;gap:16px}
+  .donut-svg-wrap{width:150px;height:150px}
+
+  /* Quick stats */
+  .quick-stats-row{gap:10px;margin-bottom:20px}
+
+  /* Table section */
+  .table-toolbar{flex-direction:column;align-items:stretch;padding:14px 16px;gap:12px}
+  .table-toolbar-left{flex-direction:column;align-items:stretch;gap:10px}
+  .table-toolbar-right{flex-wrap:wrap;gap:8px}
+  .table-toolbar-right .btn{flex:1;min-width:0;justify-content:center;min-height:44px;padding:10px 12px}
+  .category-filters{
+    overflow-x:auto;flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:4px;gap:6px;
+    scrollbar-width:none;
+  }
+  .category-filters::-webkit-scrollbar{display:none}
+  .cat-btn{padding:8px 16px;min-height:44px;flex-shrink:0;display:inline-flex;align-items:center}
+
+  /* Table action buttons */
+  .action-btn{width:44px;height:44px}
+  .action-btn svg{width:18px;height:18px}
+  .expand-btn{width:44px;height:44px}
+
+  /* Pagination */
+  .pagination{flex-direction:column;gap:12px;align-items:center;padding:14px 16px}
+  .page-btn{min-width:44px;height:44px}
+  .page-info{text-align:center}
+
+  /* Bulk actions bar */
+  .bulk-bar{flex-wrap:wrap;padding:12px 16px;gap:8px}
+  .bulk-bar .btn{min-height:44px}
+
+  /* Bottom grid panels */
+  .bottom-grid{gap:12px;margin-bottom:20px}
+  .panel-header{padding:14px 16px;flex-wrap:wrap;gap:8px}
+  .panel-header .btn{min-height:44px}
+  .sale-row{padding:12px 16px}
+  .alert-item{padding:12px 16px;flex-wrap:wrap;gap:8px}
+  .alert-item .btn-sm{min-height:44px;padding:8px 16px}
+
+  /* Notification panel: full width on mobile */
+  .notif-panel{width:100%;max-width:100%}
+
+  /* Forms in modals */
   .form-row{grid-template-columns:1fr}
-  .table-toolbar{flex-direction:column;align-items:flex-start}
+  .form-input,.form-select,.form-textarea{min-height:44px;font-size:16px}
+
+  /* Modals: bottom-sheet style on mobile */
+  .modal-overlay{align-items:flex-end}
+  .modal{
+    width:100%;max-width:100%;
+    border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+    max-height:90vh;
+    transform:translateY(100%) scale(1);
+  }
+  .modal-overlay.active .modal{transform:translateY(0) scale(1)}
+  .confirm-box{width:95%;padding:24px 20px}
+  .confirm-btns{flex-direction:column;gap:8px}
+  .confirm-btns .btn{min-height:44px;width:100%}
+  .modal-footer .btn{min-height:44px;flex:1}
+
+  /* Detail modal */
+  .detail-modal-overlay{align-items:flex-end}
+  .detail-modal{
+    width:100%;max-width:100%;
+    border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+    max-height:90vh;
+  }
+  .detail-modal{transform:translateY(100%) scale(1)}
+  .detail-modal-overlay.active .detail-modal{transform:translateY(0) scale(1)}
+
+  /* Toast: full-width on mobile */
+  .toast-container{left:12px;right:12px;bottom:12px}
+  .toast{max-width:none;width:100%}
+
+  /* Settings */
+  .settings-grid{grid-template-columns:1fr}
+  .setting-row{flex-wrap:wrap;gap:8px}
+
+  /* Expand rows */
+  .expand-content{grid-template-columns:1fr}
+  .expand-row td{padding-left:16px}
+
+  /* Status summary */
+  .status-summary{padding:14px 16px}
+  .status-bar-labels{gap:8px}
+
+  /* Activity feed */
+  .activity-feed{margin-bottom:20px}
+
+  /* Sidebar nav items in mobile for easier touch */
+  .sidebar-nav{padding:12px 8px}
 }
+
 @media(max-width:480px){
-  .cards-grid{grid-template-columns:1fr}
+  /* Single column stat cards */
+  .cards-grid{grid-template-columns:1fr;gap:10px}
+  .stat-card{padding:14px 16px}
+  .stat-value{font-size:1.25rem}
+
+  /* Single column quick stats */
+  .quick-stats-row{grid-template-columns:1fr;gap:10px}
+
+  /* Smaller chart */
+  .chart-area{height:180px;padding:0 0 28px 30px}
+  .chart-grid{left:30px}
+  .chart-grid-line span{font-size:.6rem}
+  .chart-bar-label{font-size:.65rem}
+
+  /* Smaller donut */
+  .donut-svg-wrap{width:130px;height:130px}
+  .donut-center-value{font-size:1.1rem}
+
+  /* Tighter table */
+  td,th{padding:10px 8px;font-size:.78rem}
+  .product-thumb{width:36px;height:36px}
+  .product-cell{gap:8px}
+  .product-name{font-size:.82rem}
+  .status-badge{padding:3px 8px;font-size:.68rem}
+
+  /* Detail modal on smallest screens */
+  .detail-product-hero{flex-direction:column;align-items:center;text-align:center}
+  .detail-info-grid{grid-template-columns:1fr}
+
+  /* Sale rows stack */
+  .sale-row{flex-direction:column;align-items:flex-start;gap:6px}
+  .sale-details{text-align:left}
+
+  /* Header: hide shortcuts button to save space */
+  .top-header{gap:6px}
+  .search-input{padding:0 12px 0 36px}
+  .search-container svg{left:10px}
+
+  /* Smaller section margins */
+  .charts-row,.table-section,.bottom-grid,.activity-feed,.quick-stats-row{margin-bottom:16px}
 }
 
 /* Page sections hidden by default for nav */
@@ -1231,6 +1409,8 @@ input[type="checkbox"]{
     </div>
   </div>
 </aside>
+<!-- Sidebar overlay for mobile (click to close) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- ============================================================
      MAIN CONTENT
@@ -1238,7 +1418,7 @@ input[type="checkbox"]{
 <div class="main-area">
   <!-- HEADER -->
   <header class="top-header">
-    <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('mobile-open')" aria-label="Menu">
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="search-container">
@@ -1779,6 +1959,27 @@ function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('collapsed');
 }
 
+/* Mobile menu with overlay + body scroll lock */
+function toggleMobileMenu(){
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const isOpen = sidebar.classList.contains('mobile-open');
+  if(isOpen){
+    closeMobileMenu();
+  } else {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('active');
+    document.body.classList.add('sidebar-open');
+  }
+}
+function closeMobileMenu(){
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.remove('mobile-open');
+  overlay.classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+}
+
 /* ============================================================
    NAVIGATION
    ============================================================ */
@@ -1797,7 +1998,7 @@ function navigate(page, el){
     shared.style.display='none';
   }
   // Close mobile menu
-  document.getElementById('sidebar').classList.remove('mobile-open');
+  closeMobileMenu();
 }
 
 /* ============================================================
@@ -2622,12 +2823,14 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('saleModal').addEventListener('click',function(e){if(e.target===this)closeSaleModal()});
   document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetailModal()});
   document.getElementById('shortcutsModal').addEventListener('click',function(e){if(e.target===this)closeShortcutsModal()});
+  // Sidebar overlay click to close
+  document.getElementById('sidebarOverlay').addEventListener('click',function(){closeMobileMenu()});
   // Keyboard shortcuts
   document.addEventListener('keydown',function(e){
     // Escape closes all modals
     if(e.key==='Escape'){
       closeModal();closeConfirm();closeRestock();closeSaleModal();
-      closeDetailModal();closeShortcutsModal();
+      closeDetailModal();closeShortcutsModal();closeMobileMenu();
       document.getElementById('notifPanel').classList.remove('open');
       return;
     }

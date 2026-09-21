@@ -100,7 +100,7 @@ input{font-family:inherit}
 .cart-count.bump{animation:pulse .3s ease}
 
 /* Hamburger */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:1100}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:1100;position:relative}
 .hamburger span{width:24px;height:1.5px;background:var(--black);transition:var(--transition)}
 .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
 .hamburger.active span:nth-child(2){opacity:0}
@@ -583,7 +583,7 @@ input{font-family:inherit}
 
   /* 11. Trending carousel - mobile touch scroll, smaller cards and arrows */
   .carousel-track .product-card{min-width:260px}
-  .carousel-btn{width:36px;height:36px}
+  .carousel-btn{width:44px;height:44px}
   .carousel-btn svg{width:14px;height:14px}
   .carousel-btn.prev{left:6px}
   .carousel-btn.next{right:6px}
@@ -628,6 +628,20 @@ input{font-family:inherit}
   /* 19. Mobile menu drawer - full screen overlay */
   .mobile-menu{width:100vw;max-width:100vw;padding:72px 32px 32px}
   .mobile-menu a{padding:16px 0;font-size:13px;letter-spacing:2.5px}
+
+  /* 21. Touch targets - minimum 44px tap areas for mobile usability */
+  .hamburger::before,.nav-icon::before{
+    content:'';position:absolute;top:50%;left:50%;
+    width:44px;height:44px;transform:translate(-50%,-50%);
+  }
+  .cart-close{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .mobile-menu .close-menu{min-width:44px;min-height:44px}
+  .cart-item-qty button{min-width:44px;min-height:44px}
+  .quick-add-btn,.quick-view-btn{min-height:44px;display:flex;align-items:center;justify-content:center}
+  .filter-tab{min-height:44px;display:inline-flex;align-items:center}
+  .footer-col ul a{display:block;padding:10px 0}
+  .footer-col ul li{margin-bottom:0}
+  .footer-social a{width:44px;height:44px}
 }
 
 /* --- Small phone (480px) --- */
@@ -661,17 +675,17 @@ input{font-family:inherit}
 
   /* 7. Product cards smaller */
   .product-info{padding:10px 2px 4px}
-  .product-name{font-size:11px;margin-bottom:4px}
+  .product-name{font-size:12px;margin-bottom:4px}
   .product-price .current{font-size:12px}
   .product-price .original{font-size:11px}
-  .product-price .discount{font-size:9px}
+  .product-price .discount{font-size:10px}
   .product-rating svg{width:10px;height:10px}
   .product-rating span{font-size:10px}
   .product-badge{padding:4px 10px;font-size:9px;letter-spacing:1.5px;top:8px;left:8px}
   .product-wishlist{width:32px;height:32px;top:8px;right:8px}
   .product-wishlist svg{width:14px;height:14px}
-  .quick-add-btn{padding:10px 6px;font-size:9px;letter-spacing:1px}
-  .quick-view-btn{padding:10px 10px;font-size:9px;letter-spacing:1px}
+  .quick-add-btn{padding:10px 6px;font-size:10px;letter-spacing:1px}
+  .quick-view-btn{padding:10px 10px;font-size:10px;letter-spacing:1px}
   .product-quick-actions{padding:8px 6px;gap:6px}
 
   /* 8. Filter tabs */
@@ -693,8 +707,8 @@ input{font-family:inherit}
   /* 11. Carousel smaller cards */
   .carousel-track .product-card{min-width:220px}
   .carousel-track{gap:14px;padding:4px 0}
-  .carousel-btn{width:32px;height:32px}
-  .carousel-btn svg{width:12px;height:12px}
+  .carousel-btn{width:44px;height:44px}
+  .carousel-btn svg{width:14px;height:14px}
 
   /* 12. Newsletter */
   .newsletter{padding:60px 16px}
@@ -708,8 +722,8 @@ input{font-family:inherit}
   .cart-item-image{width:60px;height:75px}
   .cart-item-name{font-size:11px}
   .cart-item-price{font-size:12px}
-  .cart-item-qty button{width:28px;height:28px;font-size:13px}
-  .cart-item-qty span{width:34px;height:28px;font-size:12px}
+  .cart-item-qty button{min-width:44px;min-height:44px;font-size:13px}
+  .cart-item-qty span{min-width:34px;min-height:44px;font-size:12px;display:flex;align-items:center;justify-content:center}
   .cart-checkout{font-size:11px;padding:16px;letter-spacing:2px}
   .cart-continue{font-size:11px;padding:14px;letter-spacing:1.5px}
 
@@ -751,10 +765,10 @@ input{font-family:inherit}
   .hero p{font-size:13px;margin-bottom:24px}
   .btn-primary{padding:12px 24px;font-size:10px;letter-spacing:2px}
   .product-grid{gap:8px}
-  .product-name{font-size:10px}
+  .product-name{font-size:11px}
   .product-price .current{font-size:11px}
-  .quick-add-btn{font-size:8px;padding:9px 4px;letter-spacing:.5px}
-  .quick-view-btn{font-size:8px;padding:9px 8px;letter-spacing:.5px}
+  .quick-add-btn{font-size:9px;padding:9px 4px;letter-spacing:.5px}
+  .quick-view-btn{font-size:9px;padding:9px 8px;letter-spacing:.5px}
   .carousel-track .product-card{min-width:200px}
   .category-banner{height:200px}
   .category-banner h3{font-size:16px;letter-spacing:2px}

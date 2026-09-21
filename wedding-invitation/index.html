@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Sarah & James - October 18, 2025</title>
 <meta name="description" content="You are cordially invited to celebrate the wedding of Sarah and James on October 18, 2025.">
 <style>
@@ -993,6 +993,8 @@ body {
 }
 
 /* ===== RESPONSIVE ===== */
+
+/* Min-width progressive enhancement */
 @media (min-width: 480px) {
   .gallery-grid { gap: 12px; }
   .countdown-grid { gap: 24px; }
@@ -1056,6 +1058,24 @@ body {
   }
   .rsvp-section { padding: 60px 20px; }
 
+  /* Nav: horizontal scroll to prevent wrapping overflow */
+  .nav {
+    padding: 10px 12px;
+    gap: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    padding: 8px 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   /* Corner ornaments smaller */
   .corner-ornament {
     width: 40px;
@@ -1065,6 +1085,11 @@ body {
   .corner-ornament.top-right { top: 12px; right: 12px; }
   .corner-ornament.bottom-left { bottom: 12px; left: 12px; }
   .corner-ornament.bottom-right { bottom: 12px; right: 12px; }
+
+  /* Reduce letter-spacing that wastes horizontal space on mobile */
+  .hero-prelude { letter-spacing: 4px; }
+  .hero-date { letter-spacing: 3px; }
+  .countdown-title { letter-spacing: 3px; }
 
   /* Story stacks */
   .story-inner { grid-template-columns: 1fr; gap: 32px; }
@@ -1085,12 +1110,25 @@ body {
   .venue-strip img { height: 200px; }
   .venue-strip-overlay { padding: 16px; }
 
-  /* Form inputs - prevent iOS auto-zoom */
+  /* Form row stacks on tablet for better mobile usability */
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Form inputs - prevent iOS auto-zoom (must be >= 16px) */
   .form-input,
   .form-select,
   .form-textarea {
     font-size: 16px;
   }
+
+  /* RSVP button full-width on all mobile */
+  .rsvp-btn { width: 100%; }
+
+  /* Increase small font sizes for mobile readability */
+  .event-type { font-size: 0.72rem; }
+  .countdown-label { font-size: 0.68rem; }
+  .form-label { font-size: 0.72rem; }
+  .map-label { font-size: 0.78rem; }
+  .story-label { font-size: 0.72rem; }
 
   /* Lightbox mobile */
   .lightbox img {
@@ -1101,6 +1139,33 @@ body {
     top: 12px;
     right: 12px;
   }
+
+  /* Touch-friendly active states for tap feedback */
+  .gallery-item:active img {
+    transform: scale(1.02);
+    transition-duration: 0.15s;
+  }
+  .event-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  }
+  .rsvp-btn:active::before { transform: scaleX(1); }
+  .rsvp-btn:active { color: var(--charcoal); }
+
+  /* Safe area insets for notched phones (iPhone X+) */
+  .hero-scroll {
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  }
+  .back-to-top {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    right: calc(16px + env(safe-area-inset-right, 0px));
+  }
+  .footer {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Hide countdown separators at tablet -- too cramped */
+  .countdown-separator { display: none; }
 }
 
 /* Phone */
@@ -1109,25 +1174,26 @@ body {
   .hero-content { padding: 16px; }
   .hero-prelude {
     font-size: 0.65rem;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
   }
   .hero-ornament-svg svg { width: 140px; }
   .hero-date {
     font-size: 0.75rem;
-    letter-spacing: 3px;
+    letter-spacing: 2.5px;
   }
 
   /* Countdown */
   .countdown-section { padding: 50px 16px; }
   .countdown-grid { gap: 8px; }
   .countdown-item { min-width: 60px; }
-  .countdown-separator { display: none; }
   .countdown-number { font-size: clamp(1.8rem, 5vw, 2.8rem); }
+  .countdown-title { letter-spacing: 2.5px; }
 
   /* Story */
   .story-section { padding: 50px 16px; }
   .story-image-wrap { max-width: 240px; }
   .story-heading { font-size: clamp(1.5rem, 4.5vw, 2.2rem); }
+  .story-label { letter-spacing: 3px; }
 
   /* Events */
   .events-section { padding: 50px 16px; }
@@ -1135,6 +1201,9 @@ body {
   .event-name { font-size: clamp(1.2rem, 3.5vw, 1.6rem); }
   .event-detail { flex-direction: row; }
   .section-subtitle { margin-bottom: 36px; }
+  .section-title { letter-spacing: 2.5px; }
+  .event-type { letter-spacing: 3px; }
+  .closing-date { letter-spacing: 3px; }
 
   /* Gallery */
   .gallery-section { padding: 50px 16px; }
@@ -1143,14 +1212,11 @@ body {
   /* Event map */
   .event-map iframe { height: 160px; }
 
-  /* Form row stacks on small screens */
-  .form-row { grid-template-columns: 1fr; }
-
   /* RSVP section */
   .rsvp-section { padding: 50px 16px; }
   .rsvp-btn {
-    width: 100%;
     padding: 16px 32px;
+    letter-spacing: 3px;
   }
 
   /* Closing */
@@ -1173,7 +1239,10 @@ body {
   .corner-ornament.bottom-right { bottom: 8px; right: 8px; }
 
   /* Hero scroll indicator */
-  .hero-scroll { bottom: 20px; font-size: 0.55rem; }
+  .hero-scroll {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    font-size: 0.55rem;
+  }
   .scroll-line { height: 30px; }
 
   /* Ornament lines */
@@ -1187,57 +1256,127 @@ body {
   .footer { padding: 24px 16px; font-size: 0.7rem; }
 }
 
-/* Small phone (iPhone SE, small Android) */
+/* Small phone (iPhone SE, small Android -- 375px and below) */
 @media (max-width: 375px) {
+  /* Hero */
   .hero-name { font-size: clamp(2rem, 9vw, 2.5rem); }
   .hero-ampersand { font-size: clamp(1.2rem, 4vw, 1.8rem); }
-  .hero-prelude { font-size: 0.6rem; letter-spacing: 3px; }
+  .hero-prelude { font-size: 0.6rem; letter-spacing: 2px; }
   .hero-ornament-svg svg { width: 120px; }
 
+  /* Countdown */
   .countdown-item { min-width: 50px; }
   .countdown-number { font-size: clamp(1.6rem, 5vw, 2.2rem); }
-  .countdown-label { font-size: 0.5rem; letter-spacing: 2px; }
-  .countdown-title { font-size: clamp(0.9rem, 2.5vw, 1.2rem); letter-spacing: 3px; }
+  .countdown-label { font-size: 0.55rem; letter-spacing: 2px; }
+  .countdown-title { font-size: clamp(0.9rem, 2.5vw, 1.2rem); letter-spacing: 2px; }
 
+  /* Story */
   .story-heading { font-size: clamp(1.3rem, 4vw, 1.8rem); }
   .story-quote { font-size: clamp(0.85rem, 2.2vw, 1rem); padding: 0 12px; }
   .story-quote::before { font-size: 2.2rem; top: -8px; left: -2px; }
   .story-quote::after { font-size: 2.2rem; bottom: -18px; right: -2px; }
 
-  .section-title { font-size: clamp(0.9rem, 2.5vw, 1.1rem); letter-spacing: 3px; }
+  /* Section headings */
+  .section-title { font-size: clamp(0.9rem, 2.5vw, 1.1rem); letter-spacing: 2px; }
   .section-subtitle { font-size: clamp(0.8rem, 2vw, 0.9rem); }
 
+  /* Event cards */
   .event-card { padding: 24px 16px; }
   .event-icon svg { width: 40px; height: 40px; }
   .event-detail-text { font-size: 0.85rem; }
   .event-detail-text strong { font-size: 0.8rem; }
 
+  /* Venue strip */
   .venue-strip img { height: 160px; }
   .venue-strip-text { font-size: clamp(0.8rem, 2vw, 0.95rem); }
 
+  /* Closing */
   .closing-image { width: 100px; height: 100px; }
   .closing-names { font-size: clamp(1.2rem, 3.5vw, 1.5rem); }
   .closing-message { font-size: clamp(0.85rem, 2.2vw, 1.05rem); }
-  .closing-date { font-size: 0.6rem; letter-spacing: 3px; }
+  .closing-date { font-size: 0.6rem; letter-spacing: 2px; }
 
+  /* Ornaments */
   .ornament-line { width: 30px; }
   .ornament { gap: 10px; margin: 16px 0; }
 
-  .form-label { font-size: 0.6rem; letter-spacing: 2px; }
+  /* RSVP form */
+  .form-label { font-size: 0.65rem; letter-spacing: 2px; }
   .form-input,
   .form-select,
   .form-textarea {
     padding: 12px 14px;
   }
+  .rsvp-btn { font-size: 0.7rem; letter-spacing: 2px; }
 
-  .rsvp-btn { font-size: 0.7rem; letter-spacing: 3px; }
+  /* Gallery: ensure feature images have good aspect ratio */
+  .gallery-item:nth-child(1),
+  .gallery-item:nth-child(4) {
+    aspect-ratio: 16/10;
+  }
 }
 
-/* Ultra-small screens */
+/* Ultra-small screens (iPhone SE 1st gen, Galaxy S small) */
 @media (max-width: 320px) {
+  /* Hero */
   .hero-name { font-size: 1.8rem; }
+  .hero-prelude { letter-spacing: 1.5px; font-size: 0.55rem; }
+  .hero-date { font-size: 0.7rem; letter-spacing: 1.5px; }
+  .hero-ornament-svg svg { width: 100px; }
+
+  /* Countdown */
   .countdown-item { min-width: 44px; }
+  .countdown-number { font-size: 1.5rem; }
+  .countdown-label { font-size: 0.5rem; letter-spacing: 1.5px; }
+  .countdown-title { letter-spacing: 1.5px; }
+
+  /* Story */
+  .story-image-wrap { max-width: 200px; }
+  .story-heading { font-size: 1.2rem; }
+  .story-quote { font-size: 0.82rem; padding: 0 8px; }
+  .story-quote::before { font-size: 1.8rem; top: -6px; left: 0; }
+  .story-quote::after { font-size: 1.8rem; bottom: -14px; right: 0; }
+
+  /* Events */
   .event-card { padding: 20px 12px; }
+  .event-detail-text { font-size: 0.8rem; }
+  .event-detail-text strong { font-size: 0.75rem; }
+  .event-name { font-size: 1.15rem; }
+  .event-map iframe { height: 140px; }
+
+  /* Section titles */
+  .section-title { letter-spacing: 1.5px; font-size: 0.85rem; }
+  .section-subtitle { font-size: 0.78rem; }
+
+  /* Gallery */
+  .gallery-grid { gap: 4px; }
+
+  /* RSVP */
+  .rsvp-btn { padding: 14px 20px; letter-spacing: 2px; font-size: 0.65rem; }
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 10px 12px;
+  }
+
+  /* Closing */
+  .closing-image { width: 80px; height: 80px; }
+  .closing-message { font-size: 0.82rem; padding: 0 4px; }
+  .closing-names { font-size: 1.15rem; }
+  .closing-date { font-size: 0.55rem; letter-spacing: 1.5px; }
+
+  /* Venue strip */
+  .venue-strip img { height: 130px; }
+  .venue-strip-text { font-size: 0.78rem; }
+  .venue-strip-overlay { padding: 12px; }
+
+  /* Footer */
+  .footer { font-size: 0.65rem; padding: 20px 12px; }
+
+  /* Ornaments */
+  .ornament-line { width: 24px; }
+  .ornament { gap: 8px; margin: 12px 0; }
+  .corner-ornament { width: 24px; height: 24px; opacity: 0.15; }
 }
 </style>
 </head>
