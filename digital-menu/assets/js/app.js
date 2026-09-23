@@ -56,6 +56,14 @@
     return s;
   }
   function L(obj) { return obj[state.lang] || obj.en; }
+  // Plural-aware strings: looks up key_one / key_two / key_few / key_many / key_other for the current language.
+  function tp(key, n) {
+    var form = 'other';
+    try { form = new Intl.PluralRules(LOCALES[state.lang]).select(n); } catch (e) { form = n === 1 ? 'one' : 'other'; }
+    var dict = D.i18n[state.lang] || {};
+    var k = dict[key + '_' + form] != null ? key + '_' + form : dict[key + '_other'] != null ? key + '_other' : (n === 1 && D.i18n.en[key + '_one'] != null ? key + '_one' : key + '_other');
+    return t(k, { n: n });
+  }
   var LOCALES = { en: 'en-IE', fr: 'fr-FR', ar: 'ar-u-nu-latn' };
   function money(v) {
     var whole = Math.round(v * 100) % 100 === 0;
@@ -99,7 +107,9 @@
     for (var i = 0; i < state.filters.length; i++) if (it.flags.indexOf(state.filters[i]) < 0) return false;
     if (!state.query) return true;
     var cat = D.categories.filter(function (c) { return c.id === it.cat; })[0];
-    var hay = norm([L(it.name), L(it.desc), it.name.en, it.desc.en, L(cat.name), cat.name.en].join(' '));
+    // search every language at once, so "poulet", "chicken" and "دجاج" all find the same dish
+    var vals = function (o) { return Object.keys(o).map(function (k) { return o[k]; }); };
+    var hay = norm(vals(it.name).concat(vals(it.desc), vals(cat.name)).join(' '));
     return state.query.split(/\s+/).every(function (w) { return hay.indexOf(w) > -1; });
   }
 
@@ -173,7 +183,7 @@
     $('#menu').innerHTML = html;
     $('#catnav').innerHTML = navHTML;
     $('#emptyState').hidden = total > 0;
-    $('#resultNote').textContent = filtering ? t('results', { n: total }) : '';
+    $('#resultNote').textContent = filtering ? tp('results', total) : '';
     setupSpy();
   }
 
@@ -253,7 +263,7 @@
         '<div class="success-ring"><svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
         '<h2 id="' + idAttr + '">' + esc(t('sentTitle')) + '</h2>' +
         '<p>' + esc(t('sentBody', { code: s.code, table: s.table, mins: s.mins })) + '</p>' +
-        '<ul>' + s.items.map(function (li) { var it = itemsById[li.id]; return it ? '<li><span>' + li.qty + ' × ' + esc(L(it.name)) + '</span><span>' + money(it.price * li.qty) + '</span></li>' : ''; }).join('') +
+        '<ul>' + s.items.map(function (li) { var it = itemsById[li.id]; return it ? '<li><span>' + (parseInt(li.qty, 10) || 0) + ' × ' + esc(L(it.name)) + '</span><span>' + money(it.price * li.qty) + '</span></li>' : ''; }).join('') +
         '<li><strong>' + esc(t('subtotal')) + '</strong><strong>' + money(s.total) + '</strong></li></ul>' +
         '<button type="button" class="btn btn-ghost btn-block" data-action="new">' + esc(t('newOrder')) + '</button></div>';
     }
@@ -274,7 +284,7 @@
           '<button type="button" data-inc="' + id + '" aria-label="' + esc(t('increase')) + '">+</button></div></li>';
       }).join('') + '</ul>' +
       '<label class="order-note"><span>' + esc(t('kitchenNote')) + '</span><textarea data-note maxlength="240">' + esc(state.note) + '</textarea></label>' +
-      '<div class="order-total"><span>' + esc(t('subtotal')) + ' · ' + esc(n === 1 ? t('itemCount') : t('itemsCount', { n: n })) + '</span><strong>' + money(orderTotal()) + '</strong></div>' +
+      '<div class="order-total"><span>' + esc(t('subtotal')) + ' · ' + esc(tp('itemsCount', n)) + '</span><strong>' + money(orderTotal()) + '</strong></div>' +
       '<p class="order-sub">' + esc(t('serviceNote')) + '</p>' +
       '<p class="order-msg" data-order-msg hidden></p>' +
       '<button type="button" class="btn btn-primary btn-block" data-action="send"' + (state.sending ? ' disabled' : '') + '>' + esc(state.sending ? t('sending') : t('send')) + '</button>';
