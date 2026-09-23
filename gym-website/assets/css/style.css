@@ -344,6 +344,11 @@ select:focus, input:focus { border-color: var(--ink); }
 .macro-list i { display: inline-block; width: 10px; height: 10px; margin-right: 8px; }
 .macro-list strong { color: #fff; margin-left: 4px; }
 .disclaimer { font-size: .8rem; color: var(--muted-d); margin: 0; }
+.seg input:disabled + span { opacity: .45; text-decoration: line-through; cursor: not-allowed; }
+.seg input:disabled { cursor: not-allowed; }
+.goal-note { margin: -4px 0 14px; padding: 10px 12px; border-left: 4px solid var(--ink); background: #f1f0e6; color: var(--ink); font-size: .85rem; line-height: 1.45; }
+.calc-hint { margin: 0 0 12px; padding: 10px 12px; border: 2px dashed currentColor; font-size: .85rem; font-weight: 700; }
+.bmi-marker[hidden] { display: none; }
 
 /* ---------- Coaches ---------- */
 .coach-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
@@ -516,6 +521,7 @@ select:focus, input:focus { border-color: var(--ink); }
   .marquee-track { animation: none; }
   .reveal { opacity: 1; transform: none; }
 }
+.bmi-cat:empty { display: none; }
 
 /* "All projects" link: on phones it moves into the page footer (see app.js) so it never covers content;
    without JS it falls back to a small round button */

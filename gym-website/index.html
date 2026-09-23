@@ -307,10 +307,12 @@
             <label><input type="radio" name="goal" value="maintain" checked><span>Maintain</span></label>
             <label><input type="radio" name="goal" value="gain"><span>Build muscle</span></label>
           </fieldset>
+          <p class="goal-note" id="goalNote" role="status" hidden>Your BMI is under 18.5, so we don’t suggest eating less. Maintaining or building strength is a great goal — and a coach or doctor can help you plan it safely.</p>
           <button type="submit" class="btn btn-dark btn-block">Calculate</button>
         </form>
 
         <div class="calc-result" id="calcResult" aria-live="polite">
+          <p class="calc-hint" id="calcHint" hidden>Fix the highlighted fields to see your results.</p>
           <div class="bmi">
             <p class="r-label">Body Mass Index</p>
             <p class="bmi-value"><strong id="bmiValue">—</strong> <span id="bmiCat" class="bmi-cat"></span></p>

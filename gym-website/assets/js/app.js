@@ -309,7 +309,29 @@
     const carbs = Math.max(0, Math.round((target - protein * 4 - fat * 9) / 4));
     return { bmi, bmr, tdee, target, protein, fat, carbs, goal };
   }
+  // A calorie deficit is never suggested when BMI is under 18.5.
+  const loseRadio = $('input[name="goal"][value="lose"]', cForm);
+  function syncGoal(bmi) {
+    const under = bmi != null && bmi < 18.5;
+    loseRadio.disabled = under;
+    loseRadio.closest('label').title = under ? 'Not suggested when BMI is under 18.5' : '';
+    if (under && loseRadio.checked) $('input[name="goal"][value="maintain"]', cForm).checked = true;
+    $('#goalNote').hidden = !under;
+  }
+  function clearCalc() {
+    syncGoal(null);
+    $('#bmiValue').textContent = '—';
+    const cat = $('#bmiCat'); cat.className = 'bmi-cat'; cat.textContent = '';
+    $('#bmiMarker').hidden = true;
+    ['#rBmr', '#rTdee', '#rTarget', '#mP', '#mC', '#mF'].forEach(id => { $(id).textContent = '—'; });
+    ['#mbP', '#mbC', '#mbF'].forEach(id => { $(id).style.flexBasis = '0%'; });
+    $('#calcHint').hidden = false;
+  }
   function renderCalc() {
+    const f0 = cForm.elements;
+    syncGoal(+f0.weight.value / Math.pow(+f0.height.value / 100, 2));
+    $('#calcHint').hidden = true;
+    $('#bmiMarker').hidden = false;
     const r = calc();
     const b = Math.round(r.bmi * 10) / 10;
     const [cls, label] = b < 18.5 ? ['c-under', 'Underweight'] : b < 25 ? ['c-ok', 'Healthy range'] : b < 30 ? ['c-over', 'Overweight'] : ['c-obese', 'Obese range'];
@@ -329,13 +351,13 @@
   const validCalc = () => ['age', 'height', 'weight'].map(checkNum).every(Boolean);
   cForm.addEventListener('submit', e => {
     e.preventDefault();
-    if (!validCalc()) { const bad = $('.field.invalid input', cForm); if (bad) bad.focus(); return; }
+    if (!validCalc()) { clearCalc(); const bad = $('.field.invalid input', cForm); if (bad) bad.focus(); return; }
     renderCalc();
     if (window.innerWidth < 961) $('#calcResult').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   });
   cForm.addEventListener('input', e => {
     const n = e.target.name;
-    if (LIMITS[n]) { if (!checkNum(n)) return; }
+    if (LIMITS[n]) { if (!checkNum(n)) { clearCalc(); return; } }
     if (['age', 'height', 'weight'].every(k => { const v = parseFloat(cForm.elements[k].value); return v >= LIMITS[k][0] && v <= LIMITS[k][1]; })) renderCalc();
   });
   cForm.addEventListener('change', () => { if (['age', 'height', 'weight'].every(k => { const v = parseFloat(cForm.elements[k].value); return v >= LIMITS[k][0] && v <= LIMITS[k][1]; })) renderCalc(); });
