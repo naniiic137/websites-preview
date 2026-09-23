@@ -193,6 +193,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .copy-btn:hover { border-color: var(--ink); }
 .socials { display: flex; gap: 16px; flex-wrap: wrap; }
 .socials a { font-weight: 600; }
+.socials .linkish { padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .form-card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: clamp(22px, 3vw, 36px); box-shadow: var(--shadow); }
 .field { display: flex; flex-direction: column; margin-bottom: 6px; border: 0; padding: 0; min-width: 0; }
 .field label, .field legend { font-weight: 650; font-size: 15px; margin-bottom: 8px; padding: 0; }
