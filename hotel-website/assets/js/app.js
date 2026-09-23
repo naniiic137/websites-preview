@@ -5,6 +5,7 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const IMG = 'assets/img/';
   const eur = n => '€' + Math.round(n).toLocaleString('en-US');
+  const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const store = {
     get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* storage unavailable */ } }
@@ -240,7 +241,11 @@
   /* ---------- Booking engine ---------- */
   const form = $('#bookingForm');
   const f = { room: $('#bRoom'), inp: $('#bIn'), out: $('#bOut'), adults: $('#bAdults'), children: $('#bChildren'), name: $('#bName'), email: $('#bEmail'), phone: $('#bPhone'), promo: $('#bPromo'), notes: $('#bNotes') };
-  f.room.innerHTML = ROOMS.map((r, i) => `<option value="${i}">${r.name} — ${eur(r.rate)}/night</option>`).join('');
+  // full room names on wide screens, short ones on phones so the closed dropdown never cuts the price off
+  const narrow = matchMedia('(max-width: 560px)');
+  const labelRooms = () => $$('option', f.room).forEach((o, i) => { const r = ROOMS[i]; o.textContent = narrow.matches ? `${r.short} — ${eur(r.rate)}/night` : `${r.name} — ${eur(r.rate)}/night`; });
+  f.room.innerHTML = ROOMS.map((r, i) => `<option value="${i}"></option>`).join('');
+  labelRooms(); narrow.addEventListener('change', labelRooms);
   [f.inp, f.out, $('#qbIn'), $('#qbOut')].forEach(el => { el.min = iso(addDays(today, 0)); el.max = iso(maxDate); });
 
   const state = { start: null, end: null, view: new Date(today.getFullYear(), today.getMonth(), 1) };
@@ -271,7 +276,7 @@
     let offer = null, offerMsg = '';
     if (code) {
       const rule = OFFER_RULES[code];
-      if (!rule) offerMsg = 'Unknown code';
+      if (!rule) offerMsg = `“${code}” isn’t a valid offer code`;
       else { const r = rule(ctx); if (r.error) offerMsg = r.error; else offer = r; }
     }
     const afterOffer = subtotal + (offer ? offer.amount : 0);
@@ -311,6 +316,7 @@
     const pm = $('#bPromoMsg');
     pm.textContent = q.code ? (q.offer ? `✓ ${q.offer.label} applied` : q.offerMsg) : '';
     pm.classList.toggle('bad', !!(q.code && !q.offer));
+    if (!q.code || q.offer) { f.promo.closest('.field').classList.remove('invalid'); f.promo.setAttribute('aria-invalid', 'false'); }
     $$('.offer-card').forEach(c => c.classList.toggle('applied', !!q.offer && c.dataset.code === q.code));
     if (!q.nights) { $('#sumLines').innerHTML = '<div><dt>Select your dates</dt><dd>—</dd></div>'; $('#sumTotal').textContent = '—'; return q; }
     const a = parse(f.inp.value), b = parse(f.out.value);
@@ -319,8 +325,8 @@
       ['Guests', `${q.adults} adult${q.adults > 1 ? 's' : ''}${q.children ? `, ${q.children} child${q.children > 1 ? 'ren' : ''}` : ''}`],
       [`${eur(q.room.rate)} × ${q.nights} night${q.nights > 1 ? 's' : ''}`, eur(q.subtotal)]
     ];
-    let html = lines.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
-    if (q.offer) html += `<div class="discount"><dt>${q.offer.label}</dt><dd>${q.offer.note || '−' + eur(-q.offer.amount)}</dd></div>`;
+    let html = lines.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
+    if (q.offer) html += `<div class="discount"><dt>${esc(q.offer.label)}</dt><dd>${esc(q.offer.note || '−' + eur(-q.offer.amount))}</dd></div>`;
     html += `<div><dt>VAT (10%)</dt><dd>${eur(q.vat)}</dd></div><div><dt>City tax (€4 / adult / night)</dt><dd>${eur(q.cityTax)}</dd></div>`;
     $('#sumLines').innerHTML = html;
     $('#sumTotal').textContent = eur(q.total);
@@ -416,24 +422,28 @@
     if (scroll) { $('#booking').scrollIntoView(); setTimeout(() => f.room.focus({ preventScroll: true }), 400); }
   }
 
-  // Quick book in hero
+  // Quick book in hero: uses exactly the guests chosen and suggests the lowest-priced room that fits them
   const qbIn = $('#qbIn'), qbOut = $('#qbOut');
   qbIn.value = iso(state.start); qbOut.value = iso(state.end);
   qbIn.addEventListener('change', () => { const a = parse(qbIn.value), b = parse(qbOut.value); if (a && (!b || b <= a)) qbOut.value = iso(addDays(a, 1)); });
   $('#quickBook').addEventListener('submit', e => {
     e.preventDefault();
-    const a = parse(qbIn.value), b = parse(qbOut.value), g = +$('#qbGuests').value, err = $('#qbError');
-    err.textContent = !a || !b ? 'Please choose both dates.' : a < today ? 'Arrival can’t be in the past.' : b <= a ? 'Check-out must be after check-in.' : nightsBetween(a, b) > 30 ? 'Maximum stay is 30 nights.' : '';
+    const a = parse(qbIn.value), b = parse(qbOut.value), err = $('#qbError');
+    const adults = +$('#qbAdults').value || 1, children = +$('#qbChildren').value || 0;
+    const fits = r => adults <= r.maxAdults && adults + children <= r.max;
+    err.textContent = !a || !b ? 'Please choose both dates.' : a < today ? 'Arrival can’t be in the past.' : b <= a ? 'Check-out must be after check-in.' : nightsBetween(a, b) > 30 ? 'Maximum stay is 30 nights.'
+      : !ROOMS.some(fits) ? `No single room sleeps ${adults} adults and ${children} children — please book two rooms or call us.` : '';
     if (err.textContent) return;
     f.inp.value = qbIn.value; f.out.value = qbOut.value; syncStateFromInputs();
-    f.adults.value = Math.min(4, g); f.children.value = Math.max(0, g - 4);
-    // choose the first room that fits and is free
-    let pick = ROOMS.findIndex((r, i) => g <= r.max && Math.min(4, g) <= r.maxAdults && !firstSold(a, b, i));
-    if (pick < 0) pick = ROOMS.findIndex(r => g <= r.max);
-    f.room.value = Math.max(0, pick);
+    f.adults.value = adults; f.children.value = children;
+    // rooms are listed from lowest to highest rate: take the first one that fits and is free
+    let pick = ROOMS.findIndex((r, i) => fits(r) && !firstSold(a, b, i));
+    const free = pick >= 0;
+    if (!free) pick = ROOMS.findIndex(fits);
+    f.room.value = pick;
     update(); renderCalendar();
     $('#booking').scrollIntoView();
-    toast(pick >= 0 && !firstSold(a, b, pick) ? `Good news — the ${ROOMS[pick].short} is available` : 'Some nights are sold out — see the calendar');
+    toast(free ? `The ${ROOMS[pick].short} (${eur(ROOMS[pick].rate)}/night) fits your group and is free on those dates` : `Every room for your group has sold-out nights in that range — see the calendar`);
   });
 
   // Submit
@@ -451,8 +461,16 @@
   form.addEventListener('submit', e => {
     e.preventDefault();
     const okStay = validateStay(true), okGuest = validateGuest();
+    const qp = quote(), okPromo = !qp.code || !!qp.offer || !qp.nights;
+    f.promo.setAttribute('aria-invalid', !okPromo);
+    f.promo.closest('.field').classList.toggle('invalid', !okPromo);
     const st = $('#bookStatus');
-    if (!okStay || !okGuest) {
+    if (!okPromo && okStay && okGuest) {
+      st.textContent = `${qp.offerMsg}. Change your stay or clear the offer code to book without it.`;
+      f.promo.focus();
+      return;
+    }
+    if (!okStay || !okGuest || !okPromo) {
       st.textContent = 'Please check the highlighted fields.';
       const bad = form.querySelector('[aria-invalid="true"]') || (!okStay ? f.room : null);
       bad && bad.focus();
@@ -469,7 +487,7 @@
       ['Guest', booking.name], ['Room', q.room.name], ['Arrival', fmt(parse(booking.checkin)) + ' · from 3pm'], ['Departure', fmt(parse(booking.checkout)) + ' · by 12pm'],
       ['Nights', q.nights], ['Guests', `${q.adults} adult${q.adults > 1 ? 's' : ''}${q.children ? ', ' + q.children + ' child' + (q.children > 1 ? 'ren' : '') : ''}`],
       ...(q.offer ? [['Offer', q.offer.label]] : []), ['Total due at hotel', eur(q.total)]
-    ].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    ].map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
     openModal($('#confirmModal'));
     form.reset(); f.room.value = ROOMS.indexOf(q.room); f.adults.value = 2; f.children.value = 0;
     [state.start, state.end] = defaultRange(roomIdx()); syncInputsFromState(); update(); renderCalendar();
