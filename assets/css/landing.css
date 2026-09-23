@@ -289,9 +289,8 @@ h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
 .chip[aria-pressed="true"] .count { background: var(--accent-hot); color: #1a0d06; }
 
 @media (max-width: 640px) {
-  .chips { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter) 6px; scrollbar-width: none; scroll-snap-type: x proximity; }
-  .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; scroll-snap-align: start; }
+  .chips { gap: 6px; margin-bottom: 22px; }
+  .chip { min-height: 40px; padding: 6px 12px; font-size: .86rem; gap: 6px; }
 }
 
 /* ---------- Project grid ---------- */
@@ -395,6 +394,11 @@ h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
 .field-error { color: var(--err); font-size: .85rem; font-weight: 600; min-height: 0; margin-top: 4px; }
 .field-error:empty { display: none; }
 .form-note { margin-top: 12px; font-size: .82rem; color: var(--muted); text-align: center; }
+.form-note a { color: var(--ink); font-weight: 600; }
+.form-alert { margin-top: 14px; padding: 14px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--err); background: color-mix(in srgb, var(--err) 8%, var(--surface)); font-size: .92rem; }
+.form-alert p { margin-bottom: 10px; }
+.hp-field { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+#contactSubmit[disabled] { opacity: .7; cursor: progress; }
 .form-success { text-align: center; padding: 20px 0; }
 .form-success:focus { outline: none; }
 .form-success svg { width: 64px; height: 64px; margin: 0 auto 12px; fill: none; stroke: var(--ok); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -427,9 +431,10 @@ h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
 .device { position: relative; flex: none; background: #0d0c0b; transform-origin: center center; }
 .device iframe { width: 100%; height: 100%; border: 0; background: #fff; }
 .device.desktop { border-radius: 10px; padding: 0; box-shadow: var(--shadow-lg); overflow: hidden; }
-.device.phone { padding: 14px; border-radius: 52px; box-shadow: var(--shadow-lg), inset 0 0 0 2px #3a3733; }
-.device.phone iframe { border-radius: 40px; }
-.device.phone::before { content: ""; position: absolute; top: 24px; left: 50%; width: 96px; height: 26px; margin-left: -48px; border-radius: 20px; background: #0d0c0b; z-index: 2; pointer-events: none; }
+.device.phone { padding: 40px 14px 22px; border-radius: 52px; box-shadow: var(--shadow-lg), inset 0 0 0 2px #3a3733; }
+.device.phone iframe { border-radius: 8px 8px 34px 34px; }
+/* notch sits in the top bezel so it never covers the site's own header */
+.device.phone::before { content: ""; position: absolute; top: 12px; left: 50%; width: 96px; height: 18px; margin-left: -48px; border-radius: 12px; background: #26231f; z-index: 2; pointer-events: none; }
 
 @media (max-width: 640px) {
   .preview { width: 100vw; height: 100dvh; border-radius: 0; border: 0; }

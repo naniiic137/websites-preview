@@ -107,7 +107,7 @@
   var titleEl = $('#previewTitle');
   var openLink = $('#previewOpen');
   var segBtns = $$('.segmented button', dialog);
-  var SIZES = { desktop: { w: 1280, h: 800, pad: 0 }, phone: { w: 390, h: 844, pad: 14 } };
+  var SIZES = { desktop: { w: 1280, h: 800, padX: 0, padY: 0 }, phone: { w: 390, h: 844, padX: 28, padY: 62 } }; // padY = top bezel 40 + bottom 22
   var mode = window.innerWidth < 900 ? 'phone' : 'desktop';
   var lastTrigger = null;
 
@@ -117,13 +117,13 @@
     var sw = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     var sh = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     var s = SIZES[mode];
-    var outerW = s.w + s.pad * 2;
+    var outerW = s.w + s.padX;
     var scale, outerH;
     if (mode === 'desktop') {
       scale = Math.min(1, sw / outerW);
       outerH = Math.max(400, sh / scale); // fill the available height
     } else {
-      outerH = s.h + s.pad * 2;
+      outerH = s.h + s.padY;
       scale = Math.min(1, sw / outerW, sh / outerH);
     }
     device.className = 'device ' + mode;
@@ -171,9 +171,13 @@
     });
   });
 
-  /* ---------- Contact form ---------- */
+  /* ---------- Contact form (Netlify Forms, mailto fallback) ---------- */
   var form = $('#contactForm');
   var success = $('#formSuccess');
+  var errorBox = $('#formError');
+  var submitBtn = $('#contactSubmit');
+  var MAIL = 'hamza.benismail.6@gmail.com';
+  var fields = $$('.field input, .field select, .field textarea', form);
   var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var rules = {
     name: function (v) { return v.trim().length >= 2 ? '' : 'Please enter your name.'; },
@@ -181,6 +185,7 @@
     type: function (v) { return v ? '' : 'Please choose the closest option.'; },
     message: function (v) { return v.trim().length >= 10 ? '' : 'Tell me a bit more (at least 10 characters).'; }
   };
+  function val(n) { return form.elements[n].value.trim(); }
   function check(el) {
     var msg = rules[el.name] ? rules[el.name](el.value) : '';
     var field = el.closest('.field');
@@ -189,40 +194,58 @@
     $('#' + el.getAttribute('aria-describedby')).textContent = msg;
     return !msg;
   }
-  $$('input, select, textarea', form).forEach(function (el) {
+  function mailtoHref() {
+    var subject = 'Website enquiry — ' + (val('type') || 'new project');
+    var body = 'Hi Hamza,\n\n' + val('message') + '\n\n— ' + val('name') + (val('email') ? ' (' + val('email') + ')' : '');
+    return 'mailto:' + MAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+  function syncMailto() { var h = mailtoHref(); $('#mailtoFallback').href = h; $('#mailtoNote').href = h; }
+  fields.forEach(function (el) {
     el.addEventListener('blur', function () { if (el.value) check(el); });
-    el.addEventListener('input', function () { if (el.closest('.field').classList.contains('invalid')) check(el); });
+    el.addEventListener('input', function () { if (el.closest('.field').classList.contains('invalid')) check(el); syncMailto(); });
+    el.addEventListener('change', syncMailto);
   });
+  function setSending(on) {
+    submitBtn.disabled = on;
+    submitBtn.setAttribute('aria-busy', String(on));
+    submitBtn.textContent = on ? 'Sending…' : 'Send message';
+  }
+  function showError() {
+    syncMailto();
+    errorBox.hidden = false;
+    setSending(false);
+    $('#mailtoFallback').focus();
+  }
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    errorBox.hidden = true;
     var firstBad = null;
-    $$('input, select, textarea', form).forEach(function (el) { if (!check(el) && !firstBad) firstBad = el; });
+    fields.forEach(function (el) { if (!check(el) && !firstBad) firstBad = el; });
     if (firstBad) { firstBad.focus(); return; }
-    var data = {
-      name: form.name.value.trim(),
-      email: form.email.value.trim(),
-      type: form.type.value,
-      message: form.message.value.trim(),
-      date: new Date().toISOString()
-    };
-    var saved = [];
-    try { saved = JSON.parse(store.get('hb-enquiries') || '[]'); } catch (err) { saved = []; }
-    saved.push(data);
-    store.set('hb-enquiries', JSON.stringify(saved));
-
-    var subject = 'Website enquiry — ' + data.type;
-    var body = 'Hi Hamza,\n\n' + data.message + '\n\n— ' + data.name + ' (' + data.email + ')';
-    $('#mailtoLink').href = 'mailto:hamza.benismail.6@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    $('#successName').textContent = data.name.split(' ')[0];
-    form.hidden = true;
-    success.hidden = false;
-    success.focus();
+    if (!window.fetch || !window.URLSearchParams || location.protocol === 'file:') { showError(); return; }
+    var body = new URLSearchParams();
+    Array.prototype.forEach.call(form.elements, function (el) { if (el.name) body.append(el.name, el.value); });
+    setSending(true);
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      $('#successName').textContent = val('name').split(' ')[0];
+      $('#successEmail').textContent = val('email');
+      setSending(false);
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    }).catch(showError);
   });
   $('#newMessage').addEventListener('click', function () {
     form.reset();
+    syncMailto();
     success.hidden = true;
     form.hidden = false;
-    form.name.focus();
+    form.elements.name.focus();
   });
 
   /* ---------- Reveal on scroll ---------- */
