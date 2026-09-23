@@ -503,3 +503,12 @@ h3 { font-size: 1.25rem; letter-spacing: -0.01em; }
   .projects.all .project:first-child h3 { font-size: 1.8rem; }
   .projects.all .project:first-child .project-actions { margin-top: 4px; }
 }
+
+/* wide last card (tablet + desktop): with the featured first card, 14 cards fill both the 3-col and 2-col grids */
+@media (min-width: 641px) {
+  .projects.all .project:last-child { grid-column: span 2; flex-direction: row; }
+  .projects.all .project:last-child .thumb { flex: 1.15; aspect-ratio: auto; min-height: 260px; border-bottom: 0; border-right: 1px solid var(--line); }
+  .projects.all .project:last-child .thumb img { object-position: left top; }
+  .projects.all .project:last-child .project-body { flex: 1; justify-content: center; }
+  .projects.all .project:last-child .project-actions { margin-top: 4px; }
+}

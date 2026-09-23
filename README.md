@@ -1,9 +1,9 @@
 # Websites Preview — web design & development by Hamza Ben Ismail
 
-Nine complete, working websites for different industries — restaurants, hotels, shops, real estate, events,
-logistics, SaaS and personal brands — plus a landing page to browse them. Every site is built with **pure
-HTML, CSS and vanilla JavaScript**: no frameworks, no build step, and **no external requests**, so each one
-works offline straight from disk and loads fast on phones.
+Fourteen complete, working websites for different industries — restaurants, hotels, clinics, car rental, gyms,
+travel, salons, shops, real estate, events, logistics, SaaS and personal brands — plus a landing page to browse
+them. Every site is built with **pure HTML, CSS and vanilla JavaScript**: no frameworks, no build step, and
+**no external requests**, so each one works offline straight from disk and loads fast on phones.
 
 **Live:** <https://websites-preview.netlify.app>
 
@@ -22,6 +22,11 @@ works offline straight from disk and loads fast on phones.
 | 7 | [The Azure Palace](hotel-website/) | Luxury hotel | Booking widget with availability calendar, live price with taxes and offer codes, room galleries, reviews |
 | 8 | [StockPulse](inventory-dashboard/) | Inventory SaaS | A working mini-app: products CRUD, stock movements, low-stock alerts, hand-drawn charts, CSV import/export, dark mode |
 | 9 | [Alex Rivera](portfolio-resume/) | Personal brand | Project filters and case studies, contact form, and a one-page printable résumé mode |
+| 10 | [Nour Clinic](clinic-website/) | Dental & medical clinic | Book by doctor, day and time slot from each doctor’s weekly schedule (no double-booking), confirmation with reference and “add to calendar” (.ics), prices in DT, live “open now” hours, 24/7 emergency line |
+| 11 | [Yalla Drive](car-rental-website/) | Car rental | Search by office and dates with opening-hours checks, fleet filters and sort, car galleries, live price with weekend and long-rental discounts, extras and one-way fees, driver checks (+216, age, licence) |
+| 12 | [FORGE Fitness](gym-website/) | Fitness studio | Weekly class timetable with filters and live spots left (book/cancel, full classes locked), monthly/yearly plans, BMI + Mifflin–St Jeor calorie and macro calculator, coach profiles, free-trial form |
+| 13 | [Maison Lina](salon-website/) | Barber & beauty salon | Book stylist → services → time, only offering slots long enough for everything chosen, printable price list, loyalty stamp card, gift-card builder with live preview, gallery lightbox |
+| 14 | [Rihla Tours](travel-agency-website/) | Tunisian tour operator | Tour filters and sort, day-by-day itineraries with photo lightbox, price calculator with seasons, group discounts, private option and single rooms, month-by-month season chart, enquiry form |
 
 Open [`index.html`](index.html) to browse them all, filter by industry, and preview any site at desktop or
 phone size.
