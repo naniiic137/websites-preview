@@ -1,0 +1,28 @@
+/* Résumé print stylesheet — one A4 page, ink-friendly. Loaded with media="print". */
+@page { size: A4; margin: 13mm 14mm; }
+
+html, body { background: #fff !important; color: #141414 !important; }
+body { margin: 0; font: 10pt/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+.site, .back-link, .skip-link, .toast, dialog { display: none !important; }
+
+.resume { display: block !important; color: #141414; }
+.resume * { color: inherit; }
+.resume h1 { font-size: 28pt; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin: 0; }
+.r-role { font: 600 10.5pt system-ui, sans-serif; color: #c2381a !important; margin-top: 4pt; }
+.r-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16pt; padding-bottom: 9pt; border-bottom: 2pt solid #141414; }
+.r-contact { list-style: none; margin: 0; padding: 0; text-align: right; font: 8.4pt/1.5 ui-monospace, Consolas, monospace; }
+.r-summary { margin: 12pt 0 4pt; font-size: 10.2pt; color: #333 !important; }
+.r-cols { display: grid; grid-template-columns: 1fr 34%; gap: 18pt; }
+.resume h2 { font: 700 8.6pt ui-monospace, Consolas, monospace; text-transform: uppercase; letter-spacing: .12em; color: #c2381a !important; margin: 15pt 0 7pt; padding-bottom: 3pt; border-bottom: .6pt solid #d9d5cc; }
+.r-job { margin-bottom: 9pt; break-inside: avoid; }
+.r-job-head { display: flex; justify-content: space-between; gap: 8pt; }
+.r-job-head strong { font-size: 10pt; }
+.r-job-head > span { font: 8.2pt ui-monospace, Consolas, monospace; color: #555 !important; white-space: nowrap; }
+.r-org { font-weight: 600; color: #444 !important; }
+.r-job ul, .r-projects { margin: 3pt 0 0; padding-left: 12pt; list-style: disc; }
+.r-job li, .r-projects li { margin: 1pt 0; }
+.r-side p { margin: 0 0 2pt; }
+.r-skill { margin-bottom: 7pt; }
+.r-skill strong { display: block; font-size: 8.8pt; }
+.r-skill span { color: #333 !important; }
+a { text-decoration: none; }

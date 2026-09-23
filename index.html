@@ -1,1480 +1,481 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Stack Web Developer | Portfolio</title>
-<meta name="description" content="Full Stack Web Developer portfolio showcasing 9 professional web projects including restaurants, e-commerce, dashboards, and more.">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #0f0f23;
-  --bg-card: #1a1a2e;
-  --bg-card-hover: #222240;
-  --text-primary: #f0f0f5;
-  --text-secondary: #a0a0b8;
-  --text-muted: #6a6a80;
-  --accent: #6C63FF;
-  --accent-hover: #5a52e0;
-  --accent-glow: rgba(108, 99, 255, 0.25);
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.5);
-  --radius: 16px;
-  --radius-sm: 8px;
-  --radius-pill: 100px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-}
-
-[data-theme="light"] {
-  --bg-primary: #f5f5fa;
-  --bg-secondary: #eeeef4;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f8f8fc;
-  --text-primary: #1a1a2e;
-  --text-secondary: #555570;
-  --text-muted: #8888a0;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(0, 0, 0, 0.15);
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-a { text-decoration: none; color: inherit; }
-img { max-width: 100%; display: block; }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-ul { list-style: none; }
-
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-/* ===== NAVBAR ===== */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  padding: 16px 0;
-  transition: background var(--transition), box-shadow var(--transition), padding var(--transition);
-}
-
-.navbar.scrolled {
-  background: var(--bg-secondary);
-  box-shadow: 0 1px 20px rgba(0,0,0,0.2);
-  padding: 10px 0;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-[data-theme="light"] .navbar.scrolled {
-  background: rgba(245, 245, 250, 0.9);
-  box-shadow: 0 1px 20px rgba(0,0,0,0.06);
-}
-
-.navbar .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.nav-logo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.5px;
-}
-
-.nav-logo span { color: var(--accent); }
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-}
-
-.nav-links a {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  transition: color var(--transition);
-  font-weight: 500;
-}
-
-.nav-links a:hover { color: var(--accent); }
-
-.theme-toggle {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  transition: all var(--transition);
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-
-.theme-toggle:hover {
-  background: var(--bg-card-hover);
-  color: var(--accent);
-  border-color: var(--border-hover);
-}
-
-.theme-toggle svg { width: 20px; height: 20px; }
-
-.mobile-toggle {
-  display: none;
-  width: 44px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.mobile-toggle span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: var(--text-primary);
-  transition: all var(--transition);
-  border-radius: 2px;
-}
-
-.mobile-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-.mobile-toggle.active span:nth-child(2) { opacity: 0; }
-.mobile-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-
-/* ===== HERO ===== */
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-  padding: 120px 24px 80px;
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #0a0a1a 0%, #1a1040 25%, #0d1530 50%, #0a0a1a 75%, #151035 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-}
-
-[data-theme="light"] .hero-bg {
-  background: linear-gradient(135deg, #f5f5fa 0%, #e8e0ff 25%, #dfe8ff 50%, #f5f5fa 75%, #ebe0ff 100%);
-  background-size: 400% 400%;
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(108, 99, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(108, 99, 255, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-[data-theme="light"] .hero-grid {
-  background-image:
-    linear-gradient(rgba(108, 99, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(108, 99, 255, 0.06) 1px, transparent 1px);
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 720px;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 20px;
-  background: rgba(108, 99, 255, 0.1);
-  border: 1px solid rgba(108, 99, 255, 0.2);
-  border-radius: var(--radius-pill);
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 500;
-  margin-bottom: 32px;
-}
-
-.hero-badge .dot {
-  width: 8px;
-  height: 8px;
-  background: #4ade80;
-  border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.hero h1 {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  letter-spacing: -1.5px;
-}
-
-.hero h1 .gradient-text {
-  background: linear-gradient(135deg, var(--accent), #a78bfa, #6C63FF);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-subtitle {
-  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
-  color: var(--text-secondary);
-  margin-bottom: 32px;
-  line-height: 1.7;
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-}
-
-.hero-stat {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hero-stat .num {
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.stat-dot {
-  width: 4px;
-  height: 4px;
-  background: var(--text-muted);
-  border-radius: 50%;
-}
-
-.hero-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 48px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
-  border-radius: var(--radius-pill);
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all var(--transition);
-  min-height: 48px;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 4px 20px var(--accent-glow);
-}
-
-.btn-primary:hover {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px var(--accent-glow);
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-}
-
-.btn-outline:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(108, 99, 255, 0.05);
-}
-
-.btn svg { width: 18px; height: 18px; }
-
-.hero-social {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.social-link {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  transition: all var(--transition);
-}
-
-.social-link:hover {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px var(--accent-glow);
-}
-
-.social-link svg { width: 20px; height: 20px; }
-
-/* ===== FILTER BAR ===== */
-.filter-section {
-  padding: 60px 0 20px;
-  position: relative;
-  z-index: 10;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 48px;
-}
-
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-}
-
-.section-label::before,
-.section-label::after {
-  content: '';
-  width: 24px;
-  height: 1px;
-  background: var(--accent);
-  opacity: 0.3;
-}
-
-.section-header h2 {
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin-bottom: 12px;
-}
-
-.section-header p {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  max-width: 540px;
-  margin: 0 auto;
-}
-
-.filter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 40px;
-  padding: 0 16px;
-}
-
-.filter-pill {
-  padding: 10px 22px;
-  border-radius: var(--radius-pill);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  transition: all var(--transition);
-  cursor: pointer;
-  white-space: nowrap;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-
-.filter-pill:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
-  background: var(--bg-card-hover);
-}
-
-.filter-pill.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 4px 16px var(--accent-glow);
-}
-
-/* ===== PROJECTS GRID ===== */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-  padding-bottom: 80px;
-}
-
-.project-card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-.project-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.project-card.hiding {
-  opacity: 0;
-  transform: scale(0.95);
-  pointer-events: none;
-}
-
-.project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--border-hover);
-}
-
-.project-card.visible:hover {
-  transform: translateY(-6px);
-}
-
-.card-image-wrap {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-}
-
-.card-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.project-card:hover .card-image-wrap img {
-  transform: scale(1.05);
-}
-
-.card-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(10, 10, 26, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-
-.project-card:hover .card-overlay {
-  opacity: 1;
-}
-
-.card-overlay .btn {
-  transform: translateY(10px);
-  transition: all var(--transition);
-}
-
-.project-card:hover .card-overlay .btn {
-  transform: translateY(0);
-}
-
-.card-badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  padding: 6px 14px;
-  background: rgba(10, 10, 26, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #fff;
-  z-index: 2;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.card-body {
-  padding: 22px;
-}
-
-.card-body h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  letter-spacing: -0.3px;
-}
-
-.card-desc {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 18px;
-}
-
-.card-tag {
-  padding: 4px 12px;
-  background: rgba(108, 99, 255, 0.08);
-  border: 1px solid rgba(108, 99, 255, 0.15);
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--accent);
-}
-
-[data-theme="light"] .card-tag {
-  background: rgba(108, 99, 255, 0.06);
-}
-
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--accent);
-  transition: all var(--transition);
-  padding: 8px 0;
-  min-height: 44px;
-}
-
-.card-link:hover { gap: 10px; }
-
-.card-link svg {
-  width: 16px;
-  height: 16px;
-  transition: transform var(--transition);
-}
-
-.card-link:hover svg { transform: translateX(3px); }
-
-/* ===== SKILLS SECTION ===== */
-.skills-section {
-  padding: 80px 0;
-  background: var(--bg-secondary);
-}
-
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.skill-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 32px 28px;
-  text-align: center;
-  transition: all var(--transition);
-}
-
-.skill-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
-  border-color: var(--border-hover);
-}
-
-.skill-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 20px;
-  background: rgba(108, 99, 255, 0.08);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent);
-}
-
-.skill-icon svg { width: 28px; height: 28px; }
-
-.skill-card h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.skill-card p {
-  color: var(--text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-/* ===== CONTACT SECTION ===== */
-.contact-section {
-  padding: 100px 0;
-  position: relative;
-}
-
-.contact-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: start;
-}
-
-.contact-info h2 {
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin-bottom: 16px;
-}
-
-.contact-info p {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  margin-bottom: 36px;
-  line-height: 1.7;
-}
-
-.contact-links {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.contact-link-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--text-secondary);
-  transition: color var(--transition);
-  font-size: 0.95rem;
-  min-height: 44px;
-}
-
-.contact-link-item:hover { color: var(--accent); }
-
-.contact-link-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  flex-shrink: 0;
-  color: var(--accent);
-}
-
-.contact-link-icon svg { width: 20px; height: 20px; }
-
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.form-group { position: relative; }
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 16px 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: var(--font);
-  font-size: 0.95rem;
-  transition: all var(--transition);
-  outline: none;
-  min-height: 48px;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 130px;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-glow);
-}
-
-.form-submit {
-  width: 100%;
-  padding: 16px;
-  background: var(--accent);
-  color: #fff;
-  border-radius: var(--radius-sm);
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all var(--transition);
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.form-submit:hover {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px var(--accent-glow);
-}
-
-.form-submit svg { width: 18px; height: 18px; }
-
-/* ===== FOOTER ===== */
-.footer {
-  padding: 40px 0;
-  border-top: 1px solid var(--border);
-  background: var(--bg-secondary);
-}
-
-.footer .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.footer-left {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-}
-
-.footer-left span { color: var(--accent); font-weight: 600; }
-
-.footer-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.footer-social {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--text-muted);
-  transition: all var(--transition);
-  border: 1px solid var(--border);
-}
-
-.footer-social:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: rgba(108, 99, 255, 0.05);
-}
-
-.footer-social svg { width: 18px; height: 18px; }
-
-/* ===== SCROLL TO TOP ===== */
-.scroll-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 48px;
-  height: 48px;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 16px var(--accent-glow);
-  transition: all var(--transition);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 999;
-}
-
-.scroll-top.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.scroll-top:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 28px var(--accent-glow);
-}
-
-.scroll-top svg { width: 20px; height: 20px; }
-
-/* ===== MOBILE NAV ===== */
-.mobile-nav {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg-primary);
-  z-index: 998;
-  padding: 100px 32px 32px;
-  flex-direction: column;
-  gap: 8px;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all var(--transition);
-}
-
-.mobile-nav.open {
-  display: flex;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.mobile-nav a {
-  padding: 16px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-}
-
-.mobile-nav a:hover {
-  color: var(--accent);
-  background: var(--bg-card);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  .skills-grid { grid-template-columns: repeat(2, 1fr); }
-  .contact-inner { grid-template-columns: 1fr; gap: 40px; }
-}
-
-@media (max-width: 768px) {
-  .nav-links { display: none; }
-  .mobile-toggle { display: flex; }
-
-  .projects-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
-  .skills-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
-
-  .hero { padding: 100px 20px 60px; min-height: auto; min-height: 100svh; }
-  .hero h1 { font-size: 2.2rem; }
-
-  .hero-stats { gap: 16px; }
-  .hero-stats .stat-dot { display: none; }
-  .hero-stat { font-size: 0.82rem; }
-
-  .filter-bar { gap: 6px; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-  .filter-pill { flex-shrink: 0; }
-
-  .section-header { margin-bottom: 32px; }
-  .skills-section { padding: 60px 0; }
-  .contact-section { padding: 60px 0; }
-
-  .footer .container { justify-content: center; text-align: center; }
-}
-
-@media (max-width: 480px) {
-  .hero h1 { font-size: 1.85rem; }
-  .hero-subtitle { font-size: 0.95rem; }
-  .hero-actions { flex-direction: column; width: 100%; }
-  .hero-actions .btn { width: 100%; justify-content: center; }
-  .container { padding: 0 16px; }
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hamza Ben Ismail — Websites for businesses | 9 live demos</title>
+<meta name="description" content="Hamza Ben Ismail designs and builds fast, mobile-first websites for restaurants, hotels, shops, agencies and events. Browse 9 live client-style demos and preview them on desktop or phone.">
+<meta name="author" content="Hamza Ben Ismail">
+<meta name="theme-color" content="#f5f2ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12110f" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://websites-preview.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hamza Ben Ismail — Websites for businesses">
+<meta property="og:description" content="9 live, responsive website demos: restaurants, hotels, e-commerce, real estate, events and dashboards.">
+<meta property="og:url" content="https://websites-preview.netlify.app/">
+<meta property="og:image" content="https://websites-preview.netlify.app/previews/restaurant-website.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2316140f'/%3E%3Ctext x='32' y='42' font-family='Arial,sans-serif' font-size='28' font-weight='700' text-anchor='middle' fill='%23f26a2e'%3EHB%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/landing.css">
+<script>
+  /* Apply saved / system theme before paint to avoid a flash */
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('hb-theme'); } catch (e) {}
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    document.documentElement.classList.add('js');
+  })();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Hamza Ben Ismail — Web Design & Development",
+  "url": "https://websites-preview.netlify.app/",
+  "email": "hamza.benismail.6@gmail.com",
+  "founder": { "@type": "Person", "name": "Hamza Ben Ismail", "url": "https://www.hamzabenismail.cloud-ip.cc", "sameAs": ["https://github.com/naniiic137"] },
+  "address": { "@type": "PostalAddress", "addressCountry": "TN" },
+  "areaServed": "Worldwide",
+  "serviceType": ["Website design", "Website development", "Restaurant websites", "E-commerce websites"]
+}
+</script>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-<!-- NAVBAR -->
-<nav class="navbar" id="navbar">
-  <div class="container">
-    <a href="#" class="nav-logo">dev<span>.</span>folio</a>
-    <div class="nav-links">
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#contact">Contact</a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a href="#top" class="brand" aria-label="Hamza Ben Ismail — home">
+      <span class="brand-mark" aria-hidden="true">HB</span>
+      <span class="brand-name">Hamza Ben Ismail<small>Web design &amp; development</small></span>
+    </a>
+    <nav class="main-nav" id="mainNav" aria-label="Main">
+      <ul>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#included">What you get</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#contact" class="btn btn-accent nav-cta">Start a project</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
+        <span class="burger" aria-hidden="true"><span></span><span></span><span></span></span>
       </button>
     </div>
-    <div class="mobile-actions" style="display:flex;align-items:center;gap:8px;">
-      <button class="theme-toggle" id="themeToggleMobile" aria-label="Toggle theme" style="display:none;">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
   </div>
-</nav>
+</header>
 
-<!-- MOBILE NAV -->
-<div class="mobile-nav" id="mobileNav">
-  <a href="#projects" onclick="closeMobileNav()">Projects</a>
-  <a href="#skills" onclick="closeMobileNav()">Skills</a>
-  <a href="#contact" onclick="closeMobileNav()">Contact</a>
-</div>
+<main id="main">
 
-<!-- HERO -->
-<section class="hero" id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      Available for freelance work
-    </div>
-    <h1>
-      I Build <span class="gradient-text">Beautiful Websites</span> That Drive Results
-    </h1>
-    <p class="hero-subtitle">
-      Full Stack Web Developer specializing in crafting high-performance, visually stunning websites for businesses of every size.
-    </p>
-    <div class="hero-stats">
-      <div class="hero-stat"><span class="num">9</span> Projects</div>
-      <div class="stat-dot"></div>
-      <div class="hero-stat">Web Apps</div>
-      <div class="stat-dot"></div>
-      <div class="hero-stat">E-Commerce</div>
-      <div class="stat-dot"></div>
-      <div class="hero-stat">Dashboards</div>
-    </div>
-    <div class="hero-actions">
-      <a href="#projects" class="btn btn-primary">
-        View My Work
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-      </a>
-      <a href="#contact" class="btn btn-outline">
-        Get In Touch
-      </a>
-    </div>
-    <div class="hero-social">
-      <a href="mailto:your@email.com" class="social-link" aria-label="Email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      </a>
-      <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-      </a>
-      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section class="filter-section" id="projects">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-label">Portfolio</div>
-      <h2>Featured Projects</h2>
-      <p>A collection of professional websites built with modern technologies and best practices.</p>
-    </div>
-    <div class="filter-bar" id="filterBar">
-      <button class="filter-pill active" data-filter="all">All</button>
-      <button class="filter-pill" data-filter="restaurant">Restaurant</button>
-      <button class="filter-pill" data-filter="tech">Tech</button>
-      <button class="filter-pill" data-filter="ecommerce">E-Commerce</button>
-      <button class="filter-pill" data-filter="realestate">Real Estate</button>
-      <button class="filter-pill" data-filter="events">Events</button>
-      <button class="filter-pill" data-filter="saas">SaaS</button>
-      <button class="filter-pill" data-filter="hospitality">Hospitality</button>
-      <button class="filter-pill" data-filter="portfolio">Portfolio</button>
-    </div>
-    <div class="projects-grid" id="projectsGrid">
-      <!-- Cards injected by JS -->
-    </div>
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section class="skills-section" id="skills">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-label">Services</div>
-      <h2>What I Offer</h2>
-      <p>End-to-end web solutions tailored to your business needs.</p>
-    </div>
-    <div class="skills-grid" id="skillsGrid"></div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact-section" id="contact">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-label">Contact</div>
-      <h2>Let's Work Together</h2>
-      <p>Have a project in mind? I'd love to hear about it.</p>
-    </div>
-    <div class="contact-inner">
-      <div class="contact-info">
-        <h2>Get in touch</h2>
-        <p>Whether you need a new website, an e-commerce store, or a custom web application, I'm here to help bring your vision to life.</p>
-        <div class="contact-links">
-          <a href="mailto:your@email.com" class="contact-link-item">
-            <div class="contact-link-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </div>
-            your@email.com
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Taking new projects<span class="hide-xs"> · Tunisia, working worldwide</span></p>
+        <h1 id="hero-title">Websites that <em>bring customers</em> through the door.</h1>
+        <p class="lead">I design and build fast, mobile-first websites for restaurants, hotels, shops, agencies and events — with the features your customers actually use: bookings, menus, ordering, RSVPs and more.</p>
+        <div class="hero-cta">
+          <a href="#work" class="btn btn-accent btn-lg">See 9 live demos
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
           </a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="contact-link-item">
-            <div class="contact-link-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            </div>
-            GitHub Profile
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="contact-link-item">
-            <div class="contact-link-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            </div>
-            LinkedIn Profile
-          </a>
+          <a href="#contact" class="btn btn-ghost btn-lg">Get a free quote</a>
+        </div>
+        <ul class="hero-proof" aria-label="Highlights">
+          <li><strong>9</strong><span>industry demos</span></li>
+          <li><strong>100%</strong><span>responsive, phone to 4K</span></li>
+          <li><strong>0</strong><span>frameworks or plugins</span></li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="stack">
+          <div class="browser b1" style="--fb1:#0c1b33;--fb2:#c9a96e">
+            <div class="browser-bar"><i></i><i></i><i></i><span>azure-palace.com</span></div>
+            <div class="shot"><span class="shot-fallback">The Azure Palace</span><img src="previews/hotel-website.webp" width="1280" height="800" alt="" decoding="async"></div>
+          </div>
+          <div class="browser b2" style="--fb1:#1a1a1a;--fb2:#d4af37">
+            <div class="browser-bar"><i></i><i></i><i></i><span>maison-doree.fr</span></div>
+            <div class="shot"><span class="shot-fallback">La Maison Dorée</span><img src="previews/restaurant-website.webp" width="1280" height="800" alt="" decoding="async"></div>
+          </div>
+          <div class="browser b3" style="--fb1:#111;--fb2:#c8102e">
+            <div class="browser-bar"><i></i><i></i><i></i><span>luxe.store</span></div>
+            <div class="shot"><span class="shot-fallback">LUXE</span><img src="previews/ecommerce-store.webp" width="1280" height="800" alt="" decoding="async"></div>
+          </div>
+          <div class="sticker">Works offline<br><b>no CDNs</b></div>
         </div>
       </div>
-      <form class="contact-form" onsubmit="handleSubmit(event)">
-        <div class="form-group">
-          <input type="text" placeholder="Your Name" required>
-        </div>
-        <div class="form-group">
-          <input type="email" placeholder="Your Email" required>
-        </div>
-        <div class="form-group">
-          <textarea placeholder="Tell me about your project..." required></textarea>
-        </div>
-        <button type="submit" class="form-submit">
-          Send Message
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </form>
     </div>
-  </div>
-</section>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-left">
-      Built with <span>passion</span> &mdash; &copy; 2024 All rights reserved.
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Restaurants</span><span>Digital menus</span><span>Hotels</span><span>Online shops</span><span>Real estate</span><span>Weddings &amp; events</span><span>Delivery startups</span><span>Dashboards</span><span>Personal brands</span>
+        <span>Restaurants</span><span>Digital menus</span><span>Hotels</span><span>Online shops</span><span>Real estate</span><span>Weddings &amp; events</span><span>Delivery startups</span><span>Dashboards</span><span>Personal brands</span>
+      </div>
     </div>
-    <div class="footer-right">
-      <a href="mailto:your@email.com" class="footer-social" aria-label="Email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      </a>
-      <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-social" aria-label="GitHub">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-      </a>
-      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social" aria-label="LinkedIn">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      </a>
+  </section>
+
+  <!-- WORK -->
+  <section class="section work" id="work" aria-labelledby="work-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Selected work</p>
+          <h2 id="work-title">Pick your industry. Try the site.</h2>
+        </div>
+        <p class="section-intro">Every demo is a complete, working website — click around, book a table, fill a cart, RSVP. Use <strong>Preview</strong> to see how it looks on a phone.</p>
+      </div>
+
+      <div class="chips" role="toolbar" aria-label="Filter projects by industry" id="chips">
+        <button type="button" class="chip" data-filter="all" aria-pressed="true">All <span class="count">9</span></button>
+        <button type="button" class="chip" data-filter="food" aria-pressed="false">Restaurants <span class="count">2</span></button>
+        <button type="button" class="chip" data-filter="hospitality" aria-pressed="false">Hotels <span class="count">1</span></button>
+        <button type="button" class="chip" data-filter="retail" aria-pressed="false">Shops <span class="count">1</span></button>
+        <button type="button" class="chip" data-filter="realestate" aria-pressed="false">Real estate <span class="count">1</span></button>
+        <button type="button" class="chip" data-filter="events" aria-pressed="false">Events <span class="count">1</span></button>
+        <button type="button" class="chip" data-filter="business" aria-pressed="false">Startups &amp; SaaS <span class="count">2</span></button>
+        <button type="button" class="chip" data-filter="personal" aria-pressed="false">Personal brand <span class="count">1</span></button>
+      </div>
+      <p class="sr-only" id="filterStatus" aria-live="polite"></p>
+
+      <ul class="projects" id="projects">
+        <li class="project" data-cat="food" data-folder="restaurant-website" style="--fb1:#1a1a1a;--fb2:#d4af37">
+          <a class="thumb" href="restaurant-website/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">La Maison Dorée</span>
+            <img src="previews/restaurant-website.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Fine-dining restaurant</span><span>01</span></p>
+            <h3><a href="restaurant-website/index.html">La Maison Dorée</a></h3>
+            <p>An elegant French restaurant site that turns visitors into bookings.</p>
+            <ul class="feats"><li>Table reservations</li><li>Menu tabs</li><li>“Open now” hours</li><li>Gallery</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="restaurant-website/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="restaurant-website" data-name="La Maison Dorée">Preview <span class="sr-only">La Maison Dorée</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="food" data-folder="digital-menu" style="--fb1:#131110;--fb2:#e8820c">
+          <a class="thumb" href="digital-menu/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">Ember &amp; Oak</span>
+            <img src="previews/digital-menu.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>QR digital menu</span><span>02</span></p>
+            <h3><a href="digital-menu/index.html">Ember &amp; Oak</a></h3>
+            <p>A table-side menu guests open from a QR code and order from.</p>
+            <ul class="feats"><li>Search &amp; dietary filters</li><li>Order by table</li><li>EN / FR / AR</li><li>Printable QR</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="digital-menu/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="digital-menu" data-name="Ember &amp; Oak">Preview <span class="sr-only">Ember &amp; Oak</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="hospitality" data-folder="hotel-website" style="--fb1:#0c1b33;--fb2:#c9a96e">
+          <a class="thumb" href="hotel-website/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">The Azure Palace</span>
+            <img src="previews/hotel-website.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Luxury hotel</span><span>03</span></p>
+            <h3><a href="hotel-website/index.html">The Azure Palace</a></h3>
+            <p>A boutique hotel site built around rooms, offers and direct bookings.</p>
+            <ul class="feats"><li>Room booking</li><li>Special offers</li><li>Amenities</li><li>Gallery</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="hotel-website/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="hotel-website" data-name="The Azure Palace">Preview <span class="sr-only">The Azure Palace</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="retail" data-folder="ecommerce-store" style="--fb1:#111111;--fb2:#c8102e">
+          <a class="thumb" href="ecommerce-store/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">LUXE</span>
+            <img src="previews/ecommerce-store.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Fashion e-commerce</span><span>04</span></p>
+            <h3><a href="ecommerce-store/index.html">LUXE</a></h3>
+            <p>A minimalist fashion storefront with a cart that just works.</p>
+            <ul class="feats"><li>Product filters</li><li>Cart drawer</li><li>Wishlist</li><li>Quick view</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="ecommerce-store/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="ecommerce-store" data-name="LUXE">Preview <span class="sr-only">LUXE</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="realestate" data-folder="real-estate-website" style="--fb1:#1b2a4a;--fb2:#0ea5e9">
+          <a class="thumb" href="real-estate-website/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">PrimeNest Realty</span>
+            <img src="previews/real-estate-website.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Real estate agency</span><span>05</span></p>
+            <h3><a href="real-estate-website/index.html">PrimeNest Realty</a></h3>
+            <p>A listings site that helps buyers search and contact the right agent.</p>
+            <ul class="feats"><li>Property search</li><li>Listings</li><li>Agent profiles</li><li>Neighbourhoods</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="real-estate-website/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="real-estate-website" data-name="PrimeNest Realty">Preview <span class="sr-only">PrimeNest Realty</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="events" data-folder="wedding-invitation" style="--fb1:#faf8f5;--fb2:#c9a96e;--fbt:#2a2a2a">
+          <a class="thumb" href="wedding-invitation/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">Sarah &amp; James</span>
+            <img src="previews/wedding-invitation.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Wedding invitation</span><span>06</span></p>
+            <h3><a href="wedding-invitation/index.html">Sarah &amp; James</a></h3>
+            <p>A digital invitation guests keep coming back to — and actually reply to.</p>
+            <ul class="feats"><li>RSVP &amp; meal choice</li><li>Countdown</li><li>Add to calendar</li><li>Schedule</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="wedding-invitation/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="wedding-invitation" data-name="Sarah &amp; James">Preview <span class="sr-only">Sarah &amp; James</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="business" data-folder="delivery-website" style="--fb1:#0a1628;--fb2:#0066ff">
+          <a class="thumb" href="delivery-website/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">SwiftDrop</span>
+            <img src="previews/delivery-website.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Delivery startup</span><span>07</span></p>
+            <h3><a href="delivery-website/index.html">SwiftDrop</a></h3>
+            <p>A logistics landing page with live parcel tracking and clear pricing.</p>
+            <ul class="feats"><li>Parcel tracking</li><li>Pricing plans</li><li>How it works</li><li>Quote form</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="delivery-website/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="delivery-website" data-name="SwiftDrop">Preview <span class="sr-only">SwiftDrop</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="business" data-folder="inventory-dashboard" style="--fb1:#0f172a;--fb2:#3b82f6">
+          <a class="thumb" href="inventory-dashboard/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">StockPulse</span>
+            <img src="previews/inventory-dashboard.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Inventory dashboard</span><span>08</span></p>
+            <h3><a href="inventory-dashboard/index.html">StockPulse</a></h3>
+            <p>A back-office app to track stock, sales and low-stock alerts.</p>
+            <ul class="feats"><li>Charts</li><li>Product CRUD</li><li>CSV export</li><li>Dark mode</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="inventory-dashboard/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="inventory-dashboard" data-name="StockPulse">Preview <span class="sr-only">StockPulse</span></button>
+            </div>
+          </div>
+        </li>
+        <li class="project" data-cat="personal" data-folder="portfolio-resume" style="--fb1:#0a0a1a;--fb2:#6c63ff">
+          <a class="thumb" href="portfolio-resume/index.html" tabindex="-1" aria-hidden="true">
+            <span class="shot-fallback">Developer Portfolio</span>
+            <img src="previews/portfolio-resume.webp" width="1280" height="800" loading="lazy" decoding="async" alt="">
+          </a>
+          <div class="project-body">
+            <p class="project-meta"><span>Portfolio &amp; résumé</span><span>09</span></p>
+            <h3><a href="portfolio-resume/index.html">Developer Portfolio</a></h3>
+            <p>A personal site that presents skills, projects and experience.</p>
+            <ul class="feats"><li>Project filters</li><li>Skills</li><li>Timeline</li><li>Contact form</li></ul>
+            <div class="project-actions">
+              <a class="btn btn-small btn-solid" href="portfolio-resume/index.html">Open site</a>
+              <button type="button" class="btn btn-small btn-ghost preview-btn" data-folder="portfolio-resume" data-name="Developer Portfolio">Preview <span class="sr-only">Developer Portfolio</span></button>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section class="section included" id="included" aria-labelledby="included-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker">What you get</p>
+          <h2 id="included-title">Built right, not just built.</h2>
+        </div>
+        <p class="section-intro">The same standards you can test in every demo above — included in every project, not sold as extras.</p>
+      </div>
+      <ul class="benefits">
+        <li class="benefit b-wide">
+          <div class="benefit-art" aria-hidden="true">
+            <span class="dev dev-desk"></span><span class="dev dev-tab"></span><span class="dev dev-phone"></span>
+          </div>
+          <h3>Responsive on every screen</h3>
+          <p>Designed for phones first — where most of your customers are — then laid out properly for tablets and large desktops. No pinching, no sideways scrolling, tap targets sized for thumbs.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+          <h3>Fast by default</h3>
+          <p>Hand-written HTML, CSS and JavaScript. Compressed WebP images, lazy loading and no heavy frameworks slowing things down.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></svg>
+          <h3>Offline-safe &amp; reliable</h3>
+          <p>Fonts, images and scripts are self-hosted. No broken images when a third-party link dies, no tracking you didn’t ask for.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <h3>SEO basics done</h3>
+          <p>Semantic headings, page titles and descriptions, social-share tags, image alt text and structured data so Google understands your business.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2"/><path d="M4 8.5l8 1.5 8-1.5M12 10v5m0 0-3 6m3-6 3 6"/></svg>
+          <h3>Accessible</h3>
+          <p>Keyboard navigation, visible focus, readable contrast and reduced-motion support — better for every visitor.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/><path d="m9 8-2 2 2 2m6-4 2 2-2 2"/></svg>
+          <h3>Features that sell</h3>
+          <p>Reservations, ordering, carts, bookings, RSVPs, dashboards — interactive features with validation and clear feedback.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0"/></svg>
+          <h3>You own it</h3>
+          <p>Clean, readable code with no lock-in to a page builder. Host it anywhere, change it any time.</p>
+        </li>
+        <li class="benefit">
+          <svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h8M8 3v2m2.5 0c-.8 4-3.3 7-6.5 8.5M6 9c1 2 2.6 3.6 4.5 4.5"/><path d="m12 21 4.5-10 4.5 10m-7.5-3h6"/></svg>
+          <h3>Multilingual-ready</h3>
+          <p>English, French or Arabic — including right-to-left layouts — so every customer reads your site in their language.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section process" id="process" aria-labelledby="process-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker">How it works</p>
+          <h2 id="process-title">From first message to launch.</h2>
+        </div>
+      </div>
+      <ol class="steps">
+        <li><span class="step-n">01</span><h3>Talk</h3><p>You tell me about your business, your customers and what the website needs to do.</p></li>
+        <li><span class="step-n">02</span><h3>Design</h3><p>I propose a look and page structure based on your brand — you review it before any build starts.</p></li>
+        <li><span class="step-n">03</span><h3>Build</h3><p>I build the site and share a live preview link you can open on your own phone and laptop.</p></li>
+        <li><span class="step-n">04</span><h3>Launch</h3><p>We go live on your domain, and I show you how to make simple updates yourself.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact" id="contact" aria-labelledby="contact-title">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <p class="kicker">Contact</p>
+        <h2 id="contact-title">Let’s build yours.</h2>
+        <p class="lead">Tell me a little about your business and I’ll reply with ideas and a quote. No obligation.</p>
+        <ul class="contact-links">
+          <li>
+            <a href="mailto:hamza.benismail.6@gmail.com">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              <span><small>Email</small>hamza.benismail.6@gmail.com</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.hamzabenismail.cloud-ip.cc" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
+              <span><small>Portfolio</small>hamzabenismail.cloud-ip.cc</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/naniiic137" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+              <span><small>GitHub</small>github.com/naniiic137</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-card">
+        <form id="contactForm" novalidate>
+          <div class="field">
+            <label for="cf-name">Your name</label>
+            <input id="cf-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="cf-name-err">
+            <p class="field-error" id="cf-name-err"></p>
+          </div>
+          <div class="field">
+            <label for="cf-email">Email</label>
+            <input id="cf-email" name="email" type="email" autocomplete="email" required aria-describedby="cf-email-err">
+            <p class="field-error" id="cf-email-err"></p>
+          </div>
+          <div class="field">
+            <label for="cf-type">Type of business</label>
+            <select id="cf-type" name="type" required aria-describedby="cf-type-err">
+              <option value="">Choose one…</option>
+              <option>Restaurant or café</option>
+              <option>Hotel or guest house</option>
+              <option>Shop / e-commerce</option>
+              <option>Real estate</option>
+              <option>Event or wedding</option>
+              <option>Startup or SaaS</option>
+              <option>Personal brand / portfolio</option>
+              <option>Something else</option>
+            </select>
+            <p class="field-error" id="cf-type-err"></p>
+          </div>
+          <div class="field">
+            <label for="cf-msg">What do you need?</label>
+            <textarea id="cf-msg" name="message" rows="4" required minlength="10" aria-describedby="cf-msg-err" placeholder="e.g. A website for my restaurant with online reservations"></textarea>
+            <p class="field-error" id="cf-msg-err"></p>
+          </div>
+          <button type="submit" class="btn btn-accent btn-lg btn-block">Send message</button>
+          <p class="form-note">Demo form: your message is saved in this browser. For a guaranteed reply, email me directly.</p>
+        </form>
+        <div class="form-success" id="formSuccess" hidden tabindex="-1">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6"/></svg>
+          <h3>Thanks, <span id="successName">friend</span>!</h3>
+          <p>Your message is saved. To make sure it reaches me right away, send it by email too:</p>
+          <a class="btn btn-accent" id="mailtoLink" href="mailto:hamza.benismail.6@gmail.com">Send by email</a>
+          <button type="button" class="btn btn-ghost" id="newMessage">Write another message</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© <span id="year">2026</span> Hamza Ben Ismail · Web design &amp; development · Tunisia</p>
+    <p class="footer-small">All demo brands are fictional. Demo photos from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>. Font: Bricolage Grotesque (SIL OFL).</p>
+    <a href="#top" class="to-top">Back to top ↑</a>
   </div>
 </footer>
 
-<!-- SCROLL TO TOP -->
-<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
+<!-- DEVICE PREVIEW -->
+<dialog class="preview" id="preview" aria-labelledby="previewTitle">
+  <div class="preview-bar">
+    <h2 id="previewTitle">Preview</h2>
+    <div class="segmented" role="group" aria-label="Device size">
+      <button type="button" data-device="desktop" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Desktop</span>
+      </button>
+      <button type="button" data-device="phone" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg><span>Phone</span>
+      </button>
+    </div>
+    <div class="preview-actions">
+      <a class="btn btn-small btn-ghost" id="previewOpen" href="#" target="_blank" rel="noopener">Open <span class="hide-sm">in new tab</span> ↗</a>
+      <button type="button" class="icon-btn" id="previewClose" aria-label="Close preview">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="preview-stage" id="previewStage">
+    <div class="device" id="device">
+      <iframe id="previewFrame" title="Project preview" loading="lazy"></iframe>
+    </div>
+  </div>
+</dialog>
 
-<script>
-(function() {
-  'use strict';
-
-  /* ===== DATA ===== */
-  var projects = [
-    {
-      name: 'La Maison Doree',
-      desc: 'An elegant fine dining restaurant website with reservations and menu showcase.',
-      link: './restaurant-website/index.html',
-      category: 'restaurant',
-      badge: 'Restaurant',
-      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Responsive']
-    },
-    {
-      name: 'SwiftDrop',
-      desc: 'A modern delivery and logistics platform with real-time tracking.',
-      link: './delivery-website/index.html',
-      category: 'tech',
-      badge: 'Tech / Startup',
-      image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Responsive']
-    },
-    {
-      name: 'Developer Portfolio',
-      desc: 'A personal resume and portfolio site with project showcases.',
-      link: './portfolio-resume/index.html',
-      category: 'portfolio',
-      badge: 'Portfolio',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Responsive']
-    },
-    {
-      name: 'LUXE',
-      desc: 'A high-end fashion e-commerce store with cart and product filtering.',
-      link: './ecommerce-store/index.html',
-      category: 'ecommerce',
-      badge: 'E-Commerce',
-      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'E-Commerce']
-    },
-    {
-      name: 'PrimeNest Realty',
-      desc: 'A professional real estate agency website with property listings.',
-      link: './real-estate-website/index.html',
-      category: 'realestate',
-      badge: 'Real Estate',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Responsive']
-    },
-    {
-      name: 'Sarah & James',
-      desc: 'A beautiful digital wedding invitation with RSVP functionality.',
-      link: './wedding-invitation/index.html',
-      category: 'events',
-      badge: 'Events',
-      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Animations']
-    },
-    {
-      name: 'Ember & Oak',
-      desc: 'An interactive digital restaurant menu with categories and search.',
-      link: './digital-menu/index.html',
-      category: 'restaurant',
-      badge: 'Restaurant Tech',
-      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Interactive']
-    },
-    {
-      name: 'StockPulse',
-      desc: 'A comprehensive inventory management dashboard with analytics.',
-      link: './inventory-dashboard/index.html',
-      category: 'saas',
-      badge: 'SaaS / Dashboard',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Dashboard']
-    },
-    {
-      name: 'The Azure Palace',
-      desc: 'A luxury hotel website with room booking and virtual tours.',
-      link: './hotel-website/index.html',
-      category: 'hospitality',
-      badge: 'Hospitality',
-      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop',
-      tags: ['HTML5', 'CSS3', 'JavaScript', 'Responsive']
-    }
-  ];
-
-  var skills = [
-    {
-      title: 'Custom Websites',
-      desc: 'Bespoke, hand-crafted websites tailored to your brand identity.',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
-    },
-    {
-      title: 'E-Commerce Solutions',
-      desc: 'Online stores with product management, carts, and secure checkout.',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>'
-    },
-    {
-      title: 'Web Applications',
-      desc: 'Interactive web apps with dynamic features and seamless UX.',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>'
-    },
-    {
-      title: 'Restaurant Tech',
-      desc: 'Digital menus, reservations, and restaurant management tools.',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'
-    },
-    {
-      title: 'Digital Invitations',
-      desc: 'Elegant event pages with RSVP, countdowns, and animations.',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
-    },
-    {
-      title: 'Dashboards & Analytics',
-      desc: 'Data-driven dashboards with charts, reports, and real-time insights.',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
-    }
-  ];
-
-  /* ===== RENDER PROJECTS ===== */
-  var grid = document.getElementById('projectsGrid');
-  projects.forEach(function(p, i) {
-    var card = document.createElement('div');
-    card.className = 'project-card';
-    card.setAttribute('data-category', p.category);
-    card.style.transitionDelay = (i * 0.08) + 's';
-    var tagsHTML = p.tags.map(function(t) { return '<span class="card-tag">' + t + '</span>'; }).join('');
-    card.innerHTML =
-      '<div class="card-image-wrap">' +
-        '<img src="' + p.image + '" alt="' + p.name + ' preview" loading="lazy" width="600" height="375">' +
-        '<span class="card-badge">' + p.badge + '</span>' +
-        '<div class="card-overlay">' +
-          '<a href="' + p.link + '" class="btn btn-primary">View Project</a>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card-body">' +
-        '<h3>' + p.name + '</h3>' +
-        '<p class="card-desc">' + p.desc + '</p>' +
-        '<div class="card-tags">' + tagsHTML + '</div>' +
-        '<div class="card-footer">' +
-          '<a href="' + p.link + '" class="card-link">View Live <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>' +
-        '</div>' +
-      '</div>';
-    grid.appendChild(card);
-  });
-
-  /* ===== RENDER SKILLS ===== */
-  var skillsGrid = document.getElementById('skillsGrid');
-  skills.forEach(function(s) {
-    var card = document.createElement('div');
-    card.className = 'skill-card';
-    card.innerHTML =
-      '<div class="skill-icon">' + s.icon + '</div>' +
-      '<h3>' + s.title + '</h3>' +
-      '<p>' + s.desc + '</p>';
-    skillsGrid.appendChild(card);
-  });
-
-  /* ===== FILTER ===== */
-  var filterBar = document.getElementById('filterBar');
-  var pills = filterBar.querySelectorAll('.filter-pill');
-  var cards = grid.querySelectorAll('.project-card');
-
-  filterBar.addEventListener('click', function(e) {
-    var pill = e.target.closest('.filter-pill');
-    if (!pill) return;
-    pills.forEach(function(p) { p.classList.remove('active'); });
-    pill.classList.add('active');
-    var filter = pill.getAttribute('data-filter');
-
-    cards.forEach(function(card, idx) {
-      var cat = card.getAttribute('data-category');
-      if (filter === 'all' || cat === filter) {
-        card.classList.remove('hiding');
-        card.style.display = '';
-        card.style.transitionDelay = (idx * 0.06) + 's';
-        requestAnimationFrame(function() {
-          card.classList.add('visible');
-        });
-      } else {
-        card.classList.add('hiding');
-        card.classList.remove('visible');
-        setTimeout(function() {
-          if (card.classList.contains('hiding')) {
-            card.style.display = 'none';
-          }
-        }, 300);
-      }
-    });
-  });
-
-  /* ===== SCROLL ANIMATIONS ===== */
-  function onScroll() {
-    var cards = grid.querySelectorAll('.project-card:not(.hiding)');
-    cards.forEach(function(card) {
-      var rect = card.getBoundingClientRect();
-      if (rect.top < window.innerHeight - 60) {
-        card.classList.add('visible');
-      }
-    });
-
-    // Skill cards
-    var skillCards = document.querySelectorAll('.skill-card');
-    skillCards.forEach(function(card) {
-      var rect = card.getBoundingClientRect();
-      if (rect.top < window.innerHeight - 40) {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      }
-    });
-
-    // Navbar
-    var navbar = document.getElementById('navbar');
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-
-    // Scroll to top button
-    var scrollBtn = document.getElementById('scrollTop');
-    if (window.scrollY > 400) {
-      scrollBtn.classList.add('visible');
-    } else {
-      scrollBtn.classList.remove('visible');
-    }
-  }
-
-  // Initial opacity for skill cards
-  document.querySelectorAll('.skill-card').forEach(function(card) {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-  });
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  // Trigger initial check
-  setTimeout(onScroll, 100);
-
-  /* ===== SCROLL TO TOP ===== */
-  document.getElementById('scrollTop').addEventListener('click', function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  /* ===== THEME TOGGLE ===== */
-  function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    // Update all toggle buttons
-    var toggles = document.querySelectorAll('.theme-toggle');
-    toggles.forEach(function(toggle) {
-      var sun = toggle.querySelector('.icon-sun');
-      var moon = toggle.querySelector('.icon-moon');
-      if (theme === 'dark') {
-        sun.style.display = '';
-        moon.style.display = 'none';
-      } else {
-        sun.style.display = 'none';
-        moon.style.display = '';
-      }
-    });
-  }
-
-  var savedTheme = localStorage.getItem('theme') || 'dark';
-  setTheme(savedTheme);
-
-  document.querySelectorAll('.theme-toggle').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var current = document.documentElement.getAttribute('data-theme');
-      setTheme(current === 'dark' ? 'light' : 'dark');
-    });
-  });
-
-  /* ===== MOBILE NAV ===== */
-  var mobileToggle = document.getElementById('mobileToggle');
-  var mobileNav = document.getElementById('mobileNav');
-  var themeToggleMobile = document.getElementById('themeToggleMobile');
-
-  function updateMobileUI() {
-    if (window.innerWidth <= 768) {
-      themeToggleMobile.style.display = 'flex';
-    } else {
-      themeToggleMobile.style.display = 'none';
-      mobileNav.classList.remove('open');
-      mobileToggle.classList.remove('active');
-    }
-  }
-
-  mobileToggle.addEventListener('click', function() {
-    mobileToggle.classList.toggle('active');
-    mobileNav.classList.toggle('open');
-  });
-
-  window.closeMobileNav = function() {
-    mobileToggle.classList.remove('active');
-    mobileNav.classList.remove('open');
-  };
-
-  window.addEventListener('resize', updateMobileUI);
-  updateMobileUI();
-
-  /* ===== CONTACT FORM ===== */
-  window.handleSubmit = function(e) {
-    e.preventDefault();
-    var btn = e.target.querySelector('.form-submit');
-    var origHTML = btn.innerHTML;
-    btn.innerHTML = 'Message Sent!';
-    btn.style.background = '#22c55e';
-    setTimeout(function() {
-      btn.innerHTML = origHTML;
-      btn.style.background = '';
-      e.target.reset();
-    }, 2500);
-  };
-
-})();
-</script>
+<script src="assets/js/landing.js"></script>
 </body>
 </html>
