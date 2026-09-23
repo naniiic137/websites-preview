@@ -268,15 +268,20 @@ legend { padding: 0; }
 .slot { min-height: 42px; border-radius: 12px; border: 1.5px solid var(--espresso); background: #fff; font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
 .slot.free:hover { background: var(--blush-2); }
 .slot[aria-pressed="true"] { background: var(--espresso); color: var(--cream); }
-.slot.taken { border-color: transparent; background: repeating-linear-gradient(135deg, #e6d9cc 0 6px, #eee3d8 6px 12px); color: #8a7a6f; text-decoration: line-through; cursor: not-allowed; }
-.slot.short { border: 1.5px dashed #c3b1a2; background: transparent; color: #8a7a6f; cursor: not-allowed; }
+.slot { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; line-height: 1.1; padding: 4px 2px; }
+.slot small { font-size: .62rem; font-weight: 600; letter-spacing: .02em; text-transform: lowercase; text-decoration: none; }
+.slot.taken { border-color: transparent; background: repeating-linear-gradient(135deg, #e6d9cc 0 6px, #eee3d8 6px 12px); color: #7d6d62; cursor: not-allowed; }
+.slot.taken .slot-t { text-decoration: line-through; }
+/* "Not enough time": greyed, struck through and labelled so it never reads as an available slot */
+.slot.short { border: 1.5px dashed #c3b1a2; background: #efe9e3; color: #857568; cursor: not-allowed; }
+.slot.short .slot-t { text-decoration: line-through; opacity: .8; }
 .no-slots { padding: 18px; border-radius: 14px; background: var(--blush-2); color: var(--rose-ink); font-weight: 600; margin: 0; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .78rem; color: var(--muted); margin-top: 6px; }
 .legend li { display: flex; align-items: center; gap: 6px; }
 .legend i { width: 18px; height: 12px; border-radius: 4px; }
 .lg-free { border: 1.5px solid var(--espresso); background: #fff; }
 .lg-taken { background: repeating-linear-gradient(135deg, #e6d9cc 0 3px, #eee3d8 3px 6px); }
-.lg-short { border: 1.5px dashed #c3b1a2; }
+.lg-short { border: 1.5px dashed #c3b1a2; background: #efe9e3; }
 
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; }
 .field { display: flex; flex-direction: column; margin-bottom: 12px; }

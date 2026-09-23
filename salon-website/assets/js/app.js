@@ -307,7 +307,8 @@
       const g = list.filter(s => s.t >= a && s.t < b); if (!g.length) return '';
       return `<div class="slot-group"><p>${name}</p><div class="slot-row">${g.map(s => {
         const why = s.state === 'taken' ? 'booked' : s.state === 'short' ? 'not enough time' : 'available';
-        return `<button type="button" class="slot ${s.state}" data-t="${s.t}" aria-pressed="${state.start === s.t}"${s.state !== 'free' ? ' disabled' : ''} aria-label="${hhmm(s.t)}, ${why}">${hhmm(s.t)}</button>`;
+        const tag = s.state === 'short' ? '<small>too short</small>' : s.state === 'taken' ? '<small>booked</small>' : '';
+        return `<button type="button" class="slot ${s.state}" data-t="${s.t}" aria-pressed="${state.start === s.t}"${s.state !== 'free' ? ' disabled' : ''} aria-label="${hhmm(s.t)}, ${why}"><span class="slot-t">${hhmm(s.t)}</span>${tag}</button>`;
       }).join('')}</div></div>`;
     }).join('') || '<p class="no-slots">No start times left today.</p>';
   }
@@ -454,10 +455,10 @@
     const today = iso(new Date());
     const list = getBookings().filter(b => b.date >= today).sort((a, b) => (a.date + pad(a.start)).localeCompare(b.date + pad(b.start)));
     $('#apptEmpty').hidden = list.length > 0;
-    $('#apptList').innerHTML = list.map(b => `<li class="appt" data-ref="${b.ref}">
+    $('#apptList').innerHTML = list.map(b => `<li class="appt" data-ref="${esc(b.ref)}">
       <div class="appt-date"><strong>${fromIso(b.date).getDate()}</strong><small>${fromIso(b.date).toLocaleDateString('en-GB', { month: 'short' })}</small></div>
-      <div class="appt-txt"><p><strong>${hhmm(b.start)}–${hhmm(b.start + b.dur)}</strong> · ${esc(stylistById(b.stylist).first)}</p><p class="appt-svcs">${esc(b.services.map(id => svc(id).name).join(', '))}</p><p class="appt-ref">${b.ref} · ${dt(b.price)}</p></div>
-      <button type="button" class="btn btn-line btn-xs appt-cancel" data-ref="${b.ref}">Cancel <span class="sr-only">appointment ${b.ref}</span></button>
+      <div class="appt-txt"><p><strong>${hhmm(b.start)}–${hhmm(b.start + b.dur)}</strong> · ${esc(stylistById(b.stylist).first)}</p><p class="appt-svcs">${esc(b.services.map(id => svc(id).name).join(', '))}</p><p class="appt-ref">${esc(b.ref)} · ${dt(b.price)}</p></div>
+      <button type="button" class="btn btn-line btn-xs appt-cancel" data-ref="${esc(b.ref)}">Cancel <span class="sr-only">appointment ${esc(b.ref)}</span></button>
     </li>`).join('');
   }
   $('#apptList').addEventListener('click', e => {
