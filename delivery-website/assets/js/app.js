@@ -160,32 +160,50 @@
   let sim = null, simTimer = null;
   function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.abs(h); }
   function normalizeNum(v) { const m = /^\s*sd[\s-]?(\d{5})\s*$/i.exec(v); return m ? 'SD-' + m[1] : null; }
+  // Only demo numbers and pickups booked in this browser exist — anything else is "not found".
   function buildSim(num) {
     const pickups = store.get('swiftdrop.pickups', []);
     const p = pickups.find(x => x.ref === num);
-    let from, to, progress, total;
-    if (p) { from = p.from; to = p.to; progress = 0.02; }
-    else if (DEMOS[num]) [from, to, progress] = DEMOS[num];
-    else { const h = hash(num); from = CITIES[h % CITIES.length].name; to = CITIES[(h >> 5) % CITIES.length].name; if (to === from) to = 'Tunis'; progress = 0.15 + (h % 60) / 100; }
-    const a = city(from), b = city(to), d = km(a, b);
-    total = (d < 40 ? 3 : d < 200 ? 9 : 26) * 3600e3;
-    const start = Date.now() - progress * total;
-    return { num, from, to, a, b, progress, total, start, courier: COURIERS[hash(num) % COURIERS.length], booked: !!p };
+    if (!p && !DEMOS[num]) return null;
+    const [from, to, demoProgress] = p ? [p.from, p.to, 0] : DEMOS[num];
+    const a = city(from), b = city(to);
+    if (!a || !b) return null;
+    const d = km(a, b);
+    const total = (d < 40 ? 3 : d < 200 ? 9 : 26) * 3600e3;
+    const base = { num, from, to, a, b, total, courier: COURIERS[hash(num) % COURIERS.length], booked: !!p };
+    if (!p) return Object.assign(base, { progress: demoProgress, start: Date.now() - demoProgress * total });
+    // Own pickup: the timeline is anchored to the booked pickup date and slot, and moves in real time.
+    const pickupAt = slotStart(p.date, p.slot);
+    const start = pickupAt.getTime() - STEPS[1].t * total; // "Picked up" happens at the start of the slot
+    return Object.assign(base, { start, pickupAt, slot: p.slot, createdAt: p.at, progress: realProgress(start, total) });
+  }
+  function realProgress(start, total) { return Math.min(1, Math.max(0, (Date.now() - start) / total)); }
+  function slotStart(dateISO, slot) {
+    const [y, m, d] = String(dateISO).split('-').map(Number);
+    const h = parseInt(String(slot || '').slice(0, 2), 10);
+    return new Date(y, (m || 1) - 1, d || 1, isNaN(h) ? 8 : h, 0, 0);
   }
   function track(raw) {
     const msg = $('#trackMsg');
     const num = normalizeNum(raw || '');
     if (!num) { msg.textContent = raw ? 'Tracking numbers look like SD-12345 (SD followed by 5 digits).' : 'Please enter a tracking number.'; $('#tracker').hidden = true; $('#trackInput').setAttribute('aria-invalid', 'true'); return false; }
-    msg.textContent = ''; $('#trackInput').setAttribute('aria-invalid', 'false');
     $('#trackInput').value = num;
-    sim = buildSim(num);
+    const found = buildSim(num);
+    clearInterval(simTimer);
+    if (!found) {
+      sim = null; $('#tracker').hidden = true; $('#trackInput').setAttribute('aria-invalid', 'true');
+      msg.textContent = `No parcel found with number ${num}. Check the number on your receipt — or try a demo number: SD-24815, SD-77310 or SD-10392.`;
+      return false;
+    }
+    msg.textContent = ''; $('#trackInput').setAttribute('aria-invalid', 'false');
+    sim = found;
     $('#tracker').hidden = false;
     $('#tNum').textContent = num;
     $('#tRoute').textContent = `${sim.from} → ${sim.to} · ${km(sim.a, sim.b)} km`;
     $('#tMap').innerHTML = routeSVG(sim);
     renderSim();
-    clearInterval(simTimer);
-    if (sim.progress < 1) simTimer = setInterval(() => { sim.progress = Math.min(1, sim.progress + (reduce ? 0.03 : 0.012)); renderSim(); if (sim.progress >= 1) { clearInterval(simTimer); toast(`${num} has been delivered`); } }, reduce ? 4000 : 1500);
+    if (sim.booked) { if (sim.progress < 1) simTimer = setInterval(() => { sim.progress = realProgress(sim.start, sim.total); renderSim(); if (sim.progress >= 1) clearInterval(simTimer); }, 30000); }
+    else if (sim.progress < 1) simTimer = setInterval(() => { sim.progress = Math.min(1, sim.progress + (reduce ? 0.03 : 0.012)); renderSim(); if (sim.progress >= 1) { clearInterval(simTimer); toast(`${num} has been delivered`); } }, reduce ? 4000 : 1500);
     return true;
   }
   function routeSVG(s) {
@@ -208,20 +226,23 @@
     const idx = STEPS.reduce((acc, st, i) => s.progress >= st.t ? i : acc, 0);
     const delivered = s.progress >= 1;
     const fill = str => str.replace('{from}', s.from).replace('{to}', s.to);
-    $('#tStatus').textContent = s.booked && s.progress < 0.1 ? 'Pickup scheduled' : fill(STEPS[idx].title);
+    const scheduled = s.booked && s.progress < STEPS[1].t;
+    $('#tStatus').textContent = scheduled ? 'Pickup scheduled' : fill(STEPS[idx].title);
     $('#tStatus').classList.toggle('done', delivered);
-    $('#tLive').hidden = delivered;
+    $('#tLive').hidden = delivered || scheduled;
     const end = new Date(s.start + s.total);
     $('#tEta').textContent = delivered ? 'Delivered ' + hm(new Date(s.start + s.total)) : (end.toDateString() === new Date().toDateString() ? 'Today ' : dayName(end) + ' ') + hm(end);
     $('#tBar').style.width = (s.progress * 100).toFixed(1) + '%';
     $('#tProgress').setAttribute('aria-valuenow', Math.round(s.progress * 100));
     $('#tTimeline').innerHTML = STEPS.map((st, i) => {
-      const when = new Date(s.start + st.t * s.total);
+      const when = i === 0 && s.createdAt ? new Date(s.createdAt) : new Date(s.start + st.t * s.total);
       const cls = delivered || i < idx ? 'done' : i === idx ? 'current' : '';
-      const meta = cls ? `${dayName(when)}, ${hm(when)}` : `Expected ~${hm(when)}`;
+      const meta = cls ? `${dayName(when)}, ${hm(when)}` : `Expected ${when.toDateString() === new Date().toDateString() ? '' : dayName(when) + ', '}~${hm(when)}`;
       return `<li class="${cls}"><span class="tl-dot">${icon(st.icon)}</span><div><span class="tl-title">${esc(fill(st.title))}</span><span class="tl-meta">${meta}${i === 4 && cls ? ' · courier ' + s.courier : ''}</span></div></li>`;
     }).join('');
-    $('#tCourier').textContent = delivered ? `Signed for at the door. Thank you for shipping with SwiftDrop.` : `Your courier ${s.courier} will call before arriving. Keep your phone nearby.`;
+    $('#tCourier').textContent = delivered ? `Signed for at the door. Thank you for shipping with SwiftDrop.`
+      : scheduled ? `Pickup booked for ${s.pickupAt.toDateString() === new Date().toDateString() ? 'today' : dayName(s.pickupAt)}, ${s.slot}. Tracking starts when the courier collects your parcel.`
+      : `Your courier ${s.courier} will call before arriving. Keep your phone nearby.`;
     // van along route between hub departure (0.25) and arrival (0.8)
     const path = $('#routePath'), van = $('#van'), done = $('#routeDone');
     if (path && van) {
@@ -305,8 +326,33 @@
   $('#pSize').innerHTML = SIZES.map(s => `<option value="${s.id}"${s.id === 'small' ? ' selected' : ''}>${s.label} (${s.hint})</option>`).join('');
   $('#pSpeed').innerHTML = SPEEDS.map(s => `<option value="${s.id}"${s.id === 'standard' ? ' selected' : ''}>${s.label} — ${s.hint}</option>`).join('');
   const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+  const isoOf = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const LEAD_MIN = 30; // a slot can be booked until 30 minutes before it starts
+  const slotOpts = $$('#pSlot option');
+  slotOpts.forEach(o => { o.value = o.value || o.textContent; o.dataset.label = o.textContent; });
+  const slotOpen = (dateISO, slot) => slotStart(dateISO, slot).getTime() - LEAD_MIN * 60e3 > Date.now();
+  const isSunday = dateISO => { const [y, m, d] = dateISO.split('-').map(Number); return new Date(y, m - 1, d).getDay() === 0; };
+  // Grey out slots that have already started today; pick the first open one if the current choice is gone.
+  function refreshSlots() {
+    const dateISO = $('#pDate').value, sel = $('#pSlot');
+    let firstOpen = null;
+    slotOpts.forEach(o => {
+      const open = !dateISO || dateISO !== todayISO() || slotOpen(dateISO, o.value);
+      o.disabled = !open;
+      o.textContent = o.dataset.label + (open ? '' : ' — too late today');
+      if (open && !firstOpen) firstOpen = o;
+    });
+    if (sel.selectedOptions[0] && sel.selectedOptions[0].disabled && firstOpen) sel.value = firstOpen.value;
+  }
+  function firstPickupDay() {
+    let d = new Date();
+    if (d.getDay() === 0 || !slotOpts.some(o => slotOpen(isoOf(d), o.value))) d = nextWorkday(d, 1);
+    return isoOf(d);
+  }
   $('#pDate').min = todayISO();
-  $('#pDate').value = new Date().getHours() >= 17 ? (() => { const d = nextWorkday(new Date(), 1); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; })() : todayISO();
+  $('#pDate').value = firstPickupDay();
+  refreshSlots();
+  $('#pDate').addEventListener('change', () => { refreshSlots(); validateField($('#pDate')); validateField($('#pSlot')); });
   const saved = store.get('swiftdrop.sender', null);
   if (saved) ['name', 'phone', 'address'].forEach(k => { if (saved[k]) pForm.elements[k].value = saved[k]; });
   function pickupQuote() {
@@ -330,7 +376,10 @@
   const rules = {
     phone: v => /^[2-9]\d{7}$/.test(v.replace(/\D/g, '').replace(/^216(?=\d{8}$)/, '')) ? '' : 'Enter a valid Tunisian mobile number (8 digits).',
     weight: (v, f) => { const s = SIZES.find(x => x.id === pForm.elements.size.value); const n = +v; return n > 0 && n <= s.max ? '' : `Weight must be between 0.1 and ${s.max} kg for a ${s.label.toLowerCase()} parcel.`; },
-    date: v => v && v >= todayISO() ? '' : 'Choose today or a later date.',
+    date: v => !v || v < todayISO() ? 'Choose today or a later date.'
+      : isSunday(v) ? 'We don’t collect on Sundays — please choose Monday to Saturday.'
+      : v === todayISO() && !slotOpts.some(o => slotOpen(v, o.value)) ? 'All of today’s pickup slots have passed — please choose tomorrow or later.' : '',
+    slot: v => { const d = $('#pDate').value; return d === todayISO() && !slotOpen(d, v) ? 'This time slot has already started — please pick a later one.' : ''; },
     cod: v => !v || (+v >= 0 && +v <= 5000) ? '' : 'Cash on delivery is limited to 5,000 DT.'
   };
   function validateField(f) {

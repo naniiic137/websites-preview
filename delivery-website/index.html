@@ -308,7 +308,7 @@
             <div class="field"><label for="pSize">Size</label><select id="pSize" name="size"></select><p class="err"></p></div>
             <div class="field"><label for="pWeight">Weight (kg)</label><input id="pWeight" name="weight" type="number" inputmode="decimal" min="0.1" max="1000" step="0.1" value="1" required data-rule="weight"><p class="err"></p></div>
             <div class="field"><label for="pDate">Pickup date</label><input id="pDate" name="date" type="date" required data-rule="date"><p class="err"></p></div>
-            <div class="field"><label for="pSlot">Time slot</label><select id="pSlot" name="slot"><option>08:00 – 10:00</option><option>10:00 – 12:00</option><option selected>12:00 – 14:00</option><option>14:00 – 16:00</option><option>16:00 – 18:00</option></select><p class="err"></p></div>
+            <div class="field"><label for="pSlot">Time slot</label><select id="pSlot" name="slot" data-rule="slot"><option>08:00 – 10:00</option><option>10:00 – 12:00</option><option selected>12:00 – 14:00</option><option>14:00 – 16:00</option><option>16:00 – 18:00</option></select><p class="err"></p></div>
             <div class="field"><label for="pSpeed">Speed</label><select id="pSpeed" name="speed"></select><p class="err"></p></div>
             <div class="field"><label for="pCod">Cash to collect (DT) <span class="opt">optional</span></label><input id="pCod" name="cod" type="number" inputmode="decimal" min="0" max="5000" step="0.5" placeholder="0" data-rule="cod"><p class="err"></p></div>
             <div class="field span2"><label for="pNotes">Notes for the courier <span class="opt">optional</span></label><textarea id="pNotes" name="notes" rows="2" placeholder="Floor, entrance, fragile…"></textarea></div>
