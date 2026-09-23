@@ -415,3 +415,8 @@ dialog.detail { padding: 0 0 calc(20px + env(safe-area-inset-bottom)); }
 .back-link .back-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .back-link:hover, .back-link:focus-visible { width: auto; padding: 0 14px; font-size: .82rem; }
 .back-link:hover .back-label, .back-link:focus-visible .back-label { position: static; width: auto; height: auto; clip: auto; overflow: visible; }
+
+/* "All projects" link: on phones it moves into the page footer (see app.js) so it never covers the menu */
+.back-foot { display: flex; justify-content: center; width: 100%; padding: 16px 16px 24px; }
+.back-link.in-footer, body.has-bar .back-link.in-footer { position: static; inset: auto; display: inline-flex; width: auto; height: auto; min-height: 42px; padding: 0 18px; font-size: .82rem; opacity: 1; }
+.back-link.in-footer .back-label { position: static; width: auto; height: auto; clip: auto; overflow: visible; }

@@ -306,3 +306,13 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* "All projects" link: on phones it moves into the page footer (see app.js) so it never covers content;
+   without JS it falls back to a small round button */
+@media (max-width: 640px) {
+  .back-link { width: 40px; height: 40px; min-height: 0; padding: 0 !important; display: inline-grid; place-items: center; overflow: hidden; font-size: 0 !important; letter-spacing: 0; }
+  .back-link::before { content: "\2190"; font-size: 1.1rem; line-height: 1; }
+}
+.back-foot { display: flex; justify-content: center; width: 100%; flex-basis: 100%; grid-column: 1 / -1; padding: 16px 16px 24px; }
+.back-link.in-footer { position: static; inset: auto; width: auto; height: auto; min-height: 42px; padding: 0 18px !important; display: inline-flex; align-items: center; font-size: .82rem !important; letter-spacing: .02em; opacity: 1; transform: none; box-shadow: none; }
+.back-link.in-footer::before { content: none; }

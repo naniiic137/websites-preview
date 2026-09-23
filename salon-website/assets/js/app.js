@@ -679,3 +679,27 @@
 
   $('#year').textContent = new Date().getFullYear();
 })();
+
+/* "All projects" link: on phones it moves into the page footer so it never sits on top of content */
+(function () {
+  var link = document.querySelector('.back-link');
+  if (!link || !window.matchMedia) return;
+  var foot = Array.prototype.filter.call(document.querySelectorAll('footer'), function (f) {
+    return !f.closest('dialog, article, figure, blockquote, .modal, [role="dialog"]');
+  }).pop();
+  if (!foot) return;
+  var home = document.createComment('back-link');
+  link.parentNode.insertBefore(home, link);
+  var slot = document.createElement('div');
+  slot.className = 'back-foot';
+  var mq = window.matchMedia('(max-width: 640px)');
+  function place() {
+    if (mq.matches) {
+      if (link.parentNode !== slot) { slot.appendChild(link); foot.appendChild(slot); link.classList.add('in-footer'); }
+    } else if (link.parentNode === slot) {
+      home.parentNode.insertBefore(link, home.nextSibling); slot.remove(); link.classList.remove('in-footer');
+    }
+  }
+  place();
+  if (mq.addEventListener) mq.addEventListener('change', place); else if (mq.addListener) mq.addListener(place);
+})();
