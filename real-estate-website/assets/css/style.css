@@ -451,6 +451,19 @@ dialog::backdrop { background: rgba(10, 20, 17, .6); backdrop-filter: blur(3px);
 .success-inline:focus { outline: none; }
 .cmp thead th { min-width: 170px; }
 .cmp thead .muted { font-weight: 400; font-size: .85rem; }
+/* Phones: each row label sits on its own line above the values, so 2–3 homes fit side by side without sideways scrolling */
+@media (max-width: 640px) {
+  .compare__scroll { overflow-x: visible; }
+  .cmp, .cmp thead, .cmp tbody { display: block; min-width: 0; width: 100%; font-size: .85rem; }
+  .cmp tr { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); column-gap: 10px; border-bottom: 1px solid var(--line); }
+  .cmp th, .cmp td { border-bottom: 0; padding: .15rem 0 .55rem; overflow-wrap: anywhere; }
+  .cmp thead td:first-child { display: none; }
+  .cmp thead th { min-width: 0; padding: .4rem 0 .6rem; }
+  .cmp thead strong { font-size: .95rem; }
+  .cmp tbody th { grid-column: 1 / -1; width: auto; padding: .6rem 0 .1rem; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+  .cmp tbody th:empty { display: none; }
+  .cmp .btn--sm { width: 100%; padding-inline: 6px; white-space: normal; line-height: 1.2; }
+}
 
 /* "All projects" link: on phones it moves into the page footer (see app.js) so it never covers content;
    without JS it falls back to a small round button */
