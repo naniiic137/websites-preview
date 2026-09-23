@@ -497,6 +497,8 @@ dialog::backdrop { background: rgba(26, 18, 10, .45); backdrop-filter: blur(3px)
 @media (max-width: 640px) {
   .modal__close { position: fixed; right: 12px; top: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.15); }
 }
+.co-status:empty { display: none; }
+.co-status { font-size: .88rem; margin: 0 0 .6rem; }
 
 /* "All projects" link: on phones it moves into the page footer (see app.js) so it never covers content;
    without JS it falls back to a small round button */

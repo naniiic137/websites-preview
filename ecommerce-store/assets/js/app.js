@@ -48,6 +48,8 @@
   const byId = id => PRODUCTS.find(p => p.id === id);
 
   const SHIP_FREE = 300, SHIP_STD = 8, SHIP_EXPRESS = 15;
+  const MAX_QTY = 10;
+  const capMsg = () => `The maximum is ${MAX_QTY} per item. For larger orders, contact the boutique.`;
   const PROMOS = {
     WELCOME10: { label: '10% off', apply: s => ({ pct: 10 }) },
     LUXE20: { label: '20% off orders over 400 DT', min: 400, apply: s => ({ pct: 20 }) },
@@ -334,12 +336,16 @@
   $('#qvWish').addEventListener('click', () => toggleWish(qvProduct.id));
   qv.addEventListener('click', e => {
     const b = e.target.closest('[data-qty]'); if (!b) return;
-    const i = $('#qvQty'); i.value = Math.min(10, Math.max(1, (+i.value || 1) + +b.dataset.qty));
+    const i = $('#qvQty'), want = (+i.value || 1) + +b.dataset.qty;
+    i.value = Math.min(MAX_QTY, Math.max(1, want));
+    if (want > MAX_QTY) toast(capMsg());
   });
+  $('#qvQty').addEventListener('change', e => { const v = parseInt(e.target.value, 10) || 1; if (v > MAX_QTY) toast(capMsg()); e.target.value = Math.min(MAX_QTY, Math.max(1, v)); });
   $('#qvForm').addEventListener('submit', e => {
     e.preventDefault();
     if (!qvSize) { $('#qvSizeMsg').textContent = 'Please choose a size.'; $('#qvSizes input:not(:disabled)').focus(); return; }
-    addToCart(qvProduct.id, qvColor, qvSize, Math.min(10, Math.max(1, +$('#qvQty').value || 1)));
+    const want = Math.max(1, parseInt($('#qvQty').value, 10) || 1);
+    addToCart(qvProduct.id, qvColor, qvSize, want);
     closeDialog(qv);
   });
 
@@ -347,10 +353,12 @@
   function addToCart(id, color, size, qty) {
     const key = [id, color, size].join('|');
     const line = cart.find(i => i.key === key);
-    if (line) line.qty = Math.min(10, line.qty + qty); else cart.push({ key, id, color, size, qty });
+    const had = line ? line.qty : 0, now = Math.min(MAX_QTY, had + qty);
+    if (line) line.qty = now; else cart.push({ key, id, color, size, qty: now });
     saveCart();
     const c = $('[data-cart-count]'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
-    toast(byId(id).name + ' added to your bag');
+    if (had + qty > MAX_QTY) toast(now > had ? `Added ${now - had} — your bag now has the maximum of ${MAX_QTY} of ${byId(id).name}.` : `You already have the maximum of ${MAX_QTY} of ${byId(id).name} in your bag.`);
+    else toast(byId(id).name + ' added to your bag');
   }
   function totals(shipMethod) {
     const sub = cart.reduce((s, i) => s + byId(i.id).price * i.qty, 0);
@@ -387,7 +395,7 @@
         <div class="cart-item__row">
           <div class="qty qty--sm" role="group" aria-label="Quantity for ${esc(p.name)}">
             <button class="qty__btn" data-step="-1" aria-label="Decrease quantity">${icon('i-minus')}</button>
-            <input type="number" value="${i.qty}" min="1" max="10" aria-label="Quantity" data-qty-input inputmode="numeric">
+            <input type="number" value="${Number(i.qty) || 1}" min="1" max="10" aria-label="Quantity" data-qty-input inputmode="numeric">
             <button class="qty__btn" data-step="1" aria-label="Increase quantity">${icon('i-plus')}</button>
           </div>
           <strong class="price">${money(p.price * i.qty)}</strong>
@@ -417,14 +425,17 @@
     if (s) {
       line.qty += +s.dataset.step;
       if (line.qty < 1) { cart = cart.filter(i => i !== line); saveCart(); return; }
-      line.qty = Math.min(10, line.qty); saveCart();
+      if (line.qty > MAX_QTY) toast(capMsg());
+      line.qty = Math.min(MAX_QTY, line.qty); saveCart();
       const btn = $(`[data-key="${CSS.escape(line.key)}"] [data-step="${s.dataset.step}"]`); if (btn) btn.focus();
     }
   });
   $('#cartList').addEventListener('change', e => {
     if (!e.target.matches('[data-qty-input]')) return;
     const li = e.target.closest('[data-key]'); const line = cart.find(i => i.key === li.dataset.key);
-    line.qty = Math.min(10, Math.max(1, parseInt(e.target.value, 10) || 1)); saveCart();
+    const want = parseInt(e.target.value, 10) || 1;
+    if (want > MAX_QTY) toast(capMsg());
+    line.qty = Math.min(MAX_QTY, Math.max(1, want)); saveCart();
   });
   $('#promoForm').addEventListener('submit', e => {
     e.preventDefault();
@@ -432,8 +443,29 @@
     const msg = $('#promoMsg');
     if (!code) { promo = null; store.set('luxe.promo', null); msg.className = 'form-msg bad'; msg.textContent = 'Enter a promo code.'; renderCart(); return; }
     if (!PROMOS[code]) { msg.className = 'form-msg bad'; msg.textContent = `“${code}” isn’t a valid code.`; return; }
+    if (promo && promo !== code && PROMOS[promo]) {
+      // One code per order: keep whichever saves more on the current bag.
+      const oldSave = promoSaving(promo), newSave = promoSaving(code);
+      if (newSave <= oldSave) {
+        renderCart();
+        msg.className = 'form-msg bad';
+        msg.textContent = `Only one code per order. We kept ${promo} — it saves you ${money(oldSave)}${newSave ? `, ${code} would save ${money(newSave)}` : `, ${code} saves nothing on this bag`}.`;
+        return;
+      }
+      const old = promo;
+      promo = code; store.set('luxe.promo', promo); renderCart();
+      msg.textContent = `${code} applied instead of ${old} — it saves you more (${money(newSave)} vs ${money(oldSave)}).`;
+      return;
+    }
     promo = code; store.set('luxe.promo', promo); renderCart();
   });
+  // How much a code would save on the current bag (discount + shipping it makes free).
+  function promoSaving(code) {
+    const keep = promo; promo = code;
+    const t = totals(), base = (promo = null, totals());
+    promo = keep;
+    return Math.max(0, Math.round((base.total - t.total) * 100) / 100);
+  }
 
   /* ---------- Checkout ---------- */
   const co = $('#checkout'), coForm = $('#coForm');
@@ -448,7 +480,7 @@
   });
   function shipMethod() { return (coForm.elements.ship || {}).value || 'standard'; }
   function renderSummary() {
-    $('#coItems').innerHTML = cart.map(i => { const p = byId(i.id); return `<li><img src="${p.img}" alt="" width="52" height="64" loading="lazy"><span>${esc(p.name)}<small>${esc(i.color)} · ${esc(i.size)} · ×${i.qty}</small></span><strong>${money(p.price * i.qty)}</strong></li>`; }).join('');
+    $('#coItems').innerHTML = cart.map(i => { const p = byId(i.id); return `<li><img src="${p.img}" alt="" width="52" height="64" loading="lazy"><span>${esc(p.name)}<small>${esc(i.color)} · ${esc(i.size)} · ×${Number(i.qty) || 1}</small></span><strong>${money(p.price * i.qty)}</strong></li>`; }).join('');
     $('#coTotals').innerHTML = totalsHTML(totals(shipMethod()));
     const t = totals('standard');
     $('[data-ship-price="standard"]').textContent = t.ship ? money(t.ship) : 'Free';
@@ -474,18 +506,19 @@
   }
   const rules = {
     phone: v => /^[2-9]\d{7}$/.test(v.replace(/\D/g, '').replace(/^216(?=\d{8}$)/, '')) ? '' : 'Enter a valid Tunisian number (8 digits).',
-    zip: v => /^\d{4}$/.test(v) ? '' : 'Postal codes have 4 digits.',
+    zip: v => /^\d{4}$/.test(v) ? '' : 'Must be 4 digits, e.g. 1000.',
     card: v => { const d = v.replace(/\D/g, ''); if (d.length < 13 || d.length > 19) return 'Enter a full card number.'; let s = 0; for (let i = 0; i < d.length; i++) { let n = +d[d.length - 1 - i]; if (i % 2) { n *= 2; if (n > 9) n -= 9; } s += n; } return s % 10 ? 'This card number doesn’t look right.' : ''; },
     exp: v => { const m = /^(\d{2})\/(\d{2})$/.exec(v); if (!m || +m[1] < 1 || +m[1] > 12) return 'Use the MM/YY format.'; const end = new Date(2000 + +m[2], +m[1], 1); return end > new Date() ? '' : 'This card has expired.'; },
     cvc: v => /^\d{3,4}$/.test(v) ? '' : '3 or 4 digits on the back of the card.'
   };
+  const fieldName = f => { const l = f.labels && f.labels[0]; return l ? l.childNodes[0].textContent.replace(/\s*\(.*$/, '').trim() : 'This field'; };
   function validateField(f) {
     const wrap = f.closest('.field'); if (!wrap) return true;
     let msg = '';
-    const v = f.value.trim();
-    if (f.required && !v) msg = 'This field is required.';
-    else if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) msg = 'Enter a valid email address.';
-    else if (f.dataset.rule && rules[f.dataset.rule]) msg = rules[f.dataset.rule](v);
+    const v = f.value.trim(), name = fieldName(f);
+    if (f.required && !v) msg = `${name} is required.`;
+    else if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) msg = `${name}: enter a valid email address.`;
+    else if (f.dataset.rule && rules[f.dataset.rule]) { const m = rules[f.dataset.rule](v); msg = m ? `${name}: ${m.charAt(0).toLowerCase()}${m.slice(1)}` : ''; }
     wrap.classList.toggle('invalid', !!msg);
     f.setAttribute('aria-invalid', String(!!msg));
     const err = $('.err', wrap); if (err) { err.textContent = msg; if (!err.id) err.id = f.id + '-err'; f.setAttribute('aria-describedby', err.id); }
@@ -506,11 +539,12 @@
       <dt>Ship to</dt><dd>${esc(f.first.value)} ${esc(f.last.value)}, ${esc(f.address.value)}, ${esc(f.zip.value)} ${esc(f.city.value)}</dd>
       <dt>Delivery</dt><dd>${shipNames[f.ship.value]}</dd><dt>Payment</dt><dd>${esc(pay)}</dd></dl>`;
   }
-  $('#coBack').addEventListener('click', () => { step--; showStep(); });
+  $('#coBack').addEventListener('click', () => { step--; $('#coStatus').textContent = ''; showStep(); });
   coForm.addEventListener('submit', e => {
     e.preventDefault();
     const fields = $$(`.step[data-step="${step}"] input, .step[data-step="${step}"] select`, coForm).filter(f => !f.disabled && f.type !== 'radio' && f.type !== 'checkbox');
     const bad = fields.filter(f => !validateField(f));
+    $('#coStatus').textContent = bad.length ? `Please check ${bad.length === 1 ? 'this field' : 'these fields'}: ${bad.map(fieldName).join(', ')}.` : '';
     if (bad.length) { bad[0].focus(); return; }
     if (step < 4) {
       if (step === 1) { const f = coForm.elements; store.set('luxe.customer', { email: f.email.value, first: f.first.value, last: f.last.value, phone: f.phone.value, address: f.address.value, city: f.city.value, zip: f.zip.value }); }

@@ -419,6 +419,7 @@
           <p class="err" id="termsErr" aria-live="polite"></p>
         </fieldset>
 
+        <p class="err co-status" id="coStatus" role="alert"></p>
         <div class="checkout__nav">
           <button type="button" class="btn btn--ghost" id="coBack" hidden>Back</button>
           <button type="submit" class="btn btn--dark btn--grow" id="coNext">Continue to delivery</button>
@@ -428,7 +429,7 @@
       <div class="confirm" id="confirm" hidden tabindex="-1">
         <div class="confirm__icon"><svg aria-hidden="true"><use href="#i-check"/></svg></div>
         <h3 class="display display--sm">Thank you, <span id="cfName"></span>!</h3>
-        <p>Order <strong id="cfNumber"></strong> is confirmed. A summary was sent to <strong id="cfEmail"></strong>.</p>
+        <p>Order <strong id="cfNumber"></strong> is confirmed. A summary would be sent to <strong id="cfEmail"></strong> <span class="muted">(demo: nothing is sent)</span>.</p>
         <p class="muted" id="cfEta"></p>
         <button class="btn btn--dark" data-close data-goto="shop">Continue shopping</button>
       </div>
