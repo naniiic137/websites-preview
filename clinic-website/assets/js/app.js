@@ -551,13 +551,13 @@
     $('#mineEmpty').hidden = list.length > 0;
     $('#mineList').innerHTML = list.map(a => {
       const d = doctor(a.doc);
-      return `<li class="mine-item" data-ref="${a.ref}">
+      return `<li class="mine-item" data-ref="${esc(a.ref)}">
         <div class="mine-date" aria-hidden="true"><b>${Number(a.date.slice(8))}</b><small>${fmt(a.date, { month: 'short' })}</small></div>
-        <div class="mine-info"><strong>${a.time} · ${esc(d.name)}</strong><small>${longDate(a.date)} · ${esc(a.reason)}</small><small>Ref ${a.ref}</small></div>
+        <div class="mine-info"><strong>${esc(a.time)} · ${esc(d.name)}</strong><small>${longDate(a.date)} · ${esc(a.reason)}</small><small>Ref ${esc(a.ref)}</small></div>
         <div class="mine-actions">
-          <a class="link-btn ics" href="${icsUrl(a)}" download="nour-clinic-${a.ref}.ics">${icon('i-download')} Calendar<span class="sr-only"> file for ${a.ref}</span></a>
+          <a class="link-btn ics" href="${icsUrl(a)}" download="nour-clinic-${esc(a.ref)}.ics">${icon('i-download')} Calendar<span class="sr-only"> file for ${esc(a.ref)}</span></a>
           <span class="spacer"></span>
-          <button type="button" class="link-btn" data-cancel="${a.ref}">Cancel<span class="sr-only"> appointment ${a.ref}</span></button>
+          <button type="button" class="link-btn" data-cancel="${esc(a.ref)}">Cancel<span class="sr-only"> appointment ${esc(a.ref)}</span></button>
         </div>
       </li>`;
     }).join('');
